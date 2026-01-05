@@ -24,3 +24,11 @@ fun MainScreen() {
         )
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+private fun MainScreenPreview() {
+    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme {
+        MainScreen()
+    }
+}

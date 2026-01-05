@@ -38,3 +38,11 @@ fun DuasScreen() {
         )
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+private fun DuasScreenPreview() {
+    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme {
+        DuasScreen()
+    }
+}

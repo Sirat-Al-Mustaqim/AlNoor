@@ -38,3 +38,11 @@ fun QuranScreen() {
         )
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+private fun QuranScreenPreview() {
+    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme {
+        QuranScreen()
+    }
+}

@@ -295,3 +295,19 @@ private fun DuaOfTheDayCard() {
         }
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+private fun HomeScreenPreview() {
+    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme {
+        HomeScreen()
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun HomeScreenDarkPreview() {
+    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme(darkTheme = true) {
+        HomeScreen()
+    }
+}

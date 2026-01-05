@@ -38,3 +38,11 @@ fun GuardScreen() {
         )
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+private fun GuardScreenPreview() {
+    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme {
+        GuardScreen()
+    }
+}

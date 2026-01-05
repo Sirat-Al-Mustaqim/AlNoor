@@ -38,3 +38,11 @@ fun SettingsScreen() {
         )
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+private fun SettingsScreenPreview() {
+    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme {
+        SettingsScreen()
+    }
+}
