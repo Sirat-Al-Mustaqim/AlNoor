@@ -28,7 +28,12 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+        }
     }
+
     val javaVersion = libs.versions.java.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(javaVersion)
