@@ -6,7 +6,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.siratalmustaqim.alnoor.navigation.NavGraph
+import com.siratalmustaqim.alnoor.navigation.BottomNavGraph
 import com.siratalmustaqim.alnoor.ui.components.BottomNavigationBar
 
 @Composable
@@ -19,8 +19,9 @@ fun MainScreen() {
             BottomNavigationBar(navController = navController)
         }
     ) { innerPadding ->
-        NavGraph(
-            navController = navController
+        BottomNavGraph(
+            navController = navController,
+            modifier = Modifier.padding(innerPadding)
         )
     }
 }

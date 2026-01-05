@@ -1,6 +1,7 @@
 package com.siratalmustaqim.alnoor.navigation
 
 sealed class Screen(val route: String) {
+    data object Main : Screen("main")
     data object Home : Screen("home")
     data object Quran : Screen("quran")
     data object Duas : Screen("duas")
