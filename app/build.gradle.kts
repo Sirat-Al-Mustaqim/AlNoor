@@ -29,7 +29,7 @@ android {
             )
         }
     }
-    val javaVersion = 23
+    val javaVersion = libs.versions.java.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(javaVersion)
         targetCompatibility = JavaVersion.toVersion(javaVersion)
