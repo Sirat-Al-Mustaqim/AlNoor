@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -240,13 +242,17 @@ private fun PrimarySettingsCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Box {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+        ) {
             // Highlighted accent border
             if (isHighlighted) {
                 Box(
                     modifier = Modifier
                         .width(6.dp)
-                        .matchParentSize()
+                        .fillMaxHeight()
                         .background(
                             Gold,
                             RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)
