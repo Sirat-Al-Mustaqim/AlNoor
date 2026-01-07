@@ -10,8 +10,6 @@ import com.siratalmustaqim.alnoor.ui.screens.settings.QuranSettingsUiState
 @Composable
 fun QuranSettingsSection(
     uiState: QuranSettingsUiState,
-    onTextSizeChange: (Float) -> Unit,
-    onFontChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SettingsSection(
@@ -22,7 +20,7 @@ fun QuranSettingsSection(
         SettingsRowSlider(
             label = "Ayah Text Size",
             value = uiState.ayahTextSize,
-            onValueChange = onTextSizeChange,
+            onValueChange = uiState.onTextSizeChange,
             valueRange = 14f..32f,
             valueLabel = "${uiState.ayahTextSize.toInt()}sp"
         )
@@ -31,7 +29,7 @@ fun QuranSettingsSection(
             label = "Ayah Font",
             selectedValue = uiState.ayahFont,
             options = QuranSettingsUiState.availableFonts,
-            onOptionSelected = onFontChange
+            onOptionSelected = uiState.onFontChange
         )
     }
 }

@@ -28,26 +28,22 @@ import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val quranUiState by viewModel.quranUiState.collectAsState()
+    val prayerUiState by viewModel.prayerUiState.collectAsState()
+    val guardUiState by viewModel.guardUiState.collectAsState()
 
     SettingsScreenContent(
-        uiState = uiState,
-        onAyahTextSizeChange = viewModel::updateAyahTextSize,
-        onAyahFontChange = viewModel::updateAyahFont,
-        onLocationClick = { /* TODO: Open location picker */ },
-        onAzanAudioChange = viewModel::updateAzanAudio,
-        onVpnToggle = viewModel::toggleVpn
+        quranUiState = quranUiState,
+        prayerUiState = prayerUiState,
+        guardUiState = guardUiState
     )
 }
 
 @Composable
 private fun SettingsScreenContent(
-    uiState: SettingsUiState,
-    onAyahTextSizeChange: (Float) -> Unit,
-    onAyahFontChange: (String) -> Unit,
-    onLocationClick: () -> Unit,
-    onAzanAudioChange: (String) -> Unit,
-    onVpnToggle: (Boolean) -> Unit
+    quranUiState: QuranSettingsUiState,
+    prayerUiState: PrayerSettingsUiState,
+    guardUiState: GuardSettingsUiState
 ) {
     Column(
         modifier = Modifier
@@ -67,24 +63,13 @@ private fun SettingsScreenContent(
         )
 
         // Quran Settings Section
-        QuranSettingsSection(
-            uiState = uiState.quran,
-            onTextSizeChange = onAyahTextSizeChange,
-            onFontChange = onAyahFontChange
-        )
+        QuranSettingsSection(uiState = quranUiState)
 
         // Prayer Settings Section
-        PrayerSettingsSection(
-            uiState = uiState.prayer,
-            onLocationClick = onLocationClick,
-            onAzanAudioChange = onAzanAudioChange
-        )
+        PrayerSettingsSection(uiState = prayerUiState)
 
         // Guard Settings Section
-        GuardSettingsSection(
-            uiState = uiState.guard,
-            onVpnToggle = onVpnToggle
-        )
+        GuardSettingsSection(uiState = guardUiState)
 
         // Bottom spacing for navigation bar
         Spacer(modifier = Modifier.height(80.dp))
@@ -96,12 +81,9 @@ private fun SettingsScreenContent(
 private fun SettingsScreenPreview() {
     AlNoorTheme {
         SettingsScreenContent(
-            uiState = SettingsUiState(),
-            onAyahTextSizeChange = {},
-            onAyahFontChange = {},
-            onLocationClick = {},
-            onAzanAudioChange = {},
-            onVpnToggle = {}
+            quranUiState = QuranSettingsUiState(),
+            prayerUiState = PrayerSettingsUiState(),
+            guardUiState = GuardSettingsUiState()
         )
     }
 }
@@ -111,16 +93,9 @@ private fun SettingsScreenPreview() {
 private fun SettingsScreenDarkPreview() {
     AlNoorTheme(darkTheme = true) {
         SettingsScreenContent(
-            uiState = SettingsUiState(
-                quran = QuranSettingsUiState(ayahTextSize = 24f, ayahFont = "Scheherazade"),
-                prayer = PrayerSettingsUiState(currentLocation = "New York, USA", azanAudio = "Makkah"),
-                guard = GuardSettingsUiState(vpnEnabled = true)
-            ),
-            onAyahTextSizeChange = {},
-            onAyahFontChange = {},
-            onLocationClick = {},
-            onAzanAudioChange = {},
-            onVpnToggle = {}
+            quranUiState = QuranSettingsUiState(ayahTextSize = 24f, ayahFont = "Scheherazade"),
+            prayerUiState = PrayerSettingsUiState(currentLocation = "New York, USA", azanAudio = "Makkah"),
+            guardUiState = GuardSettingsUiState(vpnEnabled = true)
         )
     }
 }

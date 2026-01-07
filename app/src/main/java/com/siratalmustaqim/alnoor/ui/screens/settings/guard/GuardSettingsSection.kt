@@ -9,7 +9,6 @@ import com.siratalmustaqim.alnoor.ui.screens.settings.GuardSettingsUiState
 @Composable
 fun GuardSettingsSection(
     uiState: GuardSettingsUiState,
-    onVpnToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SettingsSection(
@@ -20,7 +19,7 @@ fun GuardSettingsSection(
         SettingsRowToggle(
             label = "Always-On VPN",
             checked = uiState.vpnEnabled,
-            onCheckedChange = onVpnToggle,
+            onCheckedChange = uiState.onVpnToggle,
             subtitle = "Keep VPN active at all times for protection"
         )
     }

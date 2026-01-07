@@ -10,8 +10,6 @@ import com.siratalmustaqim.alnoor.ui.screens.settings.PrayerSettingsUiState
 @Composable
 fun PrayerSettingsSection(
     uiState: PrayerSettingsUiState,
-    onLocationClick: () -> Unit,
-    onAzanAudioChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SettingsSection(
@@ -22,14 +20,14 @@ fun PrayerSettingsSection(
         SettingsRowText(
             label = "Current Location",
             value = uiState.currentLocation,
-            onClick = onLocationClick
+            onClick = uiState.onLocationClick
         )
 
         SettingsRowDropdown(
             label = "Azan Audio",
             selectedValue = uiState.azanAudio,
             options = PrayerSettingsUiState.availableAzanAudios,
-            onOptionSelected = onAzanAudioChange
+            onOptionSelected = uiState.onAzanAudioChange
         )
     }
 }
