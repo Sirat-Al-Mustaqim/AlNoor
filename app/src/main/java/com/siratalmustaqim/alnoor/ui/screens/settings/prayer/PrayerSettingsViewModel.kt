@@ -43,26 +43,32 @@ class PrayerSettingsViewModel @Inject constructor(
     private val settingsDataStore: SettingsDataStore
 ) : ViewModel() {
 
-    val uiState: StateFlow<PrayerSettingsUiState> = combine(
+    // Combine flows in pairs to avoid type inference issues
+    private val locationAndAutoDetect = combine(
         settingsDataStore.currentLocation,
-        settingsDataStore.autoDetectLocation,
+        settingsDataStore.autoDetectLocation
+    ) { location, autoDetect -> location to autoDetect }
+
+    private val volumeAndAzan = combine(
         settingsDataStore.adhanVolume,
-        settingsDataStore.azanAudio,
+        settingsDataStore.azanAudio
+    ) { volume, azan -> volume to azan }
+
+    private val silentAndEarly = combine(
         settingsDataStore.silentDuringPrayer,
         settingsDataStore.earlyReminder
-    ) { values ->
-        val location = values[0] as String
-        val autoDetect = values[1] as Boolean
-        val volume = values[2] as Float
-        val azan = values[3] as String
-        val silent = values[4] as Boolean
-        val early = values[5] as Boolean
-        
+    ) { silent, early -> silent to early }
+
+    val uiState: StateFlow<PrayerSettingsUiState> = combine(
+        locationAndAutoDetect,
+        volumeAndAzan,
+        silentAndEarly
+    ) { (location, autoDetect), (volume, azan), (silent, early) ->
         // Parse location into city and country
         val parts = location.split(", ")
         val city = parts.getOrNull(0) ?: "Unknown"
         val country = parts.getOrNull(1) ?: ""
-        
+
         PrayerSettingsUiState(
             currentLocation = location,
             currentCity = city,
