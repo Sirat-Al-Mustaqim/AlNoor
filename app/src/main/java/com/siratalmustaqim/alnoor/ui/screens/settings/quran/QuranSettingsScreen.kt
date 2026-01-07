@@ -22,9 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.components.SettingsRowDropdown
 import com.siratalmustaqim.alnoor.ui.components.SettingsRowSlider
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
@@ -53,12 +55,12 @@ private fun QuranSettingsScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Quran Settings") },
+                title = { Text(stringResource(R.string.quran_settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.cd_back)
                         )
                     }
                 },
@@ -83,7 +85,7 @@ private fun QuranSettingsScreenContent(
                 value = uiState.ayahTextSize,
                 onValueChange = uiState.onTextSizeChange,
                 valueRange = 14f..32f,
-                valueLabel = "${uiState.ayahTextSize.toInt()}sp"
+                valueLabel = stringResource(R.string.quran_settings_ayah_text_size, uiState.ayahTextSize.toInt())
             )
 
             Spacer(modifier = Modifier.height(16.dp))
