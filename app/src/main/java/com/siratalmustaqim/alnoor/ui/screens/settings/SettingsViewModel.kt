@@ -36,7 +36,9 @@ data class PrayerSettingsUiState(
 
 data class GuardSettingsUiState(
     val vpnEnabled: Boolean = false,
-    val onVpnToggle: (Boolean) -> Unit = {}
+    val onVpnToggle: (Boolean) -> Unit = {},
+    val alwaysOnProtection: Boolean = false,
+    val onAlwaysOnProtectionToggle: (Boolean) -> Unit = {}
 )
 
 @HiltViewModel
@@ -82,23 +84,24 @@ class SettingsViewModel @Inject constructor(
         )
     )
 
-    val guardUiState: StateFlow<GuardSettingsUiState> = settingsDataStore.vpnEnabled
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        ).let { vpnFlow ->
-            combine(vpnFlow) { values ->
-                GuardSettingsUiState(
-                    vpnEnabled = values[0],
-                    onVpnToggle = ::toggleVpn
-                )
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = GuardSettingsUiState(onVpnToggle = ::toggleVpn)
-            )
-        }
+    val guardUiState: StateFlow<GuardSettingsUiState> = combine(
+        settingsDataStore.vpnEnabled,
+        settingsDataStore.alwaysOnProtection
+    ) { vpnEnabled, alwaysOnProtection ->
+        GuardSettingsUiState(
+            vpnEnabled = vpnEnabled,
+            onVpnToggle = ::toggleVpn,
+            alwaysOnProtection = alwaysOnProtection,
+            onAlwaysOnProtectionToggle = ::toggleAlwaysOnProtection
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = GuardSettingsUiState(
+            onVpnToggle = ::toggleVpn,
+            onAlwaysOnProtectionToggle = ::toggleAlwaysOnProtection
+        )
+    )
 
     // Quran Settings Actions
     private fun updateAyahTextSize(size: Float) {
@@ -128,6 +131,12 @@ class SettingsViewModel @Inject constructor(
     private fun toggleVpn(enabled: Boolean) {
         viewModelScope.launch {
             settingsDataStore.updateVpnEnabled(enabled)
+        }
+    }
+
+    private fun toggleAlwaysOnProtection(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.updateAlwaysOnProtection(enabled)
         }
     }
 }

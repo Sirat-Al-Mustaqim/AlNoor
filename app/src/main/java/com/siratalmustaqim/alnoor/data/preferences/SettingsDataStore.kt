@@ -37,6 +37,7 @@ class SettingsDataStore @Inject constructor(
     // Guard Settings Keys
     private object GuardKeys {
         val VPN_ENABLED = booleanPreferencesKey("vpn_enabled")
+        val ALWAYS_ON_PROTECTION = booleanPreferencesKey("always_on_protection")
     }
 
     // Quran Settings
@@ -86,9 +87,19 @@ class SettingsDataStore @Inject constructor(
         prefs[GuardKeys.VPN_ENABLED] ?: false
     }
 
+    val alwaysOnProtection: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[GuardKeys.ALWAYS_ON_PROTECTION] ?: false
+    }
+
     suspend fun updateVpnEnabled(enabled: Boolean) {
         dataStore.edit { prefs ->
             prefs[GuardKeys.VPN_ENABLED] = enabled
+        }
+    }
+
+    suspend fun updateAlwaysOnProtection(enabled: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[GuardKeys.ALWAYS_ON_PROTECTION] = enabled
         }
     }
 }

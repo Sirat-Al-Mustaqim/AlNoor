@@ -18,8 +18,8 @@ fun GuardSettingsSection(
     ) {
         SettingsRowToggle(
             label = "Always-On VPN",
-            checked = uiState.vpnEnabled,
-            onCheckedChange = uiState.onVpnToggle,
+            checked = uiState.alwaysOnProtection,
+            onCheckedChange = uiState.onAlwaysOnProtectionToggle,
             subtitle = "Keep VPN active at all times for protection"
         )
     }
