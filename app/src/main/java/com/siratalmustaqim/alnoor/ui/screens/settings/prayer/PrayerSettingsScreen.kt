@@ -52,12 +52,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 import com.siratalmustaqim.alnoor.ui.theme.Gold
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -87,7 +89,7 @@ private fun PrayerSettingsScreenContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Prayer Settings",
+                        text = stringResource(R.string.prayer_settings_title),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
@@ -97,7 +99,7 @@ private fun PrayerSettingsScreenContent(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.cd_back),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -180,7 +182,7 @@ private fun LocationSection(
     onAutoDetectToggle: (Boolean) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionHeader(Icons.Filled.LocationOn, "Location")
+        SectionHeader(Icons.Filled.LocationOn, stringResource(R.string.prayer_settings_location))
         
         // Location Card
         Card(
@@ -215,7 +217,7 @@ private fun LocationSection(
                     ) {
                         Column {
                             Text(
-                                text = "CURRENT CITY",
+                                text = stringResource(R.string.prayer_settings_current_city),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = Gold,
                                 fontWeight = FontWeight.SemiBold
@@ -245,7 +247,7 @@ private fun LocationSection(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.EditLocation,
-                                contentDescription = "Edit location",
+                                contentDescription = stringResource(R.string.prayer_settings_edit_location),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -264,13 +266,13 @@ private fun LocationSection(
                     ) {
                         Column {
                             Text(
-                                text = "Auto-detect Location",
+                                text = stringResource(R.string.prayer_settings_auto_detect),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Updates based on GPS",
+                                text = stringResource(R.string.prayer_settings_auto_detect_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -308,7 +310,7 @@ private fun LocationSection(
                     modifier = Modifier.size(20.dp)
                 )
                 Text(
-                    text = "Your location data never leaves this device. We calculate prayer times locally to ensure complete privacy.",
+                    text = stringResource(R.string.prayer_settings_privacy_notice),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                     fontWeight = FontWeight.Medium,
@@ -350,13 +352,13 @@ private fun AudioSection(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Adhan Volume",
+                            text = stringResource(R.string.prayer_settings_adhan_volume),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "${(volume * 100).toInt()}%",
+                            text = stringResource(R.string.prayer_settings_volume_percentage, (volume * 100).toInt()),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -404,7 +406,7 @@ private fun AudioSection(
                         }
                         Column {
                             Text(
-                                text = "Adhan Reciter",
+                                text = stringResource(R.string.prayer_settings_adhan_reciter),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -428,8 +430,8 @@ private fun AudioSection(
                 // Silent During Prayer
                 SettingsToggleRow(
                     icon = Icons.Filled.DoNotDisturbOn,
-                    title = "Silent During Prayer",
-                    subtitle = "Mutes device for 15 mins",
+                    title = stringResource(R.string.prayer_settings_silent_during_prayer),
+                    subtitle = stringResource(R.string.prayer_settings_silent_during_prayer_desc),
                     checked = silentDuringPrayer,
                     onCheckedChange = onSilentToggle
                 )
@@ -439,8 +441,8 @@ private fun AudioSection(
                 // Early Reminder
                 SettingsToggleRow(
                     icon = Icons.Filled.NotificationsActive,
-                    title = "Early Reminder",
-                    subtitle = "Notify 15m before Adhan",
+                    title = stringResource(R.string.prayer_settings_early_reminder),
+                    subtitle = stringResource(R.string.prayer_settings_early_reminder_desc),
                     checked = earlyReminder,
                     onCheckedChange = onEarlyReminderToggle
                 )
@@ -532,13 +534,13 @@ private fun CalculationSection() {
             ) {
                 Column {
                     Text(
-                        text = "Juristic Method",
+                        text = stringResource(R.string.prayer_settings_juristic_method),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Standard (Shafi, Hanbli, Maliki)",
+                        text = stringResource(R.string.prayer_settings_juristic_method_value),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -583,13 +585,13 @@ private fun CalculationSection() {
             ) {
                 Column {
                     Text(
-                        text = "Time Correction",
+                        text = stringResource(R.string.prayer_settings_time_correction),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Manual adjustments per prayer",
+                        text = stringResource(R.string.prayer_settings_time_correction_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -599,7 +601,7 @@ private fun CalculationSection() {
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "Configure",
+                        text = stringResource(R.string.prayer_settings_configure),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
