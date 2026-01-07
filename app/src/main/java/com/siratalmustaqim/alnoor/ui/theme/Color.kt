@@ -2,30 +2,26 @@ package com.siratalmustaqim.alnoor.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Primary - Bright Green (from template)
-val Primary = Color(0xFF11D462)
-val PrimaryDark = Color(0xFF0EB854)
-val PrimaryLight = Color(0xFF3DE07F)
+// Primary - Deep Emerald
+val Primary = Color(0xFF136C4F)
+val PrimaryDark = Color(0xFF0D4F3A)
+val PrimaryLight = Color(0xFF1A8A66)
 
-// Accent - Gold
-val Gold = Color(0xFFD4AF37)
-val GoldLight = Color(0xFFE6C55C)
-val GoldDark = Color(0xFFB8960C)
+// Accent - Muted Gold
+val Gold = Color(0xFFD8BE52)
+val GoldLight = Color(0xFFE6CF7A)
+val GoldDark = Color(0xFFB8A040)
 
 // Backgrounds
-val BackgroundLight = Color(0xFFF6F8F7)
-val BackgroundDark = Color(0xFF102218)
+val BackgroundLight = Color(0xFFF8FBFA)
+val BackgroundDark = Color(0xFF121417)
 
 // Surface / Cards
 val SurfaceLight = Color(0xFFFFFFFF)
-val SurfaceDark = Color(0xFF1A2E22)
-
-// Emerald Dark (for hero cards)
-val EmeraldDark = Color(0xFF064E3B)
-val EmeraldDarkVariant = Color(0xFF0D1B13)
+val SurfaceDark = Color(0xFF1E2126)
 
 // Text colors
-val TextPrimaryLight = Color(0xFF0D1B13)
+val TextPrimaryLight = Color(0xFF0F1A16)
 val TextPrimaryDark = Color(0xFFFFFFFF)
 val TextSecondaryLight = Color(0xFF6B7280)
 val TextSecondaryDark = Color(0xFF9CA3AF)
@@ -42,9 +38,10 @@ val Gray700 = Color(0xFF374151)
 val Gray800 = Color(0xFF1F2937)
 val Gray900 = Color(0xFF111827)
 
-// Legacy colors (for compatibility)
-val EmeraldGreen = Primary
-val EmeraldGreenLight = PrimaryLight
-val EmeraldGreenDark = PrimaryDark
+// Emerald variants (for special UI elements)
+val EmeraldDark = Color(0xFF064E3B)
+val EmeraldDarkVariant = Color(0xFF0D1B13)
+
+// Legacy aliases
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)

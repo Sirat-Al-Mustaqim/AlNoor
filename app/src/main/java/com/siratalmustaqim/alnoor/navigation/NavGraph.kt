@@ -62,6 +62,7 @@ fun BottomNavGraph(
         }
         composable(route = Screen.Settings.route) {
             SettingsScreen(
+                onBackClick = { navController.popBackStack() },
                 onQuranSettingsClick = { navController.navigate(Screen.QuranSettings.route) },
                 onPrayerSettingsClick = { navController.navigate(Screen.PrayerSettings.route) },
                 onGuardSettingsClick = { navController.navigate(Screen.GuardSettings.route) }

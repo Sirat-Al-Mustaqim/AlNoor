@@ -1,7 +1,10 @@
 package com.siratalmustaqim.alnoor.ui.screens.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,129 +12,459 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
+import com.siratalmustaqim.alnoor.ui.theme.Gold
 
-data class SettingsItem(
-    val icon: String,
-    val title: String,
-    val subtitle: String,
-    val onClick: () -> Unit
-)
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onQuranSettingsClick: () -> Unit,
-    onPrayerSettingsClick: () -> Unit,
-    onGuardSettingsClick: () -> Unit
+    onBackClick: () -> Unit = {},
+    onQuranSettingsClick: () -> Unit = {},
+    onPrayerSettingsClick: () -> Unit = {},
+    onGuardSettingsClick: () -> Unit = {},
+    onAppearanceClick: () -> Unit = {},
+    onLanguageClick: () -> Unit = {},
+    onAboutClick: () -> Unit = {}
 ) {
-    val settingsItems = listOf(
-        SettingsItem(
-            icon = "📖",
-            title = "Quran",
-            subtitle = "Ayah text size, font style",
-            onClick = onQuranSettingsClick
-        ),
-        SettingsItem(
-            icon = "🕌",
-            title = "Prayer",
-            subtitle = "Location, azan audio",
-            onClick = onPrayerSettingsClick
-        ),
-        SettingsItem(
-            icon = "🛡️",
-            title = "Guard",
-            subtitle = "VPN, protection settings",
-            onClick = onGuardSettingsClick
-        )
-    )
-
-    SettingsScreenContent(settingsItems = settingsItems)
-}
-
-@Composable
-private fun SettingsScreenContent(settingsItems: List<SettingsItem>) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-    ) {
-        // Header
-        Text(
-            text = "Settings",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        // Settings List
-        settingsItems.forEach { item ->
-            SettingsItemCard(item = item)
-            Spacer(modifier = Modifier.height(12.dp))
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Settings",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                actions = {
+                    // Empty spacer to balance the layout
+                    Spacer(modifier = Modifier.width(48.dp))
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
+                )
+            )
         }
-
-        // Bottom spacing for navigation bar
-        Spacer(modifier = Modifier.height(80.dp))
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+        ) {
+            // Hero Title Section
+            HeroSection()
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Primary Settings Cards
+            PrimarySettingsSection(
+                onQuranClick = onQuranSettingsClick,
+                onPrayerClick = onPrayerSettingsClick,
+                onGuardClick = onGuardSettingsClick
+            )
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // General Settings Section
+            GeneralSettingsSection(
+                onAppearanceClick = onAppearanceClick,
+                onLanguageClick = onLanguageClick,
+                onAboutClick = onAboutClick
+            )
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // Footer
+            FooterSection()
+            
+            Spacer(modifier = Modifier.height(24.dp))
+        }
     }
 }
 
 @Composable
-private fun SettingsItemCard(item: SettingsItem) {
+private fun HeroSection() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Shield icon with gradient background
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                        )
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Shield,
+                contentDescription = null,
+                tint = Gold,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        // Title with colored span
+        Text(
+            text = buildAnnotatedString {
+                append("Configure your\n")
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                    append("spiritual shield")
+                }
+            },
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            lineHeight = 32.sp,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+private fun PrimarySettingsSection(
+    onQuranClick: () -> Unit,
+    onPrayerClick: () -> Unit,
+    onGuardClick: () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        // Quran Settings Card
+        PrimarySettingsCard(
+            icon = Icons.Filled.MenuBook,
+            title = "Quran Settings",
+            subtitle = "Recitation audio, translation scripts, and reading goals.",
+            onClick = onQuranClick
+        )
+        
+        // Prayer Settings Card
+        PrimarySettingsCard(
+            icon = Icons.Filled.Schedule,
+            title = "Prayer Settings",
+            subtitle = "Calculation methods, Adhan notifications, and location.",
+            onClick = onPrayerClick
+        )
+        
+        // Guard Settings Card (highlighted)
+        PrimarySettingsCard(
+            icon = Icons.Filled.Security,
+            title = "Guard Settings",
+            subtitle = "Website blocking, strict mode, and active hours.",
+            onClick = onGuardClick,
+            isHighlighted = true
+        )
+    }
+}
+
+@Composable
+private fun PrimarySettingsCard(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    isHighlighted: Boolean = false
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { item.onClick() },
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Box {
+            // Highlighted accent border
+            if (isHighlighted) {
+                Box(
+                    modifier = Modifier
+                        .width(6.dp)
+                        .matchParentSize()
+                        .background(
+                            Gold,
+                            RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)
+                        )
+                )
+            }
+            
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .padding(start = if (isHighlighted) 8.dp else 0.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = Gold,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                
+                // Placeholder for image (using colored box for now)
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                )
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GeneralSettingsSection(
+    onAppearanceClick: () -> Unit,
+    onLanguageClick: () -> Unit,
+    onAboutClick: () -> Unit
+) {
+    Column {
+        Text(
+            text = "GENERAL",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            letterSpacing = 2.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
+        )
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column {
+                GeneralSettingsRow(
+                    icon = Icons.Filled.Palette,
+                    title = "Appearance",
+                    onClick = onAppearanceClick
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                GeneralSettingsRow(
+                    icon = Icons.Filled.Language,
+                    title = "Language",
+                    value = "English",
+                    onClick = onLanguageClick
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                GeneralSettingsRow(
+                    icon = Icons.Filled.Info,
+                    title = "About Nur Blocker",
+                    onClick = onAboutClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GeneralSettingsRow(
+    icon: ImageVector,
+    title: String,
+    value: String? = null,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = item.icon,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(end = 16.dp)
-            )
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
                 )
+            }
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            if (value != null) {
                 Text(
-                    text = item.subtitle,
+                    text = value,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Go to ${item.title}",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp)
             )
         }
+    }
+}
+
+@Composable
+private fun FooterSection() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // Local storage badge
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(50))
+                .background(Gold.copy(alpha = 0.1f))
+                .border(1.dp, Gold.copy(alpha = 0.2f), RoundedCornerShape(50))
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Lock,
+                contentDescription = null,
+                tint = Gold,
+                modifier = Modifier.size(16.dp)
+            )
+            Text(
+                text = "LOCAL STORAGE ONLY",
+                style = MaterialTheme.typography.labelSmall,
+                color = Gold,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 1.sp
+            )
+        }
+        
+        // Version
+        Text(
+            text = "Nur Blocker v1.0.2",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -139,12 +472,14 @@ private fun SettingsItemCard(item: SettingsItem) {
 @Composable
 private fun SettingsScreenPreview() {
     AlNoorTheme {
-        SettingsScreenContent(
-            settingsItems = listOf(
-                SettingsItem("📖", "Quran", "Ayah text size, font style") {},
-                SettingsItem("🕌", "Prayer", "Location, azan audio") {},
-                SettingsItem("🛡️", "Guard", "VPN, protection settings") {}
-            )
-        )
+        SettingsScreen()
+    }
+}
+
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun SettingsScreenDarkPreview() {
+    AlNoorTheme(darkTheme = true) {
+        SettingsScreen()
     }
 }

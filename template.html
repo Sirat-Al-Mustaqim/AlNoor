@@ -5,20 +5,21 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Nur Blocker - Home</title>
+    <title>Nur Blocker - Settings</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Scheherazade+New:wght@400;700&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap"
         rel="stylesheet" />
+    <!-- Material Symbols -->
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
-    <!-- Tailwind Config -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
         tailwind.config = {
@@ -26,35 +27,57 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#11d462",
-                        "background-light": "#f6f8f7",
-                        "background-dark": "#102218",
-                        "emerald-dark": "#064e3b", // Deep emerald for cards
-                        "gold-accent": "#D4AF37", // Gold for accents
+                        "primary": "#136c4f", // Deep Emerald
+                        "primary-dark": "#0d4f3a",
+                        "accent-gold": "#D8BE52", // Muted Gold
+                        "background-light": "#f8fbfa", // Soft off-white
+                        "background-dark": "#121417",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e2126",
                     },
                     fontFamily: {
-                        "display": ["Inter", "sans-serif"],
-                        "arabic": ["'Scheherazade New'", "serif"],
+                        "display": ["Manrope", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
                     },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        "soft": "0 4px 20px -2px rgba(19, 108, 79, 0.08)",
+                        "glow": "0 0 15px rgba(216, 190, 82, 0.2)",
+                    }
                 },
             },
         }
     </script>
     <style>
-        /* Custom scrollbar hiding for cleaner mobile look */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        ::-webkit-scrollbar-track {
+            background: transparent;
         }
 
-        /* Arabic text scaling */
-        .font-arabic {
-            line-height: 1.8;
+        ::-webkit-scrollbar-thumb {
+            background-color: #e5e7eb;
+            border-radius: 20px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background-color: #374151;
+        }
+
+        /* Subtle pattern overlay */
+        .bg-pattern {
+            background-image: radial-gradient(#136c4f 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            opacity: 0.03;
         }
     </style>
     <style>
@@ -64,173 +87,162 @@
     </style>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-[#0d1b13] dark:text-white pb-20">
-    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<body
+    class="bg-background-light dark:bg-background-dark text-[#0f1a16] dark:text-gray-100 font-display transition-colors duration-200">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden group/design-root">
+        <!-- Background Pattern Overlay -->
+        <div class="absolute inset-0 bg-pattern pointer-events-none fixed z-0"></div>
         <!-- Header -->
         <div
-            class="sticky top-0 z-50 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 pb-2 justify-between border-b border-[#e5e7eb] dark:border-[#1f2937]">
-            <div class="text-primary flex size-12 shrink-0 items-center justify-start">
-                <span class="material-symbols-outlined" style="font-size: 28px;">security</span>
+            class="relative z-10 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 sticky top-0 border-b border-black/5 dark:border-white/5">
+            <div
+                class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer">
+                <span class="material-symbols-outlined text-primary dark:text-emerald-400"
+                    style="font-size: 24px;">arrow_back</span>
             </div>
             <h2
-                class="text-[#0d1b13] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">
-                Nur Blocker</h2>
-            <div class="flex w-12 items-center justify-end">
-                <button
-                    class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-[#0d1b13] dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
-                    <span class="material-symbols-outlined" style="font-size: 24px;">settings</span>
-                </button>
-            </div>
+                class="text-primary dark:text-emerald-400 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">
+                Settings</h2>
         </div>
-        <!-- Section 1: Salah Times -->
-        <div class="flex flex-col gap-4 p-4">
-            <!-- Headline -->
-            <div class="flex justify-between items-end">
-                <h2 class="text-[#0d1b13] dark:text-white tracking-tight text-[22px] font-bold leading-tight">Salah
-                    Times</h2>
-                <span class="text-sm text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[16px]">location_on</span> London, UK
-                </span>
+        <!-- Main Content -->
+        <div class="relative z-10 flex-1 flex flex-col px-4 pb-8 max-w-md mx-auto w-full">
+            <!-- Hero Title -->
+            <div class="flex flex-col items-center justify-center pt-6 pb-8">
+                <div
+                    class="size-12 mb-3 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-glow">
+                    <span class="material-symbols-outlined text-accent-gold" style="font-size: 24px;">shield</span>
+                </div>
+                <h1
+                    class="text-[#0f1a16] dark:text-white text-2xl font-bold leading-tight tracking-[-0.02em] text-center">
+                    Configure your<br /><span class="text-primary dark:text-emerald-400">spiritual shield</span></h1>
             </div>
-            <!-- Hero Card: Next Prayer -->
-            <div class="w-full relative overflow-hidden rounded-xl shadow-lg bg-emerald-dark">
-                <!-- Decorative Gold Circle -->
-                <div class="absolute -right-6 -top-6 w-32 h-32 rounded-full border-[1px] border-gold-accent/20"></div>
-                <div class="absolute -right-2 -top-2 w-32 h-32 rounded-full border-[1px] border-gold-accent/10"></div>
-                <div class="relative z-10 p-6 flex flex-col items-center justify-center text-center gap-2">
-                    <p class="text-gold-accent text-sm font-medium tracking-widest uppercase">Now Praying</p>
-                    <h3 class="text-white text-4xl font-bold tracking-tight">Asr</h3>
-                    <p class="text-white/80 text-xl font-medium">04:45 PM</p>
+            <!-- Primary Settings Cards -->
+            <div class="space-y-4">
+                <!-- Quran Settings -->
+                <div class="group cursor-pointer">
                     <div
-                        class="mt-4 flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
-                        <span class="material-symbols-outlined text-primary text-sm">schedule</span>
-                        <p class="text-white text-sm font-normal">Maghrib in 1h 25m</p>
+                        class="flex items-center justify-between gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-4 shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 border border-transparent hover:border-primary/10 dark:hover:border-emerald-500/20">
+                        <div class="flex flex-col gap-1.5 flex-[2_2_0px]">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-accent-gold"
+                                    style="font-size: 20px;">menu_book</span>
+                                <p class="text-primary dark:text-emerald-400 text-lg font-bold leading-tight">Quran
+                                    Settings</p>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-relaxed">Recitation
+                                audio, translation scripts, and reading goals.</p>
+                        </div>
+                        <div class="w-20 h-20 shrink-0 bg-center bg-no-repeat bg-cover rounded-xl shadow-inner relative overflow-hidden"
+                            data-alt="Abstract golden Arabic calligraphy pattern on dark emerald background"
+                            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC0tvv0qz7ZT-Lml3cln3t_84PQa-qzKQYCE1igf-JhwRjr42gUqA_ZGwZZA44KiNDStkFMizfx8-UHTXSzIzWSCrndaXgNpYifs5iAq_3oTRZA2s3U-vZ6pdzIvi490jgjaIVcOqmOP5gd-Dj8PNcYh3w-q9qJrVZlCKEqvw99b-gXxgnq4cAgIV7w64ML248HABAcXZOG5GOOYSdlDgOChYUhodYNzf3HNqo0NALarSSOgMUyUU_xSI2dEWVLml6Mb369ODyhqxG9");'>
+                            <div class="absolute inset-0 bg-primary/20 mix-blend-overlay"></div>
+                        </div>
                     </div>
                 </div>
-                <!-- Background Gradient/Texture Overlay -->
-                <div class="absolute inset-0 bg-gradient-to-br from-emerald-900/80 to-black/20 mix-blend-overlay pointer-events-none"
-                    data-alt="Abstract deep green gradient background"></div>
-            </div>
-            <!-- Prayer List -->
-            <div
-                class="bg-white dark:bg-[#1a2e22] rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-4">
-                <div class="grid grid-cols-1 divide-y divide-gray-100 dark:divide-gray-700">
-                    <div class="flex justify-between items-center py-3 first:pt-0">
-                        <span class="text-gray-600 dark:text-gray-300 font-medium">Fajr</span>
-                        <span class="text-[#0d1b13] dark:text-white font-bold">05:30 AM</span>
-                    </div>
-                    <div class="flex justify-between items-center py-3">
-                        <span class="text-gray-600 dark:text-gray-300 font-medium">Dhuhr</span>
-                        <span class="text-[#0d1b13] dark:text-white font-bold">12:15 PM</span>
-                    </div>
+                <!-- Prayer Settings -->
+                <div class="group cursor-pointer">
                     <div
-                        class="flex justify-between items-center py-3 bg-primary/5 -mx-4 px-4 border-l-4 border-primary">
-                        <span class="text-primary font-bold flex items-center gap-2">Asr <span
-                                class="material-symbols-outlined text-[16px]">volume_up</span></span>
-                        <span class="text-primary font-bold">04:45 PM</span>
+                        class="flex items-center justify-between gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-4 shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 border border-transparent hover:border-primary/10 dark:hover:border-emerald-500/20">
+                        <div class="flex flex-col gap-1.5 flex-[2_2_0px]">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-accent-gold"
+                                    style="font-size: 20px;">schedule</span>
+                                <p class="text-primary dark:text-emerald-400 text-lg font-bold leading-tight">Prayer
+                                    Settings</p>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-relaxed">Calculation
+                                methods, Adhan notifications, and location.</p>
+                        </div>
+                        <div class="w-20 h-20 shrink-0 bg-center bg-no-repeat bg-cover rounded-xl shadow-inner relative overflow-hidden"
+                            data-alt="Silhouette of mosque dome against a soft dawn sky"
+                            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCqqyJPLu6BT5AkIUrYqawjk_KAkWCVPPaL3cAbpu1GLaschWZqeTI5oWkQR9-KpsA6UCMyLNiWAJVc-nprMuK0RuqxYhWxlh0t_U2uGbEGQSwrNKl_EFjnJKIX4tbH_xkJemjj0cLnfLekNh6oadaUwsQZyDbClhZqPv90tsAiVettZ1pOSHxRaNhdTmrb7Idt33EHZfr1XUmnBxZrJh1xrbtr2a51-aXmqCY_Tn3kV2gl1fBcH5femJTD5tfvDJxD6VgHXefvqpEs");'>
+                            <div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+                        </div>
                     </div>
-                    <div class="flex justify-between items-center py-3">
-                        <span class="text-gray-600 dark:text-gray-300 font-medium">Maghrib</span>
-                        <span class="text-[#0d1b13] dark:text-white font-bold">06:10 PM</span>
-                    </div>
-                    <div class="flex justify-between items-center py-3 last:pb-0">
-                        <span class="text-gray-600 dark:text-gray-300 font-medium">Isha</span>
-                        <span class="text-[#0d1b13] dark:text-white font-bold">07:45 PM</span>
+                </div>
+                <!-- Guard Settings (Highlighted) -->
+                <div class="group cursor-pointer">
+                    <div
+                        class="relative flex items-center justify-between gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-4 shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 overflow-hidden">
+                        <!-- Accent Border -->
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-accent-gold rounded-l-2xl"></div>
+                        <div class="flex flex-col gap-1.5 flex-[2_2_0px] pl-2">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-accent-gold"
+                                    style="font-size: 20px;">security</span>
+                                <p class="text-primary dark:text-emerald-400 text-lg font-bold leading-tight">Guard
+                                    Settings</p>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-relaxed">Website
+                                blocking, strict mode, and active hours.</p>
+                        </div>
+                        <div class="w-20 h-20 shrink-0 bg-center bg-no-repeat bg-cover rounded-xl shadow-inner relative overflow-hidden"
+                            data-alt="Abstract secure shield visualization with emerald light"
+                            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAPV_6-2flav8FyKmvWo18kQ3E61pvDPP4YduXc7nbvxcKvConKoFyhNUDORbauwXM3Y6jhQNprrXiDBvUonewoH0iahDonyl383S6qKmOH8Qs3ohVqFcwx1P2Q4UqsBqID8uHXi6SKOW9__JhxEVmG2fkzonkkbhxk2Yc__-30Hoz_PJTaXDg0QCGjznh0LmYz13QWFyu6Q2TRjuL0GCzcTg3k1et56r8VcXdaCuDbz6ZKGCaRXDiLXDotICmbQVXkeqo15c0hGrtY");'>
+                            <div class="absolute inset-0 bg-primary/30 mix-blend-multiply"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Spacer -->
-        <div class="h-2 bg-transparent"></div>
-        <!-- Section 2: Surah of the Day -->
-        <div class="flex flex-col gap-4 p-4 pt-0">
-            <h2 class="text-[#0d1b13] dark:text-white tracking-tight text-[22px] font-bold leading-tight">Surah of the
-                Day</h2>
-            <div
-                class="group relative flex flex-col justify-start rounded-xl bg-white dark:bg-[#1a2e22] shadow-sm border border-gray-100 dark:border-gray-800 p-5 gap-4">
-                <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-3">
-                    <div class="flex flex-col">
-                        <span class="text-lg font-bold text-[#0d1b13] dark:text-white">Al-Mulk</span>
-                        <span class="text-xs text-gray-500 uppercase tracking-wider">Verse 13</span>
+            <!-- Secondary Settings Section -->
+            <div class="mt-8 mb-4">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-3">General</h3>
+                <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800">
+                    <!-- Appearance -->
+                    <div
+                        class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary dark:text-emerald-400"
+                                    style="font-size: 18px;">palette</span>
+                            </div>
+                            <span class="text-[#0f1a16] dark:text-gray-200 font-medium">Appearance</span>
+                        </div>
+                        <span class="material-symbols-outlined text-gray-400"
+                            style="font-size: 20px;">chevron_right</span>
                     </div>
-                    <button class="bg-primary/10 hover:bg-primary/20 p-2 rounded-full transition-colors">
-                        <span class="material-symbols-outlined text-primary" style="font-size: 20px;">play_arrow</span>
-                    </button>
-                </div>
-                <!-- Arabic Text -->
-                <p class="font-arabic text-right text-2xl text-[#0d1b13] dark:text-gray-100 leading-relaxed pt-2">
-                    وَأَسِرُّوا قَوْلَكُمْ أَوِ اجْهَرُوا بِهِ ۖ إِنَّهُ عَلِيمٌ بِذَاتِ الصُّدُورِ
-                </p>
-                <!-- Translation -->
-                <p
-                    class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed italic border-l-2 border-gold-accent pl-3">
-                    "And conceal your speech or publicize it; indeed, He is Knowing of that within the breasts."
-                </p>
-                <div class="pt-2">
-                    <button
-                        class="w-full flex items-center justify-center rounded-lg h-10 bg-primary text-white text-sm font-bold shadow-md shadow-primary/20 hover:bg-green-500 transition-colors">
-                        Read Full Surah
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Section 3: Dua of the Day -->
-        <div class="flex flex-col gap-4 p-4 pt-0">
-            <h2 class="text-[#0d1b13] dark:text-white tracking-tight text-[22px] font-bold leading-tight">Dua of the Day
-            </h2>
-            <div
-                class="relative flex flex-col justify-start rounded-xl bg-gradient-to-br from-[#0d1b13] to-[#1a2e22] shadow-md p-6 gap-4 text-white">
-                <!-- Gold Accent Corner -->
-                <div class="absolute top-0 right-0 w-16 h-16 opacity-20"
-                    style="background-image: radial-gradient(circle at top right, #D4AF37, transparent 70%);"></div>
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="material-symbols-outlined text-gold-accent">verified_user</span>
-                    <span class="text-gold-accent text-xs font-bold uppercase tracking-widest">For Protection</span>
-                </div>
-                <p class="font-arabic text-center text-xl leading-loose">
-                    بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ
-                </p>
-                <p class="text-white/80 text-sm text-center leading-relaxed">
-                    "In the Name of Allah, with Whose Name nothing is harmed on earth nor in heaven."
-                </p>
-                <div class="flex gap-3 mt-2">
-                    <button
-                        class="flex-1 flex items-center justify-center rounded-lg h-9 bg-white/10 text-white text-sm font-medium hover:bg-white/20 transition-colors backdrop-blur-sm">
-                        <span class="material-symbols-outlined mr-2 text-[18px]">share</span> Share
-                    </button>
-                    <button
-                        class="flex-1 flex items-center justify-center rounded-lg h-9 bg-white/10 text-white text-sm font-medium hover:bg-white/20 transition-colors backdrop-blur-sm">
-                        <span class="material-symbols-outlined mr-2 text-[18px]">content_copy</span> Copy
-                    </button>
+                    <!-- Language -->
+                    <div
+                        class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary dark:text-emerald-400"
+                                    style="font-size: 18px;">language</span>
+                            </div>
+                            <span class="text-[#0f1a16] dark:text-gray-200 font-medium">Language</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-400">English</span>
+                            <span class="material-symbols-outlined text-gray-400"
+                                style="font-size: 20px;">chevron_right</span>
+                        </div>
+                    </div>
+                    <!-- About -->
+                    <div
+                        class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary dark:text-emerald-400"
+                                    style="font-size: 18px;">info</span>
+                            </div>
+                            <span class="text-[#0f1a16] dark:text-gray-200 font-medium">About Nur Blocker</span>
+                        </div>
+                        <span class="material-symbols-outlined text-gray-400"
+                            style="font-size: 20px;">chevron_right</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- Bottom Navigation Spacer -->
-        <div class="h-6"></div>
-    </div>
-    <!-- Bottom Navigation Bar -->
-    <div
-        class="fixed bottom-0 left-0 w-full bg-white dark:bg-[#102218] border-t border-gray-100 dark:border-gray-800 pb-safe pt-2 px-6 z-40">
-        <div class="flex justify-between items-center h-16">
-            <button class="flex flex-col items-center gap-1 text-primary w-16">
-                <span class="material-symbols-outlined filled">home</span>
-                <span class="text-[10px] font-bold">Home</span>
-            </button>
-            <button
-                class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors w-16">
-                <span class="material-symbols-outlined">explore</span>
-                <span class="text-[10px] font-medium">Qibla</span>
-            </button>
-            <button
-                class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors w-16">
-                <span class="material-symbols-outlined">shield</span>
-                <span class="text-[10px] font-medium">Blocker</span>
-            </button>
-            <button
-                class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors w-16">
-                <span class="material-symbols-outlined">grid_view</span>
-                <span class="text-[10px] font-medium">More</span>
-            </button>
+            <!-- Footer -->
+            <div class="mt-auto pt-6 flex flex-col items-center gap-2">
+                <div
+                    class="flex items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-accent-gold/10 border border-accent-gold/20">
+                    <span class="material-symbols-outlined text-accent-gold" style="font-size: 16px;">lock</span>
+                    <span class="text-xs font-semibold text-accent-gold uppercase tracking-wide">Local Storage
+                        Only</span>
+                </div>
+                <p class="text-xs text-gray-400 text-center font-medium">Nur Blocker v1.0.2</p>
+            </div>
         </div>
     </div>
 </body>
