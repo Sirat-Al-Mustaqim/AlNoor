@@ -23,27 +23,24 @@ import com.siratalmustaqim.alnoor.ui.screens.settings.guard.GuardSettingsSection
 import com.siratalmustaqim.alnoor.ui.screens.settings.prayer.PrayerSettingsSection
 import com.siratalmustaqim.alnoor.ui.screens.settings.quran.QuranSettingsSection
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val quranUiState by viewModel.quranUiState.collectAsState()
-    val prayerUiState by viewModel.prayerUiState.collectAsState()
-    val guardUiState by viewModel.guardUiState.collectAsState()
-
     SettingsScreenContent(
-        quranUiState = quranUiState,
-        prayerUiState = prayerUiState,
-        guardUiState = guardUiState
+        quranUiStateFlow = viewModel.quranUiState,
+        prayerUiStateFlow = viewModel.prayerUiState,
+        guardUiStateFlow = viewModel.guardUiState
     )
 }
 
 @Composable
 private fun SettingsScreenContent(
-    quranUiState: QuranSettingsUiState,
-    prayerUiState: PrayerSettingsUiState,
-    guardUiState: GuardSettingsUiState
+    quranUiStateFlow: StateFlow<QuranSettingsUiState>,
+    prayerUiStateFlow: StateFlow<PrayerSettingsUiState>,
+    guardUiStateFlow: StateFlow<GuardSettingsUiState>
 ) {
     Column(
         modifier = Modifier
@@ -53,7 +50,7 @@ private fun SettingsScreenContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header
+        // Header - this won't recompose on state changes
         Text(
             text = "Settings",
             style = MaterialTheme.typography.headlineMedium,
@@ -62,29 +59,40 @@ private fun SettingsScreenContent(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Quran Settings Section
-        QuranSettingsSection(uiState = quranUiState)
-
-        // Prayer Settings Section
-        PrayerSettingsSection(uiState = prayerUiState)
-
-        // Guard Settings Section
-        GuardSettingsSection(uiState = guardUiState)
+        // Each section collects its own state - isolated recomposition!
+        QuranSettingsSectionWrapper(uiStateFlow = quranUiStateFlow)
+        PrayerSettingsSectionWrapper(uiStateFlow = prayerUiStateFlow)
+        GuardSettingsSectionWrapper(uiStateFlow = guardUiStateFlow)
 
         // Bottom spacing for navigation bar
         Spacer(modifier = Modifier.height(80.dp))
     }
 }
 
+@Composable
+private fun QuranSettingsSectionWrapper(uiStateFlow: StateFlow<QuranSettingsUiState>) {
+    val uiState by uiStateFlow.collectAsState()
+    QuranSettingsSection(uiState = uiState)
+}
+
+@Composable
+private fun PrayerSettingsSectionWrapper(uiStateFlow: StateFlow<PrayerSettingsUiState>) {
+    val uiState by uiStateFlow.collectAsState()
+    PrayerSettingsSection(uiState = uiState)
+}
+
+@Composable
+private fun GuardSettingsSectionWrapper(uiStateFlow: StateFlow<GuardSettingsUiState>) {
+    val uiState by uiStateFlow.collectAsState()
+    GuardSettingsSection(uiState = uiState)
+}
+
+// Previews use direct UiState (not StateFlow)
 @Preview(showBackground = true)
 @Composable
 private fun SettingsScreenPreview() {
     AlNoorTheme {
-        SettingsScreenContent(
-            quranUiState = QuranSettingsUiState(),
-            prayerUiState = PrayerSettingsUiState(),
-            guardUiState = GuardSettingsUiState()
-        )
+        SettingsScreenPreviewContent()
     }
 }
 
@@ -92,10 +100,38 @@ private fun SettingsScreenPreview() {
 @Composable
 private fun SettingsScreenDarkPreview() {
     AlNoorTheme(darkTheme = true) {
-        SettingsScreenContent(
+        SettingsScreenPreviewContent(
             quranUiState = QuranSettingsUiState(ayahTextSize = 24f, ayahFont = "Scheherazade"),
             prayerUiState = PrayerSettingsUiState(currentLocation = "New York, USA", azanAudio = "Makkah"),
             guardUiState = GuardSettingsUiState(vpnEnabled = true)
         )
+    }
+}
+
+@Composable
+private fun SettingsScreenPreviewContent(
+    quranUiState: QuranSettingsUiState = QuranSettingsUiState(),
+    prayerUiState: PrayerSettingsUiState = PrayerSettingsUiState(),
+    guardUiState: GuardSettingsUiState = GuardSettingsUiState()
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Settings",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        QuranSettingsSection(uiState = quranUiState)
+        PrayerSettingsSection(uiState = prayerUiState)
+        GuardSettingsSection(uiState = guardUiState)
+        Spacer(modifier = Modifier.height(80.dp))
     }
 }
