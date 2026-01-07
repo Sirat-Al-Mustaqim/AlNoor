@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.net.VpnService
 import android.os.Build
@@ -20,9 +21,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.net.InetSocketAddress
 import java.nio.ByteBuffer
-import java.nio.channels.DatagramChannel
 
 /**
  * VPN Service for content filtering using local VPN and Cloudflare DNS
@@ -36,6 +35,15 @@ class ContentBlockerVpnService : VpnService() {
     private var vpnJob: Job? = null
     private val packetHandler = PacketHandler()
     private var isRunning = false
+    
+    companion object {
+        const val ACTION_START = "com.siratalmustaqim.alnoor.vpn.START"
+        const val ACTION_STOP = "com.siratalmustaqim.alnoor.vpn.STOP"
+        
+        // Broadcast action for state changes
+        const val ACTION_STATE_CHANGED = "com.siratalmustaqim.alnoor.vpn.STATE_CHANGED"
+        const val EXTRA_STATE = "state"
+    }
     
     override fun onCreate() {
         super.onCreate()
@@ -75,6 +83,7 @@ class ContentBlockerVpnService : VpnService() {
             
             if (vpnInterface != null) {
                 isRunning = true
+                broadcastStateChange(VpnState.CONNECTED)
                 
                 // Start packet processing in coroutine
                 vpnJob = serviceScope?.launch {
@@ -84,11 +93,13 @@ class ContentBlockerVpnService : VpnService() {
                 Timber.d("VPN started successfully")
             } else {
                 Timber.e("Failed to establish VPN connection")
+                broadcastStateChange(VpnState.ERROR)
                 stopSelf()
             }
             
         } catch (e: Exception) {
             Timber.e(e, "Error starting VPN")
+            broadcastStateChange(VpnState.ERROR)
             stopSelf()
         }
     }
@@ -114,25 +125,28 @@ class ContentBlockerVpnService : VpnService() {
         val vpnFd = vpnInterface ?: return
         val inputStream = FileInputStream(vpnFd.fileDescriptor)
         val outputStream = FileOutputStream(vpnFd.fileDescriptor)
-        val packet = ByteBuffer.allocate(VpnConfig.VPN_MTU)
+        val buffer = ByteArray(VpnConfig.VPN_MTU)
         
         try {
             while (isRunning && serviceScope?.isActive == true) {
-                // Read packet from VPN interface
-                packet.clear()
-                val length = inputStream.channel.read(packet)
+                // Read packet from VPN interface using blocking I/O
+                val length = inputStream.read(buffer)
                 
                 if (length > 0) {
-                    packet.flip()
+                    // Wrap buffer in ByteBuffer for processing
+                    val packet = ByteBuffer.wrap(buffer, 0, length)
                     
                     // Process the packet
                     val processedPacket = packetHandler.processPacket(packet)
                     
                     // Write processed packet back to VPN interface
                     if (processedPacket != null) {
-                        processedPacket.position(0)
-                        val written = outputStream.channel.write(processedPacket)
-                        packetHandler.recordBytesSent(written.toLong())
+                        val data = ByteArray(processedPacket.remaining())
+                        processedPacket.get(data)
+                        
+                        // Write all bytes using blocking I/O
+                        outputStream.write(data)
+                        packetHandler.recordBytesSent(data.size.toLong())
                     }
                 }
             }
@@ -162,11 +176,24 @@ class ContentBlockerVpnService : VpnService() {
         }
         vpnInterface = null
         
+        // Broadcast state change
+        broadcastStateChange(VpnState.DISCONNECTED)
+        
         // Stop foreground service
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
         
         Timber.d("VPN service stopped")
+    }
+    
+    /**
+     * Broadcast VPN state change to listeners
+     */
+    private fun broadcastStateChange(state: VpnState) {
+        val intent = Intent(ACTION_STATE_CHANGED).apply {
+            putExtra(EXTRA_STATE, state.name)
+        }
+        sendBroadcast(intent)
     }
     
     override fun onDestroy() {
@@ -223,10 +250,5 @@ class ContentBlockerVpnService : VpnService() {
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .build()
-    }
-    
-    companion object {
-        const val ACTION_START = "com.siratalmustaqim.alnoor.vpn.START"
-        const val ACTION_STOP = "com.siratalmustaqim.alnoor.vpn.STOP"
     }
 }

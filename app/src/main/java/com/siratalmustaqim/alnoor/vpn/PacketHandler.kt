@@ -23,6 +23,12 @@ class PacketHandler {
         packetsProcessed++
         
         try {
+            // Check minimum packet size
+            if (packet.remaining() < 1) {
+                Timber.w("Packet too small")
+                return null
+            }
+            
             // Read IP header
             val version = (packet.get(0).toInt() shr 4) and 0x0F
             
@@ -44,10 +50,16 @@ class PacketHandler {
         // For a simple local VPN implementation, we redirect DNS queries
         // The actual DNS resolution is handled by the system using our configured DNS servers
         
+        // Check minimum IPv4 header size
+        if (packet.remaining() < 20) {
+            Timber.w("IPv4 packet too small: ${packet.remaining()} bytes")
+            return packet
+        }
+        
         val protocol = packet.get(9).toInt() and 0xFF
         
         // Protocol 17 = UDP (used for DNS)
-        if (protocol == 17) {
+        if (protocol == 17 && packet.remaining() >= 24) {
             val sourcePort = packet.getShort(20).toInt() and 0xFFFF
             val destPort = packet.getShort(22).toInt() and 0xFFFF
             

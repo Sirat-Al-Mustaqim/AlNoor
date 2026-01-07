@@ -56,8 +56,9 @@ class VpnManager @Inject constructor(
             
             context.startForegroundService(intent)
             
-            _vpnState.value = VpnState.CONNECTED
-            Timber.d("VPN service started")
+            // Note: State will be updated to CONNECTED by the service once tunnel is established
+            // For now, we assume success if service starts without exception
+            Timber.d("VPN service start initiated")
             
             VpnResult.Success
         } catch (e: Exception) {
@@ -82,8 +83,9 @@ class VpnManager @Inject constructor(
             
             context.startService(intent)
             
-            _vpnState.value = VpnState.DISCONNECTED
-            Timber.d("VPN service stopped")
+            // Note: State will be updated to DISCONNECTED by the service after cleanup
+            // For now, we assume success if stop request is sent without exception
+            Timber.d("VPN service stop initiated")
             
             VpnResult.Success
         } catch (e: Exception) {

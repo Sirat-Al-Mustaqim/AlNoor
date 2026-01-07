@@ -22,8 +22,7 @@ data class GuardSettingsUiState(
     val alwaysOnProtection: Boolean = false,
     val onAlwaysOnProtectionToggle: (Boolean) -> Unit = {},
     val offlineMode: Boolean = false,
-    val onOfflineModeToggle: (Boolean) -> Unit = {},
-    val vpnPermissionIntent: Intent? = null
+    val onOfflineModeToggle: (Boolean) -> Unit = {}
 )
 
 sealed class GuardSettingsEvent {
