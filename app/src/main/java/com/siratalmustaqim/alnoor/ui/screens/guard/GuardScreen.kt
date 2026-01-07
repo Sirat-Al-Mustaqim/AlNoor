@@ -1,48 +1,556 @@
 package com.siratalmustaqim.alnoor.ui.screens.guard
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.FlashOn
+import androidx.compose.material.icons.filled.Power
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
+import com.siratalmustaqim.alnoor.ui.theme.Gold
+import com.siratalmustaqim.alnoor.vpn.VpnState
+import com.siratalmustaqim.alnoor.vpn.VpnStatistics
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun GuardScreen() {
-    Column(
+fun GuardScreen(
+    viewModel: GuardViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val vpnPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        viewModel.onVpnPermissionResult(result.resultCode == Activity.RESULT_OK)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is GuardEvent.RequestVpnPermission -> {
+                    vpnPermissionLauncher.launch(event.intent)
+                }
+                is GuardEvent.ShowError -> {
+                    snackbarHostState.showSnackbar(event.message)
+                }
+                is GuardEvent.ShowMessage -> {
+                    snackbarHostState.showSnackbar(event.message)
+                }
+            }
+        }
+    }
+
+    GuardScreenContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onToggleVpn = viewModel::toggleVpn,
+        onAlwaysOnVpnChange = viewModel::setAlwaysOnVpn
+    )
+}
+
+@Composable
+private fun GuardScreenContent(
+    uiState: GuardUiState,
+    snackbarHostState: SnackbarHostState,
+    onToggleVpn: () -> Unit,
+    onAlwaysOnVpnChange: (Boolean) -> Unit
+) {
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Hero Shield Section
+            ShieldButton(
+                isConnected = uiState.isConnected,
+                isConnecting = uiState.isConnecting,
+                onClick = onToggleVpn
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Status Text
+            StatusSection(uiState = uiState)
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // Statistics Card
+            if (uiState.isConnected) {
+                StatisticsCard(statistics = uiState.statistics)
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            // Always-on VPN Toggle
+            AlwaysOnVpnCard(
+                enabled = uiState.alwaysOnVpn,
+                onCheckedChange = onAlwaysOnVpnChange
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Info Card
+            InfoCard()
+
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
+}
+
+@Composable
+private fun ShieldButton(
+    isConnected: Boolean,
+    isConnecting: Boolean,
+    onClick: () -> Unit
+) {
+    val scale by animateFloatAsState(
+        targetValue = if (isConnected) 1.05f else 1f,
+        animationSpec = tween(500),
+        label = "scale"
+    )
+
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+        animationSpec = tween(500),
+        label = "backgroundColor"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = if (isConnected) Gold else MaterialTheme.colorScheme.outline,
+        animationSpec = tween(500),
+        label = "borderColor"
+    )
+
+    val iconColor by animateColorAsState(
+        targetValue = if (isConnected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+        animationSpec = tween(500),
+        label = "iconColor"
+    )
+
+    Box(
+        modifier = Modifier
+            .size(200.dp)
+            .scale(scale),
+        contentAlignment = Alignment.Center
+    ) {
+        // Outer glow for connected state
+        if (isConnected) {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(CircleShape)
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                Gold.copy(alpha = 0.1f),
+                                Color.Transparent
+                            )
+                        )
+                    )
+            )
+        }
+
+        // Decorative ring
+        Box(
+            modifier = Modifier
+                .size(180.dp)
+                .border(
+                    width = if (isConnected) 3.dp else 1.dp,
+                    color = borderColor.copy(alpha = 0.5f),
+                    shape = CircleShape
+                )
+        )
+
+        // Main button
+        Box(
+            modifier = Modifier
+                .size(160.dp)
+                .clip(CircleShape)
+                .background(backgroundColor)
+                .border(2.dp, borderColor, CircleShape)
+                .clickable(enabled = !isConnecting) { onClick() },
+            contentAlignment = Alignment.Center
+        ) {
+            if (isConnecting) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(64.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 4.dp
+                )
+            } else {
+                Icon(
+                    imageVector = if (isConnected) Icons.Filled.Shield else Icons.Filled.Power,
+                    contentDescription = if (isConnected) "Connected" else "Disconnected",
+                    tint = iconColor,
+                    modifier = Modifier.size(72.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatusSection(uiState: GuardUiState) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "🛡️",
-            style = MaterialTheme.typography.displayLarge
-        )
-        Text(
-            text = "Guard",
+            text = uiState.statusText,
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
+            fontWeight = FontWeight.Bold,
+            color = if (uiState.isConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = if (uiState.isConnected) "Your connection is secure" else "Tap the shield to connect",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun StatisticsCard(statistics: VpnStatistics) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Text(
+                text = "SESSION STATISTICS",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                StatItem(
+                    icon = Icons.Filled.Timer,
+                    label = "Duration",
+                    value = formatDuration(statistics.connectionTime)
+                )
+                StatItem(
+                    icon = Icons.Filled.Download,
+                    label = "Downloaded",
+                    value = formatBytes(statistics.bytesIn)
+                )
+                StatItem(
+                    icon = Icons.Filled.Upload,
+                    label = "Uploaded",
+                    value = formatBytes(statistics.bytesOut)
+                )
+            }
+
+            if (statistics.packetsBlocked > 0) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Shield,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "${statistics.packetsBlocked} distractions blocked",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatItem(
+    icon: ImageVector,
+    label: String,
+    value: String
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Gold,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = "Coming Soon",
-            style = MaterialTheme.typography.bodyMedium,
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 @Composable
-private fun GuardScreenPreview() {
-    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme {
-        GuardScreen()
+private fun AlwaysOnVpnCard(
+    enabled: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(Gold.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.FlashOn,
+                        contentDescription = null,
+                        tint = Gold,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Column {
+                    Text(
+                        text = "Always-on VPN",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Auto-connect on device boot",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Switch(
+                checked = enabled,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun InfoCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Shield,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = "Guard filters distracting content locally on your device. Your browsing data never leaves your phone.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                lineHeight = 18.sp
+            )
+        }
+    }
+}
+
+private fun formatDuration(seconds: Long): String {
+    val hours = seconds / 3600
+    val minutes = (seconds % 3600) / 60
+    val secs = seconds % 60
+    return when {
+        hours > 0 -> "${hours}h ${minutes}m"
+        minutes > 0 -> "${minutes}m ${secs}s"
+        else -> "${secs}s"
+    }
+}
+
+private fun formatBytes(bytes: Long): String {
+    return when {
+        bytes >= 1_000_000_000 -> String.format("%.1f GB", bytes / 1_000_000_000.0)
+        bytes >= 1_000_000 -> String.format("%.1f MB", bytes / 1_000_000.0)
+        bytes >= 1_000 -> String.format("%.1f KB", bytes / 1_000.0)
+        else -> "$bytes B"
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun GuardScreenDisconnectedPreview() {
+    AlNoorTheme {
+        GuardScreenContent(
+            uiState = GuardUiState(),
+            snackbarHostState = SnackbarHostState(),
+            onToggleVpn = {},
+            onAlwaysOnVpnChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun GuardScreenConnectedPreview() {
+    AlNoorTheme {
+        GuardScreenContent(
+            uiState = GuardUiState(
+                vpnState = VpnState.CONNECTED,
+                alwaysOnVpn = true,
+                statistics = VpnStatistics(
+                    bytesIn = 15_000_000,
+                    bytesOut = 2_500_000,
+                    packetsBlocked = 42,
+                    connectionTime = 3665
+                )
+            ),
+            snackbarHostState = SnackbarHostState(),
+            onToggleVpn = {},
+            onAlwaysOnVpnChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun GuardScreenDarkPreview() {
+    AlNoorTheme(darkTheme = true) {
+        GuardScreenContent(
+            uiState = GuardUiState(vpnState = VpnState.CONNECTED),
+            snackbarHostState = SnackbarHostState(),
+            onToggleVpn = {},
+            onAlwaysOnVpnChange = {}
+        )
     }
 }
