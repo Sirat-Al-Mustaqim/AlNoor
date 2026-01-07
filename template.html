@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html class="light dark" lang="en">
+<html class="light" lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Nur Blocker - Guard Settings</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;500;600;700&amp;display=swap"
+    <title>Prayer Settings - Nur Blocker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
         rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
@@ -15,35 +15,78 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script
-        id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { primary: "#12a165", "primary-dark": "#04562d", accent: "#C9A961", "background-light": "#f6f8f7", "background-dark": "#11211a", "surface-light": "#ffffff", "surface-dark": "#27272a", "text-main": "#2A332E", "text-muted": "#6b7280" }, fontFamily: { display: "Noto Serif" }, boxShadow: { soft: "0 4px 20px -2px rgba(5, 107, 56, 0.05)", glow: "0 0 15px rgba(201, 169, 97, 0.3)" }, borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" } } } };</script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d7351",
+                        "primary-content": "#ffffff",
+                        "secondary": "#D7AF1B",
+                        "background-light": "#ffffff",
+                        "background-dark": "#1d1d20",
+                        "surface-light": "#f8fcfa",
+                        "surface-dark": "#2a2a2d",
+                        "text-main": "#0e1b17",
+                        "text-muted": "#6b7280",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        "soft": "0 4px 20px -2px rgba(13, 115, 81, 0.05)",
+                    }
+                },
+            },
+        }
+    </script>
     <style>
-        /* Custom toggle transition */
+        /* Custom range slider styling for Emerald Green theme */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #0d7351;
+            margin-top: -8px;
+            box-shadow: 0 0 0 4px #fff, 0 0 0 6px #D7AF1B;
+            cursor: pointer;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e5e7eb;
+            border-radius: 2px;
+        }
+
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #e5e7eb;
+        }
+
+        /* Custom switch styling */
         .toggle-checkbox:checked {
             right: 0;
-            border-color: #056b38;
+            border-color: #0d7351;
         }
 
         .toggle-checkbox:checked+.toggle-label {
-            background-color: #056b38;
-        }
-
-        /* Smooth transitions for all theme changes */
-        * {
-            transition-property: background-color, border-color, color, fill, stroke;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 300ms;
-        }
-
-        /* Hide scrollbar for clean look */
-        ::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
-        }
-    </style>
-    <style>
-        body {
-            min-height: max(884px, 100dvh);
+            background-color: #0d7351;
         }
     </style>
     <style>
@@ -54,131 +97,186 @@
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display antialiased overflow-x-hidden selection:bg-primary/20 selection:text-primary">
+    class="bg-background-light dark:bg-background-dark text-text-main font-display antialiased min-h-screen flex flex-col">
     <!-- Top Navigation -->
     <header
-        class="sticky top-0 z-50 flex items-center justify-between px-6 py-5 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
-        <button
-            class="flex items-center justify-center w-10 h-10 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-text-main dark:text-white transition-colors group">
-            <span
-                class="material-symbols-outlined text-[28px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
-        </button>
-        <h1 class="text-lg font-bold tracking-tight text-text-main dark:text-white absolute left-1/2 -translate-x-1/2">
-            Guard Settings</h1>
-        <div class="w-10"></div> <!-- Spacer for balance -->
+        class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
+        <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
+            <button
+                class="p-2 -ml-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800 text-text-main transition-colors">
+                <span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+            </button>
+            <h1 class="text-lg font-bold text-text-main tracking-tight">Prayer Settings</h1>
+            <div class="w-10"></div> <!-- Spacer for optical centering -->
+        </div>
     </header>
-    <main class="flex-1 flex flex-col px-6 pb-8 max-w-lg mx-auto w-full">
-        <!-- Hero Visual Anchor -->
-        <div class="flex flex-col items-center justify-center py-10 fade-in-up">
-            <div class="relative flex items-center justify-center w-24 h-24 mb-6">
-                <!-- Abstract glowing background for the icon -->
-                <div
-                    class="absolute inset-0 rounded-full bg-gradient-to-tr from-primary/5 to-accent/20 blur-xl dark:opacity-30">
-                </div>
-                <div
-                    class="relative z-10 flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#fcfcfc] to-[#f0fdf4] dark:from-zinc-800 dark:to-zinc-900 rounded-full shadow-soft border border-gray-100 dark:border-zinc-700">
-                    <span class="material-symbols-outlined text-[40px] text-accent">shield_lock</span>
-                </div>
-                <!-- Decorative orbital ring -->
-                <div class="absolute inset-0 border border-accent/20 rounded-full scale-110 animate-pulse"></div>
+    <main class="flex-1 w-full max-w-md mx-auto px-4 py-6 space-y-8 pb-20">
+        <!-- Location Section -->
+        <section class="space-y-4">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-secondary"
+                    style="font-variation-settings: 'FILL' 1;">location_on</span>
+                <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Location</h2>
             </div>
-            <p
-                class="text-sm font-medium text-primary/80 dark:text-emerald-400 uppercase tracking-widest text-center mb-1">
-                Status: Active</p>
-            <h2 class="text-2xl font-bold text-text-main dark:text-white text-center">Your Guard is Up</h2>
-        </div>
-        <!-- Settings Section -->
-        <div class="flex flex-col gap-5 mt-4">
-            <!-- VPN Card -->
             <div
-                class="group relative overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-100 dark:border-zinc-700 shadow-soft hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
+                class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 shadow-soft border border-gray-100 dark:border-gray-800 relative overflow-hidden group">
+                <!-- Decorative gold accent -->
                 <div
-                    class="absolute top-0 left-0 w-1 h-full bg-accent opacity-0 group-hover:opacity-100 transition-opacity">
+                    class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-secondary/10 to-transparent rounded-bl-full -mr-4 -mt-4">
                 </div>
-                <div class="p-5 flex items-center gap-4">
-                    <div
-                        class="flex-shrink-0 w-12 h-12 rounded-full bg-[#f4fbf7] dark:bg-primary/10 flex items-center justify-center text-accent">
-                        <span class="material-symbols-outlined">vpn_key</span>
+                <div class="flex items-start justify-between gap-4 relative z-10">
+                    <div>
+                        <p class="text-xs font-semibold text-secondary mb-1">CURRENT CITY</p>
+                        <h3 class="text-xl font-bold text-text-main dark:text-white leading-tight">Mecca</h3>
+                        <p class="text-sm text-text-muted dark:text-gray-400">Saudi Arabia</p>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="text-base font-bold text-text-main dark:text-white leading-tight mb-1">Always-on VPN
-                        </h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 font-normal leading-relaxed">Filter
-                            distractions securely via encrypted tunnel.</p>
+                    <button
+                        class="flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-gray-700 shadow-sm border border-gray-100 dark:border-gray-600 text-primary hover:bg-primary hover:text-white transition-all">
+                        <span class="material-symbols-outlined text-xl">edit_location</span>
+                    </button>
+                </div>
+                <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                    <div class="flex flex-col">
+                        <span class="text-base font-medium text-text-main dark:text-white">Auto-detect Location</span>
+                        <span class="text-xs text-text-muted dark:text-gray-400">Updates based on GPS</span>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-2">
-                        <input checked="" class="sr-only peer" type="checkbox" />
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input checked="" class="sr-only peer" type="checkbox" value="" />
                         <div
-                            class="w-[52px] h-[32px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[28px] after:w-[28px] after:transition-all peer-checked:bg-primary shadow-inner">
+                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
                         </div>
                     </label>
                 </div>
             </div>
-            <!-- Protection Card -->
+            <div class="bg-primary/5 rounded-xl p-4 flex gap-3 items-start border border-primary/10">
+                <span class="material-symbols-outlined text-primary text-xl mt-0.5">shield_lock</span>
+                <p class="text-xs text-primary/80 leading-relaxed font-medium">
+                    Your location data never leaves this device. We calculate prayer times locally to ensure complete
+                    privacy.
+                </p>
+            </div>
+        </section>
+        <!-- Audio Preferences Section -->
+        <section class="space-y-4">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-secondary"
+                    style="font-variation-settings: 'FILL' 1;">volume_up</span>
+                <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Audio Preferences</h2>
+            </div>
             <div
-                class="group relative overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-100 dark:border-zinc-700 shadow-soft hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
-                <div
-                    class="absolute top-0 left-0 w-1 h-full bg-accent opacity-0 group-hover:opacity-100 transition-opacity">
-                </div>
-                <div class="p-5 flex items-center gap-4">
-                    <div
-                        class="flex-shrink-0 w-12 h-12 rounded-full bg-[#f4fbf7] dark:bg-primary/10 flex items-center justify-center text-accent">
-                        <span class="material-symbols-outlined">security</span>
+                class="bg-white dark:bg-surface-dark rounded-2xl shadow-soft border border-gray-100 dark:border-gray-800 divide-y divide-gray-100 dark:divide-gray-800">
+                <!-- Volume Slider -->
+                <div class="p-5">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-base font-medium text-text-main dark:text-white">Adhan Volume</span>
+                        <span class="text-sm font-bold text-primary">85%</span>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="text-base font-bold text-text-main dark:text-white leading-tight mb-1">Always-on
-                            Protection</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 font-normal leading-relaxed">Prevent
-                            disabling during prayer times &amp; focus sessions.</p>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-2">
-                        <input checked="" class="sr-only peer" type="checkbox" />
+                    <div class="relative h-6 flex items-center">
+                        <!-- Custom track background for gradient -->
+                        <div class="absolute w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-primary w-[85%]"></div>
+                        </div>
+                        <input class="absolute w-full z-10 opacity-0 cursor-pointer h-full" max="100" min="0"
+                            type="range" value="85" />
+                        <!-- Visual Thumb -->
                         <div
-                            class="w-[52px] h-[32px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[28px] after:w-[28px] after:transition-all peer-checked:bg-primary shadow-inner">
+                            class="absolute left-[85%] w-5 h-5 bg-white border-2 border-secondary rounded-full shadow-md -translate-x-1/2 pointer-events-none flex items-center justify-center">
+                            <div class="w-2 h-2 bg-primary rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Reciter Selection -->
+                <div class="p-1">
+                    <button
+                        class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors group">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary group-hover:bg-primary group-hover:text-white transition-colors">
+                                <span class="material-symbols-outlined">person</span>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-sm font-medium text-text-main dark:text-white">Adhan Reciter</p>
+                                <p class="text-xs text-primary font-medium">Mishary Rashid Alafasy</p>
+                            </div>
+                        </div>
+                        <span
+                            class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors">chevron_right</span>
+                    </button>
+                </div>
+                <!-- Silent Mode Toggle -->
+                <div class="p-5 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-600 dark:text-gray-300">
+                            <span class="material-symbols-outlined text-xl">do_not_disturb_on</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-base font-medium text-text-main dark:text-white">Silent During
+                                Prayer</span>
+                            <span class="text-xs text-text-muted dark:text-gray-400">Mutes device for 15 mins</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input class="sr-only peer" type="checkbox" value="" />
+                        <div
+                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                        </div>
+                    </label>
+                </div>
+                <!-- Pre-Prayer Reminder Toggle -->
+                <div class="p-5 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-600 dark:text-gray-300">
+                            <span class="material-symbols-outlined text-xl">notifications_active</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-base font-medium text-text-main dark:text-white">Early Reminder</span>
+                            <span class="text-xs text-text-muted dark:text-gray-400">Notify 15m before Adhan</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input checked="" class="sr-only peer" type="checkbox" value="" />
+                        <div
+                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
                         </div>
                     </label>
                 </div>
             </div>
-            <!-- Additional Context / Kill Switch (Optional but fits context) -->
-            <div
-                class="mt-2 group relative overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-100 dark:border-zinc-700 shadow-soft hover:shadow-lg transition-all duration-300">
-                <div class="p-5 flex items-center gap-4 opacity-70 hover:opacity-100 transition-opacity">
-                    <div
-                        class="flex-shrink-0 w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-800 flex items-center justify-center text-gray-400 dark:text-gray-500">
-                        <span class="material-symbols-outlined">cloud_off</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="text-base font-semibold text-text-main dark:text-white leading-tight mb-1">Offline
-                            Mode</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 font-normal leading-relaxed">Block all
-                            internet traffic.</p>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-2">
-                        <input class="sr-only peer" type="checkbox" />
-                        <div
-                            class="w-[52px] h-[32px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[28px] after:w-[28px] after:transition-all peer-checked:bg-primary shadow-inner">
-                        </div>
-                    </label>
+        </section>
+        <!-- Advanced Adjustments (Correction) -->
+        <section class="space-y-4 pt-2">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-secondary"
+                    style="font-variation-settings: 'FILL' 1;">tune</span>
+                <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Calculation Methods</h2>
+            </div>
+            <button
+                class="w-full bg-white dark:bg-surface-dark p-4 rounded-xl shadow-soft border border-gray-100 dark:border-gray-800 flex items-center justify-between group hover:border-secondary/50 transition-colors">
+                <div class="flex flex-col items-start">
+                    <span class="text-base font-medium text-text-main dark:text-white">Juristic Method</span>
+                    <span class="text-sm text-text-muted dark:text-gray-400 mt-1">Standard (Shafi, Hanbli,
+                        Maliki)</span>
                 </div>
-            </div>
-        </div>
-        <!-- Footer Meta -->
-        <div class="mt-auto pt-10 pb-4 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 dark:bg-zinc-800/50">
-                <span class="material-symbols-outlined text-[16px] text-primary dark:text-emerald-500">spa</span>
-                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Peace of mind, always.</p>
-            </div>
-            <p class="mt-4 text-[10px] text-gray-300 dark:text-zinc-600 uppercase tracking-widest">Nur Blocker v2.4
-                (Local)</p>
-        </div>
+                <div class="flex items-center gap-2 text-primary font-medium text-sm">
+                    Change
+                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                </div>
+            </button>
+            <button
+                class="w-full bg-white dark:bg-surface-dark p-4 rounded-xl shadow-soft border border-gray-100 dark:border-gray-800 flex items-center justify-between group hover:border-secondary/50 transition-colors">
+                <div class="flex flex-col items-start">
+                    <span class="text-base font-medium text-text-main dark:text-white">Time Correction</span>
+                    <span class="text-sm text-text-muted dark:text-gray-400 mt-1">Manual adjustments per prayer</span>
+                </div>
+                <div class="flex items-center gap-2 text-primary font-medium text-sm">
+                    Configure
+                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                </div>
+            </button>
+        </section>
     </main>
-    <!-- Floating Feedback Toast (Hidden by default, simulating presence) -->
-    <!-- In a real app, this would animate in -->
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4">
-        <div class="bg-primary text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">check_circle</span>
-            <span class="text-sm font-medium">Protection settings updated</span>
-        </div>
+    <!-- Bottom Decoration -->
+    <div
+        class="fixed bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white to-transparent dark:from-background-dark pointer-events-none z-10">
     </div>
 </body>
 

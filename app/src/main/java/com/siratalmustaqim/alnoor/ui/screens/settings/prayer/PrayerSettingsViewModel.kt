@@ -13,12 +13,28 @@ import javax.inject.Inject
 
 data class PrayerSettingsUiState(
     val currentLocation: String = "Not set",
-    val azanAudio: String = "Default",
+    val currentCity: String = "Unknown",
+    val currentCountry: String = "",
+    val autoDetectLocation: Boolean = true,
+    val adhanVolume: Float = 0.85f,
+    val azanAudio: String = "Mishary Rashid Alafasy",
+    val silentDuringPrayer: Boolean = false,
+    val earlyReminder: Boolean = true,
     val onLocationClick: () -> Unit = {},
-    val onAzanAudioChange: (String) -> Unit = {}
+    val onAutoDetectToggle: (Boolean) -> Unit = {},
+    val onAdhanVolumeChange: (Float) -> Unit = {},
+    val onAzanAudioChange: (String) -> Unit = {},
+    val onSilentDuringPrayerToggle: (Boolean) -> Unit = {},
+    val onEarlyReminderToggle: (Boolean) -> Unit = {}
 ) {
     companion object {
-        val availableAzanAudios = listOf("Default", "Makkah", "Madinah", "Al-Aqsa", "Silent")
+        val availableReciters = listOf(
+            "Mishary Rashid Alafasy",
+            "Abdul Basit",
+            "Masjid Al-Haram",
+            "Masjid An-Nabawi",
+            "Silent"
+        )
     }
 }
 
@@ -29,20 +45,50 @@ class PrayerSettingsViewModel @Inject constructor(
 
     val uiState: StateFlow<PrayerSettingsUiState> = combine(
         settingsDataStore.currentLocation,
-        settingsDataStore.azanAudio
-    ) { location, azanAudio ->
+        settingsDataStore.autoDetectLocation,
+        settingsDataStore.adhanVolume,
+        settingsDataStore.azanAudio,
+        settingsDataStore.silentDuringPrayer,
+        settingsDataStore.earlyReminder
+    ) { values ->
+        val location = values[0] as String
+        val autoDetect = values[1] as Boolean
+        val volume = values[2] as Float
+        val azan = values[3] as String
+        val silent = values[4] as Boolean
+        val early = values[5] as Boolean
+        
+        // Parse location into city and country
+        val parts = location.split(", ")
+        val city = parts.getOrNull(0) ?: "Unknown"
+        val country = parts.getOrNull(1) ?: ""
+        
         PrayerSettingsUiState(
             currentLocation = location,
-            azanAudio = azanAudio,
+            currentCity = city,
+            currentCountry = country,
+            autoDetectLocation = autoDetect,
+            adhanVolume = volume,
+            azanAudio = azan,
+            silentDuringPrayer = silent,
+            earlyReminder = early,
             onLocationClick = ::onLocationClick,
-            onAzanAudioChange = ::updateAzanAudio
+            onAutoDetectToggle = ::updateAutoDetect,
+            onAdhanVolumeChange = ::updateVolume,
+            onAzanAudioChange = ::updateAzanAudio,
+            onSilentDuringPrayerToggle = ::updateSilentDuringPrayer,
+            onEarlyReminderToggle = ::updateEarlyReminder
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = PrayerSettingsUiState(
             onLocationClick = ::onLocationClick,
-            onAzanAudioChange = ::updateAzanAudio
+            onAutoDetectToggle = ::updateAutoDetect,
+            onAdhanVolumeChange = ::updateVolume,
+            onAzanAudioChange = ::updateAzanAudio,
+            onSilentDuringPrayerToggle = ::updateSilentDuringPrayer,
+            onEarlyReminderToggle = ::updateEarlyReminder
         )
     )
 
@@ -50,9 +96,33 @@ class PrayerSettingsViewModel @Inject constructor(
         // TODO: Open location picker
     }
 
+    private fun updateAutoDetect(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.updateAutoDetectLocation(enabled)
+        }
+    }
+
+    private fun updateVolume(volume: Float) {
+        viewModelScope.launch {
+            settingsDataStore.updateAdhanVolume(volume)
+        }
+    }
+
     private fun updateAzanAudio(audio: String) {
         viewModelScope.launch {
             settingsDataStore.updateAzanAudio(audio)
+        }
+    }
+
+    private fun updateSilentDuringPrayer(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.updateSilentDuringPrayer(enabled)
+        }
+    }
+
+    private fun updateEarlyReminder(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.updateEarlyReminder(enabled)
         }
     }
 }

@@ -32,6 +32,10 @@ class SettingsDataStore @Inject constructor(
     private object PrayerKeys {
         val CURRENT_LOCATION = stringPreferencesKey("current_location")
         val AZAN_AUDIO = stringPreferencesKey("azan_audio")
+        val AUTO_DETECT_LOCATION = booleanPreferencesKey("auto_detect_location")
+        val ADHAN_VOLUME = floatPreferencesKey("adhan_volume")
+        val SILENT_DURING_PRAYER = booleanPreferencesKey("silent_during_prayer")
+        val EARLY_REMINDER = booleanPreferencesKey("early_reminder")
     }
 
     // Guard Settings Keys
@@ -80,6 +84,46 @@ class SettingsDataStore @Inject constructor(
     suspend fun updateAzanAudio(audio: String) {
         dataStore.edit { prefs ->
             prefs[PrayerKeys.AZAN_AUDIO] = audio
+        }
+    }
+
+    val autoDetectLocation: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[PrayerKeys.AUTO_DETECT_LOCATION] ?: true
+    }
+
+    suspend fun updateAutoDetectLocation(enabled: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[PrayerKeys.AUTO_DETECT_LOCATION] = enabled
+        }
+    }
+
+    val adhanVolume: Flow<Float> = dataStore.data.map { prefs ->
+        prefs[PrayerKeys.ADHAN_VOLUME] ?: 0.85f
+    }
+
+    suspend fun updateAdhanVolume(volume: Float) {
+        dataStore.edit { prefs ->
+            prefs[PrayerKeys.ADHAN_VOLUME] = volume
+        }
+    }
+
+    val silentDuringPrayer: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[PrayerKeys.SILENT_DURING_PRAYER] ?: false
+    }
+
+    suspend fun updateSilentDuringPrayer(enabled: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[PrayerKeys.SILENT_DURING_PRAYER] = enabled
+        }
+    }
+
+    val earlyReminder: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[PrayerKeys.EARLY_REMINDER] ?: true
+    }
+
+    suspend fun updateEarlyReminder(enabled: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[PrayerKeys.EARLY_REMINDER] = enabled
         }
     }
 

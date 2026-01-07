@@ -208,7 +208,7 @@ private fun PrayerListCard() {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(0.dp, 16.dp)) {
             PrayerTimeRow("Fajr", "05:30 AM", isActive = false)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             PrayerTimeRow("Dhuhr", "12:15 PM", isActive = false)
@@ -238,7 +238,7 @@ private fun PrayerTimeRow(name: String, time: String, isActive: Boolean) {
     }
     
     Row(
-        modifier = bgModifier.padding(vertical = 12.dp),
+        modifier = bgModifier.padding(vertical = 12.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
