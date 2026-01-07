@@ -45,12 +45,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 import com.siratalmustaqim.alnoor.ui.theme.Gold
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,7 +82,7 @@ private fun GuardSettingsScreenContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Guard Settings",
+                        text = stringResource(R.string.guard_settings_title),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
@@ -90,7 +92,7 @@ private fun GuardSettingsScreenContent(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.cd_back),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -121,24 +123,24 @@ private fun GuardSettingsScreenContent(
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 GuardSettingCard(
                     icon = Icons.Filled.VpnKey,
-                    title = "Always-on VPN",
-                    description = "Filter distractions securely via encrypted tunnel.",
+                    title = stringResource(R.string.guard_settings_always_on_vpn),
+                    description = stringResource(R.string.guard_settings_always_on_vpn_desc),
                     checked = uiState.alwaysOnVpn,
                     onCheckedChange = uiState.onAlwaysOnVpnToggle
                 )
                 
                 GuardSettingCard(
                     icon = Icons.Filled.Security,
-                    title = "Always-on Protection",
-                    description = "Prevent disabling during prayer times & focus sessions.",
+                    title = stringResource(R.string.guard_settings_always_on_protection),
+                    description = stringResource(R.string.guard_settings_always_on_protection_desc),
                     checked = uiState.alwaysOnProtection,
                     onCheckedChange = uiState.onAlwaysOnProtectionToggle
                 )
                 
                 GuardSettingCard(
                     icon = Icons.Filled.CloudOff,
-                    title = "Offline Mode",
-                    description = "Block all internet traffic.",
+                    title = stringResource(R.string.guard_settings_offline_mode),
+                    description = stringResource(R.string.guard_settings_offline_mode_desc),
                     checked = uiState.offlineMode,
                     onCheckedChange = uiState.onOfflineModeToggle,
                     isSecondary = true
@@ -211,7 +213,7 @@ private fun HeroSection(isActive: Boolean) {
         
         // Status
         Text(
-            text = if (isActive) "STATUS: ACTIVE" else "STATUS: INACTIVE",
+            text = if (isActive) stringResource(R.string.guard_settings_status_active) else stringResource(R.string.guard_settings_status_inactive),
             style = MaterialTheme.typography.labelSmall,
             color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Medium,
@@ -221,7 +223,7 @@ private fun HeroSection(isActive: Boolean) {
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = if (isActive) "Your Guard is Up" else "Guard is Down",
+            text = if (isActive) stringResource(R.string.guard_settings_guard_is_up) else stringResource(R.string.guard_settings_guard_is_down),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -336,7 +338,7 @@ private fun FooterSection() {
                 modifier = Modifier.size(16.dp)
             )
             Text(
-                text = "Peace of mind, always.",
+                text = stringResource(R.string.guard_settings_peace_of_mind),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium
