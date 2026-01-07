@@ -181,6 +181,7 @@ private fun HeroSection() {
         Text(
             text = buildAnnotatedString {
                 append(stringResource(R.string.settings_hero_configure))
+                append("\n")
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
                     append(stringResource(R.string.settings_hero_spiritual_shield))
                 }

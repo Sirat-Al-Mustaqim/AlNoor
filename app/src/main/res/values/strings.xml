@@ -92,7 +92,7 @@
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
-    <string name="settings_hero_configure">Configure your\n</string>
+    <string name="settings_hero_configure">Configure your </string>
     <string name="settings_hero_spiritual_shield">spiritual shield</string>
     <string name="settings_quran_title">Quran Settings</string>
     <string name="settings_quran_subtitle">Recitation audio, translation scripts, and reading goals.</string>
