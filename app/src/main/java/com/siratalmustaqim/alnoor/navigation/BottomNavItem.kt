@@ -32,8 +32,8 @@ val bottomNavItems = listOf(
         unselectedIcon = Icons.Outlined.Explore
     ),
     BottomNavItem(
-        route = Screen.Blocker.route,
-        title = "Blocker",
+        route = Screen.Guard.route,
+        title = "Guard",
         selectedIcon = Icons.Filled.Shield,
         unselectedIcon = Icons.Outlined.Shield
     ),

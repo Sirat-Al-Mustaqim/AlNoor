@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.MenuBook
-import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -42,7 +41,6 @@ data class MoreMenuItem(
 fun MoreScreen(
     onQuranClick: () -> Unit = {},
     onDuasClick: () -> Unit = {},
-    onGuardClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
     val menuItems = listOf(
@@ -57,12 +55,6 @@ fun MoreScreen(
             title = "Duas",
             subtitle = "Daily supplications",
             onClick = onDuasClick
-        ),
-        MoreMenuItem(
-            icon = Icons.Filled.Security,
-            title = "Guard",
-            subtitle = "Protection settings",
-            onClick = onGuardClick
         ),
         MoreMenuItem(
             icon = Icons.Filled.Settings,

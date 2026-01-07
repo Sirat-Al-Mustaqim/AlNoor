@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.siratalmustaqim.alnoor.ui.screens.blocker.BlockerScreen
 import com.siratalmustaqim.alnoor.ui.screens.duas.DuasScreen
 import com.siratalmustaqim.alnoor.ui.screens.guard.GuardScreen
 import com.siratalmustaqim.alnoor.ui.screens.home.HomeScreen
@@ -19,7 +18,7 @@ import com.siratalmustaqim.alnoor.ui.screens.settings.quran.QuranSettingsScreen
 
 /**
  * Navigation graph for the bottom navigation inside MainScreen.
- * Contains: Home, Qibla, Blocker, More (+ sub-screens)
+ * Contains: Home, Qibla, Guard, More (+ sub-screens)
  */
 @Composable
 fun BottomNavGraph(
@@ -38,14 +37,13 @@ fun BottomNavGraph(
         composable(route = Screen.Qibla.route) {
             QiblaScreen()
         }
-        composable(route = Screen.Blocker.route) {
-            BlockerScreen()
+        composable(route = Screen.Guard.route) {
+            GuardScreen()
         }
         composable(route = Screen.More.route) {
             MoreScreen(
                 onQuranClick = { navController.navigate(Screen.Quran.route) },
                 onDuasClick = { navController.navigate(Screen.Duas.route) },
-                onGuardClick = { navController.navigate(Screen.Guard.route) },
                 onSettingsClick = { navController.navigate(Screen.Settings.route) }
             )
         }
@@ -56,9 +54,6 @@ fun BottomNavGraph(
         }
         composable(route = Screen.Duas.route) {
             DuasScreen()
-        }
-        composable(route = Screen.Guard.route) {
-            GuardScreen()
         }
         composable(route = Screen.Settings.route) {
             SettingsScreen(
