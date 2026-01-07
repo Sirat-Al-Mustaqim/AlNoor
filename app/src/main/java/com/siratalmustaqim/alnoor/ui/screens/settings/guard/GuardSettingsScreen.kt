@@ -113,7 +113,7 @@ private fun GuardSettingsScreenContent(
                 .padding(horizontal = 24.dp)
         ) {
             // Hero Section
-            HeroSection(isActive = uiState.vpnEnabled || uiState.alwaysOnProtection)
+            HeroSection(isActive = uiState.alwaysOnVpn || uiState.alwaysOnProtection)
             
             Spacer(modifier = Modifier.height(24.dp))
             
@@ -123,8 +123,8 @@ private fun GuardSettingsScreenContent(
                     icon = Icons.Filled.VpnKey,
                     title = "Always-on VPN",
                     description = "Filter distractions securely via encrypted tunnel.",
-                    checked = uiState.vpnEnabled,
-                    onCheckedChange = uiState.onVpnToggle
+                    checked = uiState.alwaysOnVpn,
+                    onCheckedChange = uiState.onAlwaysOnVpnToggle
                 )
                 
                 GuardSettingCard(
@@ -352,7 +352,7 @@ private fun GuardSettingsScreenPreview() {
         GuardSettingsScreenContent(
             uiStateFlow = MutableStateFlow(
                 GuardSettingsUiState(
-                    vpnEnabled = true,
+                    alwaysOnVpn = true,
                     alwaysOnProtection = true
                 )
             ),

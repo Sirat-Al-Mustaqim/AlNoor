@@ -23,9 +23,9 @@ class GuardRepository @Inject constructor(
 ) {
     
     /**
-     * Get VPN enabled state from settings
+     * Get always-on VPN state from settings
      */
-    val vpnEnabled: Flow<Boolean> = settingsDataStore.vpnEnabled
+    val alwaysOnVpn: Flow<Boolean> = settingsDataStore.alwaysOnVpn
     
     /**
      * Get always-on protection state from settings
@@ -48,15 +48,15 @@ class GuardRepository @Inject constructor(
     val vpnStatistics: StateFlow<VpnStatistics> = vpnManager.statistics
     
     /**
-     * Enable or disable VPN
+     * Enable or disable always-on VPN
      * @param enabled Whether to enable VPN
      * @return VpnResult indicating success or error
      */
-    suspend fun setVpnEnabled(enabled: Boolean): VpnResult {
-        Timber.d("Setting VPN enabled: $enabled")
+    suspend fun setAlwaysOnVpn(enabled: Boolean): VpnResult {
+        Timber.d("Setting always-on VPN: $enabled")
         
         // Update settings first
-        settingsDataStore.updateVpnEnabled(enabled)
+        settingsDataStore.updateAlwaysOnVpn(enabled)
         
         // Start or stop VPN service
         return if (enabled) {
