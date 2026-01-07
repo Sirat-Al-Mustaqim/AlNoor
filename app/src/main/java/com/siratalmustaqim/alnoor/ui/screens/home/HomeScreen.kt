@@ -1,6 +1,7 @@
 package com.siratalmustaqim.alnoor.ui.screens.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,25 +10,48 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.siratalmustaqim.alnoor.ui.components.HomeCard
+import androidx.compose.ui.unit.sp
+import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
+import com.siratalmustaqim.alnoor.ui.theme.EmeraldDark
 import com.siratalmustaqim.alnoor.ui.theme.Gold
+import com.siratalmustaqim.alnoor.ui.theme.White
 
 @Composable
 fun HomeScreen() {
@@ -36,123 +60,185 @@ fun HomeScreen() {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header
-        GreetingHeader()
+        // Salah Times Section
+        SalahTimesSection()
         
         Spacer(modifier = Modifier.height(8.dp))
         
-        // Salah Times Section
-        SalahTimesCard()
-        
         // Surah of the Day Section
-        SurahOfTheDayCard()
+        SurahOfTheDaySection()
         
         // Dua of the Day Section
-        DuaOfTheDayCard()
+        DuaOfTheDaySection()
         
         // Bottom spacing for navigation bar
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(100.dp))
     }
 }
 
 @Composable
-private fun GreetingHeader() {
+private fun SalahTimesSection() {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "In the name of Allah, the Most Gracious, the Most Merciful",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                text = "Salah Times",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.LocationOn,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    text = "London, UK",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        
+        // Hero Card: Current Prayer
+        CurrentPrayerHeroCard()
+        
+        // Prayer List Card
+        PrayerListCard()
     }
 }
 
 @Composable
-private fun SalahTimesCard() {
-    HomeCard(title = "🕌 Salah Times") {
+private fun CurrentPrayerHeroCard() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(EmeraldDark)
+    ) {
+        // Decorative circles
+        Box(
+            modifier = Modifier
+                .size(128.dp)
+                .offset(x = 24.dp, y = (-24).dp)
+                .align(Alignment.TopEnd)
+                .border(1.dp, Gold.copy(alpha = 0.2f), CircleShape)
+        )
+        Box(
+            modifier = Modifier
+                .size(128.dp)
+                .offset(x = 8.dp, y = (-8).dp)
+                .align(Alignment.TopEnd)
+                .border(1.dp, Gold.copy(alpha = 0.1f), CircleShape)
+        )
+        
+        // Content
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Next Prayer Highlight
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "Next Prayer",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = "Maghrib",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text(
-                            text = "in 2h 15m",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Gold
-                        )
-                        Text(
-                            text = "6:45 PM",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-            }
+            Text(
+                text = "NOW PRAYING",
+                style = MaterialTheme.typography.labelSmall,
+                color = Gold,
+                letterSpacing = 2.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Asr",
+                style = MaterialTheme.typography.displaySmall,
+                color = White,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "04:45 PM",
+                style = MaterialTheme.typography.titleLarge,
+                color = White.copy(alpha = 0.8f)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             
-            // Prayer Times List
-            PrayerTimeRow("Fajr", "5:15 AM", false)
-            PrayerTimeRow("Dhuhr", "12:30 PM", false)
-            PrayerTimeRow("Asr", "3:45 PM", true)
-            PrayerTimeRow("Maghrib", "6:45 PM", false)
-            PrayerTimeRow("Isha", "8:15 PM", false)
+            // Next prayer countdown
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(White.copy(alpha = 0.1f))
+                    .border(1.dp, White.copy(alpha = 0.1f), RoundedCornerShape(50))
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Schedule,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    text = "Maghrib in 1h 25m",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = White
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun PrayerTimeRow(name: String, time: String, isCurrent: Boolean) {
-    Row(
-        modifier = Modifier
+private fun PrayerListCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            PrayerTimeRow("Fajr", "05:30 AM", isActive = false)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            PrayerTimeRow("Dhuhr", "12:15 PM", isActive = false)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            PrayerTimeRow("Asr", "04:45 PM", isActive = true)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            PrayerTimeRow("Maghrib", "06:10 PM", isActive = false)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            PrayerTimeRow("Isha", "07:45 PM", isActive = false)
+        }
+    }
+}
+
+@Composable
+private fun PrayerTimeRow(name: String, time: String, isActive: Boolean) {
+    val bgModifier = if (isActive) {
+        Modifier
             .fillMaxWidth()
-            .then(
-                if (isCurrent) {
-                    Modifier
-                        .clip(MaterialTheme.shapes.small)
-                        .background(Gold.copy(alpha = 0.15f))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                } else {
-                    Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                }
-            ),
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
+            .border(
+                width = 0.dp,
+                color = Color.Transparent,
+                shape = RoundedCornerShape(0.dp)
+            )
+    } else {
+        Modifier.fillMaxWidth()
+    }
+    
+    Row(
+        modifier = bgModifier.padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -160,154 +246,294 @@ private fun PrayerTimeRow(name: String, time: String, isCurrent: Boolean) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (isCurrent) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(Gold)
-                )
-            }
             Text(
                 text = name,
                 style = MaterialTheme.typography.bodyLarge,
-                color = if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                fontWeight = if (isCurrent) FontWeight.SemiBold else FontWeight.Normal
+                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium,
+                color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
             )
+            if (isActive) {
+                Icon(
+                    imageVector = Icons.Filled.VolumeUp,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
         Text(
             text = time,
             style = MaterialTheme.typography.bodyLarge,
-            color = if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = if (isCurrent) FontWeight.SemiBold else FontWeight.Normal
+            fontWeight = FontWeight.Bold,
+            color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
         )
     }
 }
 
 @Composable
-private fun SurahOfTheDayCard() {
-    HomeCard(title = "📖 Surah of the Day") {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+private fun SurahOfTheDaySection() {
+    Column(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Surah of the Day",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Al-Fatiha",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+            Column(modifier = Modifier.padding(20.dp)) {
+                // Header
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Al-Mulk",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "VERSE 13",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            letterSpacing = 1.sp
+                        )
+                    }
+                    IconButton(
+                        onClick = { },
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = "Play",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 16.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                 )
+                
+                // Arabic text
                 Text(
-                    text = "الفاتحة",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-            
-            Text(
-                text = "The Opening • 7 Verses • Meccan",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\nالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+                    text = "وَأَسِرُّوا قَوْلَكُمْ أَوِ اجْهَرُوا بِهِ ۖ إِنَّهُ عَلِيمٌ بِذَاتِ الصُّدُورِ",
                     style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.End,
+                    lineHeight = 40.sp,
                     modifier = Modifier.fillMaxWidth()
                 )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Translation
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Box(
+                        modifier = Modifier
+                            .width(2.dp)
+                            .height(48.dp)
+                            .background(Gold)
+                    )
+                    Text(
+                        text = "\"And conceal your speech or publicize it; indeed, He is Knowing of that within the breasts.\"",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontStyle = FontStyle.Italic,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 12.dp)
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Read button
+                Button(
+                    onClick = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = "Read Full Surah",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
-            
-            Text(
-                text = "\"All praise is due to Allah, Lord of all the worlds.\"",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Light
-            )
         }
     }
 }
 
 @Composable
-private fun DuaOfTheDayCard() {
-    HomeCard(title = "🤲 Dua of the Day") {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+private fun DuaOfTheDaySection() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Dua of the Day",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFF0D1B13),
+                            Color(0xFF1A2E22)
+                        )
+                    )
+                )
         ) {
-            Text(
-                text = "Morning Remembrance",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.SemiBold
-            )
-            
+            // Gold accent in corner (decorative)
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(Gold.copy(alpha = 0.1f))
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            
-            Text(
-                text = "\"O Allah, by You we enter the morning and by You we enter the evening, by You we live and by You we die, and to You is the resurrection.\"",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                    .size(64.dp)
+                    .align(Alignment.TopEnd)
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                Gold.copy(alpha = 0.2f),
+                                Color.Transparent
+                            )
+                        )
+                    )
             )
             
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.padding(24.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = null,
-                    tint = Gold,
-                    modifier = Modifier.size(16.dp)
-                )
+                // Category badge
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.VerifiedUser,
+                        contentDescription = null,
+                        tint = Gold,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        text = "FOR PROTECTION",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Gold,
+                        letterSpacing = 2.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Arabic dua
                 Text(
-                    text = "  Recite in the morning",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = White,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 36.sp,
+                    modifier = Modifier.fillMaxWidth()
                 )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                // Translation
+                Text(
+                    text = "\"In the Name of Allah, with Whose Name nothing is harmed on earth nor in heaven.\"",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = White.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                // Action buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = { },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = White
+                        ),
+                        border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
+                            brush = Brush.linearGradient(listOf(White.copy(alpha = 0.2f), White.copy(alpha = 0.2f)))
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Share,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Share")
+                    }
+                    OutlinedButton(
+                        onClick = { },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = White
+                        ),
+                        border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
+                            brush = Brush.linearGradient(listOf(White.copy(alpha = 0.2f), White.copy(alpha = 0.2f)))
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ContentCopy,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Copy")
+                    }
+                }
             }
         }
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+private fun Modifier.width(dp: androidx.compose.ui.unit.Dp): Modifier = this.then(Modifier.size(width = dp, height = 0.dp))
+
+@Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme {
+    AlNoorTheme {
         HomeScreen()
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun HomeScreenDarkPreview() {
-    com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme(darkTheme = true) {
+    AlNoorTheme(darkTheme = true) {
         HomeScreen()
     }
 }

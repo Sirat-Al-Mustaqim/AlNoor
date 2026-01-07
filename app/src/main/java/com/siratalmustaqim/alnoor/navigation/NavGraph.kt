@@ -5,8 +5,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.siratalmustaqim.alnoor.ui.screens.blocker.BlockerScreen
+import com.siratalmustaqim.alnoor.ui.screens.duas.DuasScreen
 import com.siratalmustaqim.alnoor.ui.screens.guard.GuardScreen
 import com.siratalmustaqim.alnoor.ui.screens.home.HomeScreen
+import com.siratalmustaqim.alnoor.ui.screens.more.MoreScreen
+import com.siratalmustaqim.alnoor.ui.screens.qibla.QiblaScreen
+import com.siratalmustaqim.alnoor.ui.screens.quran.QuranScreen
 import com.siratalmustaqim.alnoor.ui.screens.settings.SettingsScreen
 import com.siratalmustaqim.alnoor.ui.screens.settings.guard.GuardSettingsScreen
 import com.siratalmustaqim.alnoor.ui.screens.settings.prayer.PrayerSettingsScreen
@@ -14,7 +19,7 @@ import com.siratalmustaqim.alnoor.ui.screens.settings.quran.QuranSettingsScreen
 
 /**
  * Navigation graph for the bottom navigation inside MainScreen.
- * Contains: Guard, Home, Settings (+ sub-screens)
+ * Contains: Home, Qibla, Blocker, More (+ sub-screens)
  */
 @Composable
 fun BottomNavGraph(
@@ -26,11 +31,34 @@ fun BottomNavGraph(
         startDestination = Screen.Home.route,
         modifier = modifier
     ) {
-        composable(route = Screen.Guard.route) {
-            GuardScreen()
-        }
+        // Bottom Nav Destinations
         composable(route = Screen.Home.route) {
             HomeScreen()
+        }
+        composable(route = Screen.Qibla.route) {
+            QiblaScreen()
+        }
+        composable(route = Screen.Blocker.route) {
+            BlockerScreen()
+        }
+        composable(route = Screen.More.route) {
+            MoreScreen(
+                onQuranClick = { navController.navigate(Screen.Quran.route) },
+                onDuasClick = { navController.navigate(Screen.Duas.route) },
+                onGuardClick = { navController.navigate(Screen.Guard.route) },
+                onSettingsClick = { navController.navigate(Screen.Settings.route) }
+            )
+        }
+        
+        // Screens from More menu
+        composable(route = Screen.Quran.route) {
+            QuranScreen()
+        }
+        composable(route = Screen.Duas.route) {
+            DuasScreen()
+        }
+        composable(route = Screen.Guard.route) {
+            GuardScreen()
         }
         composable(route = Screen.Settings.route) {
             SettingsScreen(

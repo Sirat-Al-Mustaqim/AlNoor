@@ -1,12 +1,14 @@
 package com.siratalmustaqim.alnoor.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Security
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class BottomNavItem(
@@ -18,21 +20,27 @@ data class BottomNavItem(
 
 val bottomNavItems = listOf(
     BottomNavItem(
-        route = Screen.Guard.route,
-        title = "Guard",
-        selectedIcon = Icons.Filled.Security,
-        unselectedIcon = Icons.Outlined.Security
-    ),
-    BottomNavItem(
         route = Screen.Home.route,
         title = "Home",
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home
     ),
     BottomNavItem(
-        route = Screen.Settings.route,
-        title = "Settings",
-        selectedIcon = Icons.Filled.Settings,
-        unselectedIcon = Icons.Outlined.Settings
+        route = Screen.Qibla.route,
+        title = "Qibla",
+        selectedIcon = Icons.Filled.Explore,
+        unselectedIcon = Icons.Outlined.Explore
+    ),
+    BottomNavItem(
+        route = Screen.Blocker.route,
+        title = "Blocker",
+        selectedIcon = Icons.Filled.Shield,
+        unselectedIcon = Icons.Outlined.Shield
+    ),
+    BottomNavItem(
+        route = Screen.More.route,
+        title = "More",
+        selectedIcon = Icons.Filled.GridView,
+        unselectedIcon = Icons.Outlined.GridView
     )
 )
