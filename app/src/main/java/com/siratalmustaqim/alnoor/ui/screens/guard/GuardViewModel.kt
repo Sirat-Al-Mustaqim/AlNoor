@@ -1,8 +1,10 @@
 package com.siratalmustaqim.alnoor.ui.screens.guard
 
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.data.repository.GuardRepository
 import com.siratalmustaqim.alnoor.vpn.VpnResult
 import com.siratalmustaqim.alnoor.vpn.VpnState
@@ -26,19 +28,20 @@ data class GuardUiState(
 ) {
     val isConnected: Boolean get() = vpnState == VpnState.CONNECTED
     val isDisconnected: Boolean get() = vpnState == VpnState.DISCONNECTED
-    val statusText: String get() = when (vpnState) {
-        VpnState.DISCONNECTED -> "Protection Off"
-        VpnState.CONNECTING -> "Connecting..."
-        VpnState.CONNECTED -> "Protected"
-        VpnState.DISCONNECTING -> "Disconnecting..."
-        VpnState.ERROR -> "Connection Error"
+    @get:StringRes
+    val statusTextRes: Int get() = when (vpnState) {
+        VpnState.DISCONNECTED -> R.string.guard_status_protection_off
+        VpnState.CONNECTING -> R.string.guard_status_connecting
+        VpnState.CONNECTED -> R.string.guard_status_protected
+        VpnState.DISCONNECTING -> R.string.guard_status_disconnecting
+        VpnState.ERROR -> R.string.guard_status_error
     }
 }
 
 sealed class GuardEvent {
     data class RequestVpnPermission(val intent: Intent) : GuardEvent()
-    data class ShowError(val message: String) : GuardEvent()
-    data class ShowMessage(val message: String) : GuardEvent()
+    data class ShowError(@StringRes val messageRes: Int) : GuardEvent()
+    data class ShowMessage(@StringRes val messageRes: Int) : GuardEvent()
 }
 
 @HiltViewModel
@@ -84,11 +87,11 @@ class GuardViewModel @Inject constructor(
                 
                 // Start VPN
                 val result = guardRepository.setAlwaysOnVpn(true)
-                handleVpnResult(result, "Connected")
+                handleVpnResult(result, R.string.guard_connected_message)
             } else {
                 // Stop VPN
                 val result = guardRepository.setAlwaysOnVpn(false)
-                handleVpnResult(result, "Disconnected")
+                handleVpnResult(result, R.string.guard_disconnected_message)
             }
         }
     }
@@ -106,7 +109,7 @@ class GuardViewModel @Inject constructor(
             }
             
             val result = guardRepository.setAlwaysOnVpn(enabled)
-            handleVpnResult(result, if (enabled) "Always-on VPN enabled" else "Always-on VPN disabled")
+            handleVpnResult(result, if (enabled) R.string.guard_always_on_enabled else R.string.guard_always_on_disabled)
         }
     }
 
@@ -115,23 +118,25 @@ class GuardViewModel @Inject constructor(
             if (granted) {
                 Timber.d("VPN permission granted, starting VPN")
                 val result = guardRepository.setAlwaysOnVpn(true)
-                handleVpnResult(result, "Connected")
+                handleVpnResult(result, R.string.guard_connected_message)
             } else {
                 Timber.d("VPN permission denied")
-                _events.emit(GuardEvent.ShowError("VPN permission is required"))
+                _events.emit(GuardEvent.ShowError(R.string.guard_vpn_permission_required))
             }
         }
     }
 
-    private suspend fun handleVpnResult(result: VpnResult, successMessage: String) {
+    private suspend fun handleVpnResult(result: VpnResult, @StringRes successMessageRes: Int) {
         when (result) {
             is VpnResult.Success -> {
-                Timber.d(successMessage)
-                _events.emit(GuardEvent.ShowMessage(successMessage))
+                Timber.d("VPN operation successful")
+                _events.emit(GuardEvent.ShowMessage(successMessageRes))
             }
             is VpnResult.Error -> {
                 Timber.e("VPN error: ${result.message}")
-                _events.emit(GuardEvent.ShowError(result.message))
+                // Note: result.message is a dynamic error, keeping it as is
+                // In production, you might want to map common errors to resource IDs
+                _events.emit(GuardEvent.ShowError(R.string.guard_status_error))
             }
         }
     }
