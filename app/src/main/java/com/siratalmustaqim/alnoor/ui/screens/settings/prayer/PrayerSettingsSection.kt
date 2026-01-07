@@ -1,22 +1,19 @@
 package com.siratalmustaqim.alnoor.ui.screens.settings.prayer
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.siratalmustaqim.alnoor.ui.components.SettingsRowDropdown
 import com.siratalmustaqim.alnoor.ui.components.SettingsRowText
 import com.siratalmustaqim.alnoor.ui.components.SettingsSection
+import com.siratalmustaqim.alnoor.ui.screens.settings.PrayerSettingsUiState
 
 @Composable
 fun PrayerSettingsSection(
-    modifier: Modifier = Modifier,
-    viewModel: PrayerSettingsViewModel = hiltViewModel()
+    uiState: PrayerSettingsUiState,
+    onLocationClick: () -> Unit,
+    onAzanAudioChange: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val location by viewModel.currentLocation.collectAsState()
-    val azanAudio by viewModel.azanAudio.collectAsState()
-
     SettingsSection(
         title = "Prayer",
         icon = "🕌",
@@ -24,17 +21,15 @@ fun PrayerSettingsSection(
     ) {
         SettingsRowText(
             label = "Current Location",
-            value = location,
-            onClick = {
-                // TODO: Open location picker dialog
-            }
+            value = uiState.currentLocation,
+            onClick = onLocationClick
         )
 
         SettingsRowDropdown(
             label = "Azan Audio",
-            selectedValue = azanAudio,
-            options = PrayerSettingsViewModel.availableAzanAudios,
-            onOptionSelected = { viewModel.updateAzanAudio(it) }
+            selectedValue = uiState.azanAudio,
+            options = PrayerSettingsUiState.availableAzanAudios,
+            onOptionSelected = onAzanAudioChange
         )
     }
 }

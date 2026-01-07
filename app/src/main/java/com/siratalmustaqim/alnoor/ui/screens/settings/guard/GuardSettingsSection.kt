@@ -1,20 +1,17 @@
 package com.siratalmustaqim.alnoor.ui.screens.settings.guard
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.siratalmustaqim.alnoor.ui.components.SettingsRowToggle
 import com.siratalmustaqim.alnoor.ui.components.SettingsSection
+import com.siratalmustaqim.alnoor.ui.screens.settings.GuardSettingsUiState
 
 @Composable
 fun GuardSettingsSection(
-    modifier: Modifier = Modifier,
-    viewModel: GuardSettingsViewModel = hiltViewModel()
+    uiState: GuardSettingsUiState,
+    onVpnToggle: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val vpnEnabled by viewModel.vpnEnabled.collectAsState()
-
     SettingsSection(
         title = "Guard",
         icon = "🛡️",
@@ -22,8 +19,8 @@ fun GuardSettingsSection(
     ) {
         SettingsRowToggle(
             label = "Always-On VPN",
-            checked = vpnEnabled,
-            onCheckedChange = { viewModel.toggleVpn(it) },
+            checked = uiState.vpnEnabled,
+            onCheckedChange = onVpnToggle,
             subtitle = "Keep VPN active at all times for protection"
         )
     }

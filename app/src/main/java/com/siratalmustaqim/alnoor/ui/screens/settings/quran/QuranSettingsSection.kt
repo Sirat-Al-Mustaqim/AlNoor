@@ -1,22 +1,19 @@
 package com.siratalmustaqim.alnoor.ui.screens.settings.quran
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.siratalmustaqim.alnoor.ui.components.SettingsRowDropdown
 import com.siratalmustaqim.alnoor.ui.components.SettingsRowSlider
 import com.siratalmustaqim.alnoor.ui.components.SettingsSection
+import com.siratalmustaqim.alnoor.ui.screens.settings.QuranSettingsUiState
 
 @Composable
 fun QuranSettingsSection(
-    modifier: Modifier = Modifier,
-    viewModel: QuranSettingsViewModel = hiltViewModel()
+    uiState: QuranSettingsUiState,
+    onTextSizeChange: (Float) -> Unit,
+    onFontChange: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val textSize by viewModel.ayahTextSize.collectAsState()
-    val font by viewModel.ayahFont.collectAsState()
-
     SettingsSection(
         title = "Quran",
         icon = "📖",
@@ -24,17 +21,17 @@ fun QuranSettingsSection(
     ) {
         SettingsRowSlider(
             label = "Ayah Text Size",
-            value = textSize,
-            onValueChange = { viewModel.updateTextSize(it) },
+            value = uiState.ayahTextSize,
+            onValueChange = onTextSizeChange,
             valueRange = 14f..32f,
-            valueLabel = "${textSize.toInt()}sp"
+            valueLabel = "${uiState.ayahTextSize.toInt()}sp"
         )
 
         SettingsRowDropdown(
             label = "Ayah Font",
-            selectedValue = font,
-            options = QuranSettingsViewModel.availableFonts,
-            onOptionSelected = { viewModel.updateFont(it) }
+            selectedValue = uiState.ayahFont,
+            options = QuranSettingsUiState.availableFonts,
+            onOptionSelected = onFontChange
         )
     }
 }
