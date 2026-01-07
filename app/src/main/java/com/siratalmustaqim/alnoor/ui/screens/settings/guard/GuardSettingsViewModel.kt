@@ -1,14 +1,19 @@
 package com.siratalmustaqim.alnoor.ui.screens.settings.guard
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.siratalmustaqim.alnoor.data.preferences.SettingsDataStore
+import com.siratalmustaqim.alnoor.data.repository.GuardRepository
+import com.siratalmustaqim.alnoor.vpn.VpnResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 data class GuardSettingsUiState(
@@ -17,18 +22,27 @@ data class GuardSettingsUiState(
     val alwaysOnProtection: Boolean = false,
     val onAlwaysOnProtectionToggle: (Boolean) -> Unit = {},
     val offlineMode: Boolean = false,
-    val onOfflineModeToggle: (Boolean) -> Unit = {}
+    val onOfflineModeToggle: (Boolean) -> Unit = {},
+    val vpnPermissionIntent: Intent? = null
 )
+
+sealed class GuardSettingsEvent {
+    data class RequestVpnPermission(val intent: Intent) : GuardSettingsEvent()
+    data class ShowError(val message: String) : GuardSettingsEvent()
+}
 
 @HiltViewModel
 class GuardSettingsViewModel @Inject constructor(
-    private val settingsDataStore: SettingsDataStore
+    private val guardRepository: GuardRepository
 ) : ViewModel() {
 
+    private val _events = MutableSharedFlow<GuardSettingsEvent>()
+    val events = _events.asSharedFlow()
+
     val uiState: StateFlow<GuardSettingsUiState> = combine(
-        settingsDataStore.vpnEnabled,
-        settingsDataStore.alwaysOnProtection,
-        settingsDataStore.offlineMode
+        guardRepository.vpnEnabled,
+        guardRepository.alwaysOnProtection,
+        guardRepository.offlineMode
     ) { vpnEnabled, alwaysOnProtection, offlineMode ->
         GuardSettingsUiState(
             vpnEnabled = vpnEnabled,
@@ -50,19 +64,44 @@ class GuardSettingsViewModel @Inject constructor(
 
     private fun toggleVpn(enabled: Boolean) {
         viewModelScope.launch {
-            settingsDataStore.updateVpnEnabled(enabled)
+            Timber.d("Toggling VPN: $enabled")
+            
+            if (enabled) {
+                // Check VPN permission first
+                val permissionIntent = guardRepository.prepareVpn()
+                if (permissionIntent != null) {
+                    Timber.d("VPN permission required")
+                    _events.emit(GuardSettingsEvent.RequestVpnPermission(permissionIntent))
+                    return@launch
+                }
+            }
+            
+            // Enable or disable VPN
+            val result = guardRepository.setVpnEnabled(enabled)
+            
+            when (result) {
+                is VpnResult.Success -> {
+                    Timber.d("VPN toggled successfully")
+                }
+                is VpnResult.Error -> {
+                    Timber.e("Failed to toggle VPN: ${result.message}")
+                    _events.emit(GuardSettingsEvent.ShowError(result.message))
+                }
+            }
         }
     }
 
     private fun toggleAlwaysOnProtection(enabled: Boolean) {
         viewModelScope.launch {
-            settingsDataStore.updateAlwaysOnProtection(enabled)
+            Timber.d("Toggling always-on protection: $enabled")
+            guardRepository.setAlwaysOnProtection(enabled)
         }
     }
 
     private fun toggleOfflineMode(enabled: Boolean) {
         viewModelScope.launch {
-            settingsDataStore.updateOfflineMode(enabled)
+            Timber.d("Toggling offline mode: $enabled")
+            guardRepository.setOfflineMode(enabled)
         }
     }
 }
