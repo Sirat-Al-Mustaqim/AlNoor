@@ -31,7 +31,8 @@ android {
             )
         }
         debug {
-            applicationIdSuffix = ".debug"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = ".dev"
             isDebuggable = true
         }
     }

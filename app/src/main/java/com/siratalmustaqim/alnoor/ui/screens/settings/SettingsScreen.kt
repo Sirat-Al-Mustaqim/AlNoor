@@ -1,5 +1,6 @@
 package com.siratalmustaqim.alnoor.ui.screens.settings
 
+import com.siratalmustaqim.alnoor.BuildConfig
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -467,7 +468,7 @@ private fun FooterSection() {
         
         // Version
         Text(
-            text = "Nur Blocker v1.0.2",
+            text = "Al Noor v${BuildConfig.VERSION_NAME}",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
