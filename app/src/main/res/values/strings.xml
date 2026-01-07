@@ -26,10 +26,12 @@
     <string name="home_surah_almulk">Al-Mulk</string>
     <string name="home_verse_number">VERSE 13</string>
     <string name="home_surah_verse">وَأَسِرُّوا قَوْلَكُمْ أَوِ اجْهَرُوا بِهِ ۖ إِنَّهُ عَلِيمٌ بِذَاتِ الصُّدُورِ</string>
+    <string name="home_surah_translation">"And conceal your speech or publicize it; indeed, He is Knowing of that within the breasts."</string>
     <string name="home_read_full_surah">Read Full Surah</string>
     <string name="home_dua_of_day">Dua of the Day</string>
     <string name="home_dua_for_protection">FOR PROTECTION</string>
     <string name="home_dua_arabic">بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ</string>
+    <string name="home_dua_translation">"In the Name of Allah, with Whose Name nothing is harmed on earth nor in heaven."</string>
     
     <!-- Guard Screen -->
     <string name="guard_connected_desc">Connected</string>
