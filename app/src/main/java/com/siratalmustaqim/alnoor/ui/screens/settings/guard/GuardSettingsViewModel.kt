@@ -15,7 +15,9 @@ data class GuardSettingsUiState(
     val vpnEnabled: Boolean = false,
     val onVpnToggle: (Boolean) -> Unit = {},
     val alwaysOnProtection: Boolean = false,
-    val onAlwaysOnProtectionToggle: (Boolean) -> Unit = {}
+    val onAlwaysOnProtectionToggle: (Boolean) -> Unit = {},
+    val offlineMode: Boolean = false,
+    val onOfflineModeToggle: (Boolean) -> Unit = {}
 )
 
 @HiltViewModel
@@ -25,20 +27,24 @@ class GuardSettingsViewModel @Inject constructor(
 
     val uiState: StateFlow<GuardSettingsUiState> = combine(
         settingsDataStore.vpnEnabled,
-        settingsDataStore.alwaysOnProtection
-    ) { vpnEnabled, alwaysOnProtection ->
+        settingsDataStore.alwaysOnProtection,
+        settingsDataStore.offlineMode
+    ) { vpnEnabled, alwaysOnProtection, offlineMode ->
         GuardSettingsUiState(
             vpnEnabled = vpnEnabled,
             onVpnToggle = ::toggleVpn,
             alwaysOnProtection = alwaysOnProtection,
-            onAlwaysOnProtectionToggle = ::toggleAlwaysOnProtection
+            onAlwaysOnProtectionToggle = ::toggleAlwaysOnProtection,
+            offlineMode = offlineMode,
+            onOfflineModeToggle = ::toggleOfflineMode
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = GuardSettingsUiState(
             onVpnToggle = ::toggleVpn,
-            onAlwaysOnProtectionToggle = ::toggleAlwaysOnProtection
+            onAlwaysOnProtectionToggle = ::toggleAlwaysOnProtection,
+            onOfflineModeToggle = ::toggleOfflineMode
         )
     )
 
@@ -51,6 +57,12 @@ class GuardSettingsViewModel @Inject constructor(
     private fun toggleAlwaysOnProtection(enabled: Boolean) {
         viewModelScope.launch {
             settingsDataStore.updateAlwaysOnProtection(enabled)
+        }
+    }
+
+    private fun toggleOfflineMode(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.updateOfflineMode(enabled)
         }
     }
 }

@@ -1,32 +1,58 @@
 package com.siratalmustaqim.alnoor.ui.screens.settings.guard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.ShieldMoon
+import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material.icons.filled.VpnKey
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.siratalmustaqim.alnoor.ui.components.SettingsRowToggle
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
+import com.siratalmustaqim.alnoor.ui.theme.Gold
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -52,19 +78,28 @@ private fun GuardSettingsScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Guard Settings") },
+                title = {
+                    Text(
+                        text = "Guard Settings",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
+                actions = {
+                    Spacer(modifier = Modifier.width(48.dp))
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f)
                 )
             )
         }
@@ -75,22 +110,236 @@ private fun GuardSettingsScreenContent(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+                .padding(horizontal = 24.dp)
         ) {
-            SettingsRowToggle(
-                label = "Always-On VPN",
-                checked = uiState.vpnEnabled,
-                onCheckedChange = uiState.onVpnToggle,
-                subtitle = "Keep VPN active at all times"
+            // Hero Section
+            HeroSection(isActive = uiState.vpnEnabled || uiState.alwaysOnProtection)
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Settings Cards
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                GuardSettingCard(
+                    icon = Icons.Filled.VpnKey,
+                    title = "Always-on VPN",
+                    description = "Filter distractions securely via encrypted tunnel.",
+                    checked = uiState.vpnEnabled,
+                    onCheckedChange = uiState.onVpnToggle
+                )
+                
+                GuardSettingCard(
+                    icon = Icons.Filled.Security,
+                    title = "Always-on Protection",
+                    description = "Prevent disabling during prayer times & focus sessions.",
+                    checked = uiState.alwaysOnProtection,
+                    onCheckedChange = uiState.onAlwaysOnProtectionToggle
+                )
+                
+                GuardSettingCard(
+                    icon = Icons.Filled.CloudOff,
+                    title = "Offline Mode",
+                    description = "Block all internet traffic.",
+                    checked = uiState.offlineMode,
+                    onCheckedChange = uiState.onOfflineModeToggle,
+                    isSecondary = true
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(40.dp))
+            
+            // Footer
+            FooterSection()
+            
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun HeroSection(isActive: Boolean) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Hero icon with glow effect
+        Box(
+            modifier = Modifier.size(96.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            // Outer glow
+            Box(
+                modifier = Modifier
+                    .size(96.dp)
+                    .clip(CircleShape)
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                Gold.copy(alpha = 0.05f),
+                                Color.Transparent
+                            )
+                        )
+                    )
             )
+            // Decorative ring
+            Box(
+                modifier = Modifier
+                    .size(88.dp)
+                    .border(1.dp, Gold.copy(alpha = 0.2f), CircleShape)
+            )
+            // Inner circle with icon
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ShieldMoon,
+                    contentDescription = null,
+                    tint = Gold,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(20.dp))
+        
+        // Status
+        Text(
+            text = if (isActive) "STATUS: ACTIVE" else "STATUS: INACTIVE",
+            style = MaterialTheme.typography.labelSmall,
+            color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 2.sp
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = if (isActive) "Your Guard is Up" else "Guard is Down",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
 
-            Spacer(modifier = Modifier.height(16.dp))
+@Composable
+private fun GuardSettingCard(
+    icon: ImageVector,
+    title: String,
+    description: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    isSecondary: Boolean = false
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Icon
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isSecondary) 
+                            MaterialTheme.colorScheme.surfaceVariant 
+                        else 
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = if (isSecondary) 
+                        MaterialTheme.colorScheme.onSurfaceVariant 
+                    else 
+                        Gold,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            // Text content
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 20.sp
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(12.dp))
+            
+            // Switch
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            )
+        }
+    }
+}
 
-            SettingsRowToggle(
-                label = "Always-On Protection",
-                checked = uiState.alwaysOnProtection,
-                onCheckedChange = uiState.onAlwaysOnProtectionToggle,
-                subtitle = "Enable continuous protection mode"
+@Composable
+private fun FooterSection() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Peace badge
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(50))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Spa,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(16.dp)
+            )
+            Text(
+                text = "Peace of mind, always.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.Medium
             )
         }
     }
@@ -100,6 +349,22 @@ private fun GuardSettingsScreenContent(
 @Composable
 private fun GuardSettingsScreenPreview() {
     AlNoorTheme {
+        GuardSettingsScreenContent(
+            uiStateFlow = MutableStateFlow(
+                GuardSettingsUiState(
+                    vpnEnabled = true,
+                    alwaysOnProtection = true
+                )
+            ),
+            onBackClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun GuardSettingsScreenDarkPreview() {
+    AlNoorTheme(darkTheme = true) {
         GuardSettingsScreenContent(
             uiStateFlow = MutableStateFlow(GuardSettingsUiState()),
             onBackClick = {}
