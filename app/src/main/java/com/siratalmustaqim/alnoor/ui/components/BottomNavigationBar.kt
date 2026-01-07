@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.siratalmustaqim.alnoor.navigation.bottomNavItems
@@ -28,6 +29,7 @@ fun BottomNavigationBar(
     ) {
         bottomNavItems.forEach { item ->
             val isSelected = currentRoute == item.route
+            val title = stringResource(item.titleRes)
             NavigationBarItem(
                 selected = isSelected,
                 onClick = {
@@ -44,12 +46,12 @@ fun BottomNavigationBar(
                 icon = {
                     Icon(
                         imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = item.title
+                        contentDescription = title
                     )
                 },
                 label = {
                     Text(
-                        text = item.title,
+                        text = title,
                         style = MaterialTheme.typography.labelSmall
                     )
                 },
