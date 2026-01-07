@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 // Primary - Deep Emerald
 val Primary = Color(0xFF136C4F)
-val PrimaryDark = Color(0xFF0D4F3A)
+val PrimaryDark = Color(0xFF04562D)
 val PrimaryLight = Color(0xFF1A8A66)
 
 // Accent - Muted Gold
@@ -14,11 +14,11 @@ val GoldDark = Color(0xFFB8A040)
 
 // Backgrounds
 val BackgroundLight = Color(0xFFF8FBFA)
-val BackgroundDark = Color(0xFF121417)
+val BackgroundDark = Color(0xFF11211A)
 
 // Surface / Cards
 val SurfaceLight = Color(0xFFFFFFFF)
-val SurfaceDark = Color(0xFF1E2126)
+val SurfaceDark = Color(0xFF27272A)
 
 // Text colors
 val TextPrimaryLight = Color(0xFF0F1A16)

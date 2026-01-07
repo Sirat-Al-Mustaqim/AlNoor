@@ -1,83 +1,49 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en">
+<html class="light dark" lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Nur Blocker - Settings</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap"
+    <title>Nur Blocker - Guard Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;500;600;700&amp;display=swap"
         rel="stylesheet" />
-    <!-- Material Symbols -->
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#136c4f", // Deep Emerald
-                        "primary-dark": "#0d4f3a",
-                        "accent-gold": "#D8BE52", // Muted Gold
-                        "background-light": "#f8fbfa", // Soft off-white
-                        "background-dark": "#121417",
-                        "surface-light": "#ffffff",
-                        "surface-dark": "#1e2126",
-                    },
-                    fontFamily: {
-                        "display": ["Manrope", "sans-serif"],
-                        "body": ["Noto Sans", "sans-serif"],
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "2xl": "1rem",
-                        "full": "9999px"
-                    },
-                    boxShadow: {
-                        "soft": "0 4px 20px -2px rgba(19, 108, 79, 0.08)",
-                        "glow": "0 0 15px rgba(216, 190, 82, 0.2)",
-                    }
-                },
-            },
-        }
-    </script>
+    <script
+        id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { primary: "#12a165", "primary-dark": "#04562d", accent: "#C9A961", "background-light": "#f6f8f7", "background-dark": "#11211a", "surface-light": "#ffffff", "surface-dark": "#27272a", "text-main": "#2A332E", "text-muted": "#6b7280" }, fontFamily: { display: "Noto Serif" }, boxShadow: { soft: "0 4px 20px -2px rgba(5, 107, 56, 0.05)", glow: "0 0 15px rgba(201, 169, 97, 0.3)" }, borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" } } } };</script>
     <style>
-        /* Custom scrollbar for webkit */
-        ::-webkit-scrollbar {
-            width: 6px;
+        /* Custom toggle transition */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #056b38;
         }
 
-        ::-webkit-scrollbar-track {
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #056b38;
+        }
+
+        /* Smooth transitions for all theme changes */
+        * {
+            transition-property: background-color, border-color, color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
+
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 0px;
             background: transparent;
         }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: #e5e7eb;
-            border-radius: 20px;
-        }
-
-        .dark ::-webkit-scrollbar-thumb {
-            background-color: #374151;
-        }
-
-        /* Subtle pattern overlay */
-        .bg-pattern {
-            background-image: radial-gradient(#136c4f 0.5px, transparent 0.5px);
-            background-size: 24px 24px;
-            opacity: 0.03;
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
         }
     </style>
     <style>
@@ -88,161 +54,130 @@
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark text-[#0f1a16] dark:text-gray-100 font-display transition-colors duration-200">
-    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden group/design-root">
-        <!-- Background Pattern Overlay -->
-        <div class="absolute inset-0 bg-pattern pointer-events-none fixed z-0"></div>
-        <!-- Header -->
-        <div
-            class="relative z-10 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 sticky top-0 border-b border-black/5 dark:border-white/5">
-            <div
-                class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer">
-                <span class="material-symbols-outlined text-primary dark:text-emerald-400"
-                    style="font-size: 24px;">arrow_back</span>
+    class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display antialiased overflow-x-hidden selection:bg-primary/20 selection:text-primary">
+    <!-- Top Navigation -->
+    <header
+        class="sticky top-0 z-50 flex items-center justify-between px-6 py-5 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+        <button
+            class="flex items-center justify-center w-10 h-10 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-text-main dark:text-white transition-colors group">
+            <span
+                class="material-symbols-outlined text-[28px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+        </button>
+        <h1 class="text-lg font-bold tracking-tight text-text-main dark:text-white absolute left-1/2 -translate-x-1/2">
+            Guard Settings</h1>
+        <div class="w-10"></div> <!-- Spacer for balance -->
+    </header>
+    <main class="flex-1 flex flex-col px-6 pb-8 max-w-lg mx-auto w-full">
+        <!-- Hero Visual Anchor -->
+        <div class="flex flex-col items-center justify-center py-10 fade-in-up">
+            <div class="relative flex items-center justify-center w-24 h-24 mb-6">
+                <!-- Abstract glowing background for the icon -->
+                <div
+                    class="absolute inset-0 rounded-full bg-gradient-to-tr from-primary/5 to-accent/20 blur-xl dark:opacity-30">
+                </div>
+                <div
+                    class="relative z-10 flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#fcfcfc] to-[#f0fdf4] dark:from-zinc-800 dark:to-zinc-900 rounded-full shadow-soft border border-gray-100 dark:border-zinc-700">
+                    <span class="material-symbols-outlined text-[40px] text-accent">shield_lock</span>
+                </div>
+                <!-- Decorative orbital ring -->
+                <div class="absolute inset-0 border border-accent/20 rounded-full scale-110 animate-pulse"></div>
             </div>
-            <h2
-                class="text-primary dark:text-emerald-400 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">
-                Settings</h2>
+            <p
+                class="text-sm font-medium text-primary/80 dark:text-emerald-400 uppercase tracking-widest text-center mb-1">
+                Status: Active</p>
+            <h2 class="text-2xl font-bold text-text-main dark:text-white text-center">Your Guard is Up</h2>
         </div>
-        <!-- Main Content -->
-        <div class="relative z-10 flex-1 flex flex-col px-4 pb-8 max-w-md mx-auto w-full">
-            <!-- Hero Title -->
-            <div class="flex flex-col items-center justify-center pt-6 pb-8">
+        <!-- Settings Section -->
+        <div class="flex flex-col gap-5 mt-4">
+            <!-- VPN Card -->
+            <div
+                class="group relative overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-100 dark:border-zinc-700 shadow-soft hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
                 <div
-                    class="size-12 mb-3 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-glow">
-                    <span class="material-symbols-outlined text-accent-gold" style="font-size: 24px;">shield</span>
+                    class="absolute top-0 left-0 w-1 h-full bg-accent opacity-0 group-hover:opacity-100 transition-opacity">
                 </div>
-                <h1
-                    class="text-[#0f1a16] dark:text-white text-2xl font-bold leading-tight tracking-[-0.02em] text-center">
-                    Configure your<br /><span class="text-primary dark:text-emerald-400">spiritual shield</span></h1>
-            </div>
-            <!-- Primary Settings Cards -->
-            <div class="space-y-4">
-                <!-- Quran Settings -->
-                <div class="group cursor-pointer">
+                <div class="p-5 flex items-center gap-4">
                     <div
-                        class="flex items-center justify-between gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-4 shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 border border-transparent hover:border-primary/10 dark:hover:border-emerald-500/20">
-                        <div class="flex flex-col gap-1.5 flex-[2_2_0px]">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-accent-gold"
-                                    style="font-size: 20px;">menu_book</span>
-                                <p class="text-primary dark:text-emerald-400 text-lg font-bold leading-tight">Quran
-                                    Settings</p>
-                            </div>
-                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-relaxed">Recitation
-                                audio, translation scripts, and reading goals.</p>
-                        </div>
-                        <div class="w-20 h-20 shrink-0 bg-center bg-no-repeat bg-cover rounded-xl shadow-inner relative overflow-hidden"
-                            data-alt="Abstract golden Arabic calligraphy pattern on dark emerald background"
-                            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC0tvv0qz7ZT-Lml3cln3t_84PQa-qzKQYCE1igf-JhwRjr42gUqA_ZGwZZA44KiNDStkFMizfx8-UHTXSzIzWSCrndaXgNpYifs5iAq_3oTRZA2s3U-vZ6pdzIvi490jgjaIVcOqmOP5gd-Dj8PNcYh3w-q9qJrVZlCKEqvw99b-gXxgnq4cAgIV7w64ML248HABAcXZOG5GOOYSdlDgOChYUhodYNzf3HNqo0NALarSSOgMUyUU_xSI2dEWVLml6Mb369ODyhqxG9");'>
-                            <div class="absolute inset-0 bg-primary/20 mix-blend-overlay"></div>
-                        </div>
+                        class="flex-shrink-0 w-12 h-12 rounded-full bg-[#f4fbf7] dark:bg-primary/10 flex items-center justify-center text-accent">
+                        <span class="material-symbols-outlined">vpn_key</span>
                     </div>
-                </div>
-                <!-- Prayer Settings -->
-                <div class="group cursor-pointer">
-                    <div
-                        class="flex items-center justify-between gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-4 shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 border border-transparent hover:border-primary/10 dark:hover:border-emerald-500/20">
-                        <div class="flex flex-col gap-1.5 flex-[2_2_0px]">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-accent-gold"
-                                    style="font-size: 20px;">schedule</span>
-                                <p class="text-primary dark:text-emerald-400 text-lg font-bold leading-tight">Prayer
-                                    Settings</p>
-                            </div>
-                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-relaxed">Calculation
-                                methods, Adhan notifications, and location.</p>
-                        </div>
-                        <div class="w-20 h-20 shrink-0 bg-center bg-no-repeat bg-cover rounded-xl shadow-inner relative overflow-hidden"
-                            data-alt="Silhouette of mosque dome against a soft dawn sky"
-                            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCqqyJPLu6BT5AkIUrYqawjk_KAkWCVPPaL3cAbpu1GLaschWZqeTI5oWkQR9-KpsA6UCMyLNiWAJVc-nprMuK0RuqxYhWxlh0t_U2uGbEGQSwrNKl_EFjnJKIX4tbH_xkJemjj0cLnfLekNh6oadaUwsQZyDbClhZqPv90tsAiVettZ1pOSHxRaNhdTmrb7Idt33EHZfr1XUmnBxZrJh1xrbtr2a51-aXmqCY_Tn3kV2gl1fBcH5femJTD5tfvDJxD6VgHXefvqpEs");'>
-                            <div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
-                        </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-base font-bold text-text-main dark:text-white leading-tight mb-1">Always-on VPN
+                        </h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 font-normal leading-relaxed">Filter
+                            distractions securely via encrypted tunnel.</p>
                     </div>
-                </div>
-                <!-- Guard Settings (Highlighted) -->
-                <div class="group cursor-pointer">
-                    <div
-                        class="relative flex items-center justify-between gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-4 shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 overflow-hidden">
-                        <!-- Accent Border -->
-                        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-accent-gold rounded-l-2xl"></div>
-                        <div class="flex flex-col gap-1.5 flex-[2_2_0px] pl-2">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-accent-gold"
-                                    style="font-size: 20px;">security</span>
-                                <p class="text-primary dark:text-emerald-400 text-lg font-bold leading-tight">Guard
-                                    Settings</p>
-                            </div>
-                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-relaxed">Website
-                                blocking, strict mode, and active hours.</p>
+                    <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-2">
+                        <input checked="" class="sr-only peer" type="checkbox" />
+                        <div
+                            class="w-[52px] h-[32px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[28px] after:w-[28px] after:transition-all peer-checked:bg-primary shadow-inner">
                         </div>
-                        <div class="w-20 h-20 shrink-0 bg-center bg-no-repeat bg-cover rounded-xl shadow-inner relative overflow-hidden"
-                            data-alt="Abstract secure shield visualization with emerald light"
-                            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAPV_6-2flav8FyKmvWo18kQ3E61pvDPP4YduXc7nbvxcKvConKoFyhNUDORbauwXM3Y6jhQNprrXiDBvUonewoH0iahDonyl383S6qKmOH8Qs3ohVqFcwx1P2Q4UqsBqID8uHXi6SKOW9__JhxEVmG2fkzonkkbhxk2Yc__-30Hoz_PJTaXDg0QCGjznh0LmYz13QWFyu6Q2TRjuL0GCzcTg3k1et56r8VcXdaCuDbz6ZKGCaRXDiLXDotICmbQVXkeqo15c0hGrtY");'>
-                            <div class="absolute inset-0 bg-primary/30 mix-blend-multiply"></div>
-                        </div>
-                    </div>
+                    </label>
                 </div>
             </div>
-            <!-- Secondary Settings Section -->
-            <div class="mt-8 mb-4">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-3">General</h3>
+            <!-- Protection Card -->
+            <div
+                class="group relative overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-100 dark:border-zinc-700 shadow-soft hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
                 <div
-                    class="bg-surface-light dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800">
-                    <!-- Appearance -->
+                    class="absolute top-0 left-0 w-1 h-full bg-accent opacity-0 group-hover:opacity-100 transition-opacity">
+                </div>
+                <div class="p-5 flex items-center gap-4">
                     <div
-                        class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
-                        <div class="flex items-center gap-3">
-                            <div class="size-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary dark:text-emerald-400"
-                                    style="font-size: 18px;">palette</span>
-                            </div>
-                            <span class="text-[#0f1a16] dark:text-gray-200 font-medium">Appearance</span>
-                        </div>
-                        <span class="material-symbols-outlined text-gray-400"
-                            style="font-size: 20px;">chevron_right</span>
+                        class="flex-shrink-0 w-12 h-12 rounded-full bg-[#f4fbf7] dark:bg-primary/10 flex items-center justify-center text-accent">
+                        <span class="material-symbols-outlined">security</span>
                     </div>
-                    <!-- Language -->
-                    <div
-                        class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
-                        <div class="flex items-center gap-3">
-                            <div class="size-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary dark:text-emerald-400"
-                                    style="font-size: 18px;">language</span>
-                            </div>
-                            <span class="text-[#0f1a16] dark:text-gray-200 font-medium">Language</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-400">English</span>
-                            <span class="material-symbols-outlined text-gray-400"
-                                style="font-size: 20px;">chevron_right</span>
-                        </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-base font-bold text-text-main dark:text-white leading-tight mb-1">Always-on
+                            Protection</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 font-normal leading-relaxed">Prevent
+                            disabling during prayer times &amp; focus sessions.</p>
                     </div>
-                    <!-- About -->
-                    <div
-                        class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
-                        <div class="flex items-center gap-3">
-                            <div class="size-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary dark:text-emerald-400"
-                                    style="font-size: 18px;">info</span>
-                            </div>
-                            <span class="text-[#0f1a16] dark:text-gray-200 font-medium">About Nur Blocker</span>
+                    <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-2">
+                        <input checked="" class="sr-only peer" type="checkbox" />
+                        <div
+                            class="w-[52px] h-[32px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[28px] after:w-[28px] after:transition-all peer-checked:bg-primary shadow-inner">
                         </div>
-                        <span class="material-symbols-outlined text-gray-400"
-                            style="font-size: 20px;">chevron_right</span>
-                    </div>
+                    </label>
                 </div>
             </div>
-            <!-- Footer -->
-            <div class="mt-auto pt-6 flex flex-col items-center gap-2">
-                <div
-                    class="flex items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-accent-gold/10 border border-accent-gold/20">
-                    <span class="material-symbols-outlined text-accent-gold" style="font-size: 16px;">lock</span>
-                    <span class="text-xs font-semibold text-accent-gold uppercase tracking-wide">Local Storage
-                        Only</span>
+            <!-- Additional Context / Kill Switch (Optional but fits context) -->
+            <div
+                class="mt-2 group relative overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-100 dark:border-zinc-700 shadow-soft hover:shadow-lg transition-all duration-300">
+                <div class="p-5 flex items-center gap-4 opacity-70 hover:opacity-100 transition-opacity">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-800 flex items-center justify-center text-gray-400 dark:text-gray-500">
+                        <span class="material-symbols-outlined">cloud_off</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-base font-semibold text-text-main dark:text-white leading-tight mb-1">Offline
+                            Mode</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 font-normal leading-relaxed">Block all
+                            internet traffic.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-2">
+                        <input class="sr-only peer" type="checkbox" />
+                        <div
+                            class="w-[52px] h-[32px] bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[28px] after:w-[28px] after:transition-all peer-checked:bg-primary shadow-inner">
+                        </div>
+                    </label>
                 </div>
-                <p class="text-xs text-gray-400 text-center font-medium">Nur Blocker v1.0.2</p>
             </div>
+        </div>
+        <!-- Footer Meta -->
+        <div class="mt-auto pt-10 pb-4 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 dark:bg-zinc-800/50">
+                <span class="material-symbols-outlined text-[16px] text-primary dark:text-emerald-500">spa</span>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Peace of mind, always.</p>
+            </div>
+            <p class="mt-4 text-[10px] text-gray-300 dark:text-zinc-600 uppercase tracking-widest">Nur Blocker v2.4
+                (Local)</p>
+        </div>
+    </main>
+    <!-- Floating Feedback Toast (Hidden by default, simulating presence) -->
+    <!-- In a real app, this would animate in -->
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4">
+        <div class="bg-primary text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3">
+            <span class="material-symbols-outlined text-[20px]">check_circle</span>
+            <span class="text-sm font-medium">Protection settings updated</span>
         </div>
     </div>
 </body>
