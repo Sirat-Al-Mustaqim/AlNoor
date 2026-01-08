@@ -46,11 +46,13 @@ class VpnManager @Inject constructor(
                     updateState(state)
                 }
                 ContentBlockerVpnService.ACTION_STATISTICS_CHANGED -> {
-                    val bytesIn = intent.getLongExtra(ContentBlockerVpnService.EXTRA_BYTES_IN, 0L)
-                    val bytesOut = intent.getLongExtra(ContentBlockerVpnService.EXTRA_BYTES_OUT, 0L)
-                    val packetsBlocked = intent.getLongExtra(ContentBlockerVpnService.EXTRA_PACKETS_BLOCKED, 0L)
-                    
-                    updateStatistics(bytesIn, bytesOut, packetsBlocked)
+                    val stats = intent.getParcelableExtra(
+                        ContentBlockerVpnService.EXTRA_STATISTICS,
+                        VpnStatistics::class.java
+                    )
+                    if (stats != null) {
+                        updateStatistics(stats)
+                    }
                 }
             }
         }
@@ -93,21 +95,16 @@ class VpnManager @Inject constructor(
         }
     }
     
-    private fun updateStatistics(bytesIn: Long, bytesOut: Long, packetsBlocked: Long) {
+    private fun updateStatistics(stats: VpnStatistics) {
         val connectionTime = if (connectionStartTime > 0) {
             System.currentTimeMillis() / 1000 - connectionStartTime
         } else {
             0L
         }
         
-        _statistics.value = VpnStatistics(
-            bytesIn = bytesIn,
-            bytesOut = bytesOut,
-            packetsBlocked = packetsBlocked,
-            connectionTime = connectionTime
-        )
+        _statistics.value = stats.copy(connectionTime = connectionTime)
         
-        Timber.v("Statistics updated: in=$bytesIn, out=$bytesOut, blocked=$packetsBlocked, time=$connectionTime")
+        Timber.v("Statistics updated: in=${stats.bytesIn}, out=${stats.bytesOut}, blocked=${stats.packetsBlocked}, time=$connectionTime")
     }
     
     /**

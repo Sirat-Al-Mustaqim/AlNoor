@@ -50,9 +50,7 @@ class ContentBlockerVpnService : VpnService() {
         
         // Extras
         const val EXTRA_STATE = "state"
-        const val EXTRA_BYTES_IN = "bytes_in"
-        const val EXTRA_BYTES_OUT = "bytes_out"
-        const val EXTRA_PACKETS_BLOCKED = "packets_blocked"
+        const val EXTRA_STATISTICS = "statistics"
         
         // Statistics update interval
         private const val STATISTICS_UPDATE_INTERVAL_MS = 1000L
@@ -193,9 +191,7 @@ class ContentBlockerVpnService : VpnService() {
     
     private fun broadcastStatistics(stats: VpnStatistics) {
         val intent = Intent(ACTION_STATISTICS_CHANGED).apply {
-            putExtra(EXTRA_BYTES_IN, stats.bytesIn)
-            putExtra(EXTRA_BYTES_OUT, stats.bytesOut)
-            putExtra(EXTRA_PACKETS_BLOCKED, stats.packetsBlocked)
+            putExtra(EXTRA_STATISTICS, stats)
         }
         sendBroadcast(intent)
     }
