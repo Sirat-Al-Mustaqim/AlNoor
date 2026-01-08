@@ -20,24 +20,30 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.nio.ByteBuffer
 
 /**
- * VPN Service for content filtering using local VPN and Cloudflare DNS
- * This service creates a local VPN tunnel and routes all DNS traffic through
- * Cloudflare's family-safe DNS servers (1.1.1.3) which block adult content
+ * VPN Service for content filtering using DNS-based blocking.
+ * 
+ * This service creates a local VPN that configures the system to use
+ * Cloudflare's family-safe DNS servers (1.1.1.3) for all DNS lookups.
+ * 
+ * How it works:
+ * - The VPN captures DNS traffic only (not all internet traffic)
+ * - DNS queries are resolved by Cloudflare's family-safe DNS
+ * - Adult/inappropriate domains are blocked at the DNS level
+ * - Regular internet traffic flows normally without going through the VPN
  */
 @SuppressLint("VpnServicePolicy")
 class ContentBlockerVpnService : VpnService() {
 
     private var vpnInterface: ParcelFileDescriptor? = null
     private var serviceScope: CoroutineScope? = null
-    private var vpnJob: Job? = null
     private var statisticsJob: Job? = null
-    private val packetHandler = PacketHandler()
     private var isRunning = false
+    
+    // Track connection statistics
+    private var connectionStartTime = 0L
+    private var queriesBlocked = 0L
 
     companion object {
         const val VPN_ID = "${BuildConfig.APPLICATION_ID}.vpn"
@@ -89,27 +95,20 @@ class ContentBlockerVpnService : VpnService() {
             val notification = createNotification()
             startForeground(VpnConfig.NOTIFICATION_ID, notification)
 
-            // Reset statistics
-            packetHandler.resetStatistics()
-
             // Establish VPN connection
             vpnInterface = establishVpnConnection()
 
             if (vpnInterface != null) {
                 isRunning = true
+                connectionStartTime = System.currentTimeMillis()
                 broadcastStateChange(VpnState.CONNECTED)
 
-                // Start packet processing in coroutine
-                vpnJob = serviceScope?.launch {
-                    processPackets()
-                }
-
-                // Start statistics broadcasting
+                // Start statistics broadcasting (no packet processing needed!)
                 statisticsJob = serviceScope?.launch {
                     broadcastStatisticsPeriodically()
                 }
 
-                Timber.d("VPN started successfully")
+                Timber.d("VPN started successfully - DNS filtering active")
             } else {
                 Timber.e("Failed to establish VPN connection")
                 broadcastStateChange(VpnState.ERROR)
@@ -123,13 +122,25 @@ class ContentBlockerVpnService : VpnService() {
         }
     }
 
+    /**
+     * Establish DNS-only VPN connection.
+     * 
+     * This VPN only intercepts DNS traffic and directs it to Cloudflare's
+     * family-safe DNS servers. Regular internet traffic is NOT routed
+     * through the VPN, avoiding the infinite loop problem.
+     */
     private fun establishVpnConnection(): ParcelFileDescriptor? {
         return try {
             Builder()
                 .setSession(VpnConfig.SESSION_NAME)
+                // Assign a virtual IP address to the VPN interface
                 .addAddress(VpnConfig.VPN_ADDRESS, 32)
-                .addRoute(VpnConfig.VPN_ROUTE, VpnConfig.VPN_PREFIX_LENGTH)
-                .addDnsServer(VpnConfig.DNS_PRIMARY) // Cloudflare family-safe DNS
+                // Only route DNS traffic (Cloudflare's DNS servers)
+                // This routes ONLY traffic destined for these IPs through VPN
+                .addRoute(VpnConfig.DNS_PRIMARY, 32)    // Route to 1.1.1.3
+                .addRoute(VpnConfig.DNS_SECONDARY, 32) // Route to 1.0.0.3
+                // Set family-safe DNS servers for all DNS lookups
+                .addDnsServer(VpnConfig.DNS_PRIMARY)
                 .addDnsServer(VpnConfig.DNS_SECONDARY)
                 .setMtu(VpnConfig.VPN_MTU)
                 .setBlocking(false)
@@ -140,50 +151,17 @@ class ContentBlockerVpnService : VpnService() {
         }
     }
 
-    private fun processPackets() {
-        val vpnFd = vpnInterface ?: return
-        val inputStream = FileInputStream(vpnFd.fileDescriptor)
-        val outputStream = FileOutputStream(vpnFd.fileDescriptor)
-        val buffer = ByteArray(VpnConfig.VPN_MTU)
-
-        try {
-            while (isRunning && serviceScope?.isActive == true) {
-                // Read packet from VPN interface using blocking I/O
-                val length = inputStream.read(buffer)
-
-                if (length > 0) {
-                    // Wrap buffer in ByteBuffer for processing
-                    val packet = ByteBuffer.wrap(buffer, 0, length)
-
-                    // Process the packet
-                    val processedPacket = packetHandler.processPacket(packet)
-
-                    // Write processed packet back to VPN interface
-                    if (processedPacket != null) {
-                        val data = ByteArray(processedPacket.remaining())
-                        processedPacket.get(data)
-
-                        // Write all bytes using blocking I/O
-                        outputStream.write(data)
-                        packetHandler.recordBytesSent(data.size.toLong())
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            if (isRunning) {
-                Timber.e(e, "Error processing packets")
-            }
-        } finally {
-            Timber.d("Packet processing stopped")
-        }
-    }
-
     private suspend fun broadcastStatisticsPeriodically() {
         while (isRunning && serviceScope?.isActive == true) {
             delay(STATISTICS_UPDATE_INTERVAL_MS)
 
             if (isRunning) {
-                val stats = packetHandler.getStatistics()
+                val stats = VpnStatistics(
+                    bytesIn = 0,  // Not tracking packet bytes in DNS-only mode
+                    bytesOut = 0,
+                    packetsBlocked = queriesBlocked,
+                    connectionTime = (System.currentTimeMillis() - connectionStartTime) / 1000
+                )
                 broadcastStatistics(stats)
             }
         }
@@ -204,8 +182,6 @@ class ContentBlockerVpnService : VpnService() {
         // Cancel coroutine jobs
         statisticsJob?.cancel()
         statisticsJob = null
-        vpnJob?.cancel()
-        vpnJob = null
 
         // Close VPN interface
         try {
@@ -214,6 +190,7 @@ class ContentBlockerVpnService : VpnService() {
             Timber.e(e, "Error closing VPN interface")
         }
         vpnInterface = null
+        connectionStartTime = 0L
 
         // Broadcast state change
         broadcastStateChange(VpnState.DISCONNECTED)
@@ -280,7 +257,7 @@ class ContentBlockerVpnService : VpnService() {
 
         return NotificationCompat.Builder(this, VpnConfig.NOTIFICATION_CHANNEL_ID)
             .setContentTitle("AlNoor Content Guard Active")
-            .setContentText("Your content is being filtered")
+            .setContentText("DNS filtering is protecting your browsing")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
