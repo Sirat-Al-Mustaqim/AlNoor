@@ -220,11 +220,28 @@ class ContentBlockerVpnService : VpnService() {
         super.onDestroy()
         Timber.d("ContentBlockerVpnService destroyed")
 
-        stopVpn()
+        // Only stop if explicitly requested (not when killed by system)
+        if (!isRunning) {
+            serviceScope?.cancel()
+            serviceScope = null
+        }
+    }
 
-        // Cancel coroutine scope
-        serviceScope?.cancel()
-        serviceScope = null
+    /**
+     * Called when the app is swiped from recents.
+     * We restart the service to keep content filtering active.
+     */
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        Timber.d("App removed from recents, restarting VPN service")
+        
+        if (isRunning) {
+            // Schedule restart using the same intent
+            val restartIntent = Intent(this, ContentBlockerVpnService::class.java).apply {
+                action = ACTION_START
+            }
+            startForegroundService(restartIntent)
+        }
     }
 
     override fun onRevoke() {
