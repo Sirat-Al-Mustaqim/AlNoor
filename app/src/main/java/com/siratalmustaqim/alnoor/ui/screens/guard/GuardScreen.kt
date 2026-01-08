@@ -297,110 +297,48 @@ private fun StatisticsCard(statistics: VpnStatistics) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.guard_session_statistics),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                StatItem(
-                    icon = Icons.Filled.Timer,
-                    label = stringResource(R.string.guard_stat_duration),
-                    value = formatDuration(seconds = statistics.connectionTime)
-                )
-                StatItem(
-                    icon = Icons.Filled.Download,
-                    label = stringResource(R.string.guard_stat_downloaded),
-                    value = formatBytes(bytes = statistics.bytesIn)
-                )
-                StatItem(
-                    icon = Icons.Filled.Upload,
-                    label = stringResource(R.string.guard_stat_uploaded),
-                    value = formatBytes(bytes = statistics.bytesOut)
-                )
-            }
-
-            if (statistics.packetsBlocked > 0) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Shield,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(
-                            R.string.guard_distractions_blocked,
-                            statistics.packetsBlocked
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun StatItem(
-    icon: ImageVector,
-    label: String,
-    value: String
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
+        Row(
             modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = Gold,
-                modifier = Modifier.size(20.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Timer,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column {
+                Text(
+                    text = stringResource(R.string.guard_stat_duration),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = formatDuration(seconds = statistics.connectionTime),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
+
+
 
 @Composable
 private fun AlwaysOnVpnCard(
@@ -508,15 +446,7 @@ private fun formatDuration(seconds: Long): String {
     }
 }
 
-@Composable
-private fun formatBytes(bytes: Long): String {
-    return when {
-        bytes >= 1_000_000_000 -> stringResource(R.string.guard_format_gb, bytes / 1_000_000_000.0)
-        bytes >= 1_000_000 -> stringResource(R.string.guard_format_mb, bytes / 1_000_000.0)
-        bytes >= 1_000 -> stringResource(R.string.guard_format_kb, bytes / 1_000.0)
-        else -> stringResource(R.string.guard_format_b, bytes)
-    }
-}
+
 
 @Preview(showBackground = true)
 @Composable
