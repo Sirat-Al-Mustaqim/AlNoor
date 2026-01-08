@@ -24,7 +24,9 @@ data class GuardUiState(
     val vpnState: VpnState = VpnState.DISCONNECTED,
     val alwaysOnVpn: Boolean = false,
     val statistics: VpnStatistics = VpnStatistics(),
-    val isConnecting: Boolean = false
+    val isConnecting: Boolean = false,
+    val onToggleVpn: () -> Unit = {},
+    val onAlwaysOnVpnChange: (Boolean) -> Unit = {}
 ) {
     val isConnected: Boolean get() = vpnState == VpnState.CONNECTED
     val isDisconnected: Boolean get() = vpnState == VpnState.DISCONNECTED
@@ -61,15 +63,20 @@ class GuardViewModel @Inject constructor(
             vpnState = vpnState,
             alwaysOnVpn = alwaysOnVpn,
             statistics = statistics,
-            isConnecting = vpnState == VpnState.CONNECTING
+            isConnecting = vpnState == VpnState.CONNECTING,
+            onToggleVpn = ::toggleVpn,
+            onAlwaysOnVpnChange = ::setAlwaysOnVpn
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = GuardUiState()
+        initialValue = GuardUiState(
+            onToggleVpn = ::toggleVpn,
+            onAlwaysOnVpnChange = ::setAlwaysOnVpn
+        )
     )
 
-    fun toggleVpn() {
+    private fun toggleVpn() {
         viewModelScope.launch {
             val currentState = uiState.value.vpnState
             val shouldConnect = currentState == VpnState.DISCONNECTED || currentState == VpnState.ERROR
@@ -96,7 +103,7 @@ class GuardViewModel @Inject constructor(
         }
     }
 
-    fun setAlwaysOnVpn(enabled: Boolean) {
+    private fun setAlwaysOnVpn(enabled: Boolean) {
         viewModelScope.launch {
             Timber.d("Setting always-on VPN: $enabled")
             
@@ -134,8 +141,6 @@ class GuardViewModel @Inject constructor(
             }
             is VpnResult.Error -> {
                 Timber.e("VPN error: ${result.message}")
-                // Note: result.message is a dynamic error, keeping it as is
-                // In production, you might want to map common errors to resource IDs
                 _events.emit(GuardEvent.ShowError(R.string.guard_status_error))
             }
         }

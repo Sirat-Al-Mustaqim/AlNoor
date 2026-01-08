@@ -101,18 +101,14 @@ fun GuardScreen(
 
     GuardScreenContent(
         uiState = uiState,
-        snackbarHostState = snackbarHostState,
-        onToggleVpn = viewModel::toggleVpn,
-        onAlwaysOnVpnChange = viewModel::setAlwaysOnVpn
+        snackbarHostState = snackbarHostState
     )
 }
 
 @Composable
 private fun GuardScreenContent(
     uiState: GuardUiState,
-    snackbarHostState: SnackbarHostState,
-    onToggleVpn: () -> Unit,
-    onAlwaysOnVpnChange: (Boolean) -> Unit
+    snackbarHostState: SnackbarHostState
 ) {
     Box(
         modifier = Modifier
@@ -132,7 +128,7 @@ private fun GuardScreenContent(
             ShieldButton(
                 isConnected = uiState.isConnected,
                 isConnecting = uiState.isConnecting,
-                onClick = onToggleVpn
+                onClick = uiState.onToggleVpn
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -151,7 +147,7 @@ private fun GuardScreenContent(
             // Always-on VPN Toggle
             AlwaysOnVpnCard(
                 enabled = uiState.alwaysOnVpn,
-                onCheckedChange = onAlwaysOnVpnChange
+                onCheckedChange = uiState.onAlwaysOnVpnChange
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -519,9 +515,7 @@ private fun GuardScreenDisconnectedPreview() {
     AlNoorTheme {
         GuardScreenContent(
             uiState = GuardUiState(),
-            snackbarHostState = SnackbarHostState(),
-            onToggleVpn = {},
-            onAlwaysOnVpnChange = {}
+            snackbarHostState = SnackbarHostState()
         )
     }
 }
@@ -541,9 +535,7 @@ private fun GuardScreenConnectedPreview() {
                     connectionTime = 3665
                 )
             ),
-            snackbarHostState = SnackbarHostState(),
-            onToggleVpn = {},
-            onAlwaysOnVpnChange = {}
+            snackbarHostState = SnackbarHostState()
         )
     }
 }
@@ -554,9 +546,8 @@ private fun GuardScreenDarkPreview() {
     AlNoorTheme(darkTheme = true) {
         GuardScreenContent(
             uiState = GuardUiState(vpnState = VpnState.CONNECTED),
-            snackbarHostState = SnackbarHostState(),
-            onToggleVpn = {},
-            onAlwaysOnVpnChange = {}
+            snackbarHostState = SnackbarHostState()
         )
     }
 }
+

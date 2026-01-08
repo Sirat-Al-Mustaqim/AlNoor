@@ -10,6 +10,7 @@ import android.net.VpnService
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import androidx.core.app.NotificationCompat
+import com.siratalmustaqim.alnoor.BuildConfig
 import com.siratalmustaqim.alnoor.MainActivity
 import com.siratalmustaqim.alnoor.R
 import kotlinx.coroutines.CoroutineScope
@@ -37,11 +38,12 @@ class ContentBlockerVpnService : VpnService() {
     private var isRunning = false
     
     companion object {
-        const val ACTION_START = "com.siratalmustaqim.alnoor.vpn.START"
-        const val ACTION_STOP = "com.siratalmustaqim.alnoor.vpn.STOP"
+        const val VPN_ID = "${BuildConfig.APPLICATION_ID}.vpn"
+        const val ACTION_START = "$VPN_ID.START"
+        const val ACTION_STOP = "$VPN_ID.STOP"
         
         // Broadcast action for state changes
-        const val ACTION_STATE_CHANGED = "com.siratalmustaqim.alnoor.vpn.STATE_CHANGED"
+        const val ACTION_STATE_CHANGED = "$VPN_ID.STATE_CHANGED"
         const val EXTRA_STATE = "state"
     }
     
@@ -121,7 +123,7 @@ class ContentBlockerVpnService : VpnService() {
         }
     }
     
-    private suspend fun processPackets() {
+    private fun processPackets() {
         val vpnFd = vpnInterface ?: return
         val inputStream = FileInputStream(vpnFd.fileDescriptor)
         val outputStream = FileOutputStream(vpnFd.fileDescriptor)
