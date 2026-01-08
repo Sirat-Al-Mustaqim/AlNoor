@@ -1,8 +1,11 @@
 package com.siratalmustaqim.alnoor.vpn
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.VpnService
+import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +20,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class VpnManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     
     private val _vpnState = MutableStateFlow(VpnState.DISCONNECTED)
@@ -25,6 +28,87 @@ class VpnManager @Inject constructor(
     
     private val _statistics = MutableStateFlow(VpnStatistics())
     val statistics: StateFlow<VpnStatistics> = _statistics.asStateFlow()
+    
+    private var connectionStartTime: Long = 0L
+    
+    private val stateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                ContentBlockerVpnService.ACTION_STATE_CHANGED -> {
+                    val stateName = intent.getStringExtra(ContentBlockerVpnService.EXTRA_STATE)
+                    val state = try {
+                        VpnState.valueOf(stateName ?: VpnState.DISCONNECTED.name)
+                    } catch (_: Exception) {
+                        VpnState.DISCONNECTED
+                    }
+                    
+                    Timber.d("VPN state changed via broadcast: $state")
+                    updateState(state)
+                }
+                ContentBlockerVpnService.ACTION_STATISTICS_CHANGED -> {
+                    val bytesIn = intent.getLongExtra(ContentBlockerVpnService.EXTRA_BYTES_IN, 0L)
+                    val bytesOut = intent.getLongExtra(ContentBlockerVpnService.EXTRA_BYTES_OUT, 0L)
+                    val packetsBlocked = intent.getLongExtra(ContentBlockerVpnService.EXTRA_PACKETS_BLOCKED, 0L)
+                    
+                    updateStatistics(bytesIn, bytesOut, packetsBlocked)
+                }
+            }
+        }
+    }
+    
+    init {
+        registerReceivers()
+    }
+    
+    private fun registerReceivers() {
+        val filter = IntentFilter().apply {
+            addAction(ContentBlockerVpnService.ACTION_STATE_CHANGED)
+            addAction(ContentBlockerVpnService.ACTION_STATISTICS_CHANGED)
+        }
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(stateReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            @Suppress("UnspecifiedRegisterReceiverFlag")
+            context.registerReceiver(stateReceiver, filter)
+        }
+        
+        Timber.d("VPN state receiver registered")
+    }
+    
+    private fun updateState(state: VpnState) {
+        _vpnState.value = state
+        
+        when (state) {
+            VpnState.CONNECTED -> {
+                connectionStartTime = System.currentTimeMillis() / 1000
+                Timber.d("VPN connected, tracking start time: $connectionStartTime")
+            }
+            VpnState.DISCONNECTED -> {
+                connectionStartTime = 0L
+                _statistics.value = VpnStatistics()
+                Timber.d("VPN disconnected, reset statistics")
+            }
+            else -> { /* no action */ }
+        }
+    }
+    
+    private fun updateStatistics(bytesIn: Long, bytesOut: Long, packetsBlocked: Long) {
+        val connectionTime = if (connectionStartTime > 0) {
+            System.currentTimeMillis() / 1000 - connectionStartTime
+        } else {
+            0L
+        }
+        
+        _statistics.value = VpnStatistics(
+            bytesIn = bytesIn,
+            bytesOut = bytesOut,
+            packetsBlocked = packetsBlocked,
+            connectionTime = connectionTime
+        )
+        
+        Timber.v("Statistics updated: in=$bytesIn, out=$bytesOut, blocked=$packetsBlocked, time=$connectionTime")
+    }
     
     /**
      * Prepare VPN - checks if VPN permission is granted
@@ -56,8 +140,6 @@ class VpnManager @Inject constructor(
             
             context.startForegroundService(intent)
             
-            // Note: State will be updated to CONNECTED by the service once tunnel is established
-            // For now, we assume success if service starts without exception
             Timber.d("VPN service start initiated")
             
             VpnResult.Success
@@ -83,8 +165,6 @@ class VpnManager @Inject constructor(
             
             context.startService(intent)
             
-            // Note: State will be updated to DISCONNECTED by the service after cleanup
-            // For now, we assume success if stop request is sent without exception
             Timber.d("VPN service stop initiated")
             
             VpnResult.Success
@@ -100,12 +180,5 @@ class VpnManager @Inject constructor(
      */
     fun isConnected(): Boolean {
         return _vpnState.value == VpnState.CONNECTED
-    }
-    
-    /**
-     * Get current VPN state
-     */
-    fun getCurrentState(): VpnState {
-        return _vpnState.value
     }
 }

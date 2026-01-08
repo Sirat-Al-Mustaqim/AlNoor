@@ -1,13 +1,12 @@
 package com.siratalmustaqim.alnoor.vpn
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.net.VpnService
-import android.os.Build
 import android.os.ParcelFileDescriptor
 import androidx.core.app.NotificationCompat
 import com.siratalmustaqim.alnoor.BuildConfig
@@ -17,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -29,11 +29,13 @@ import java.nio.ByteBuffer
  * This service creates a local VPN tunnel and routes all DNS traffic through
  * Cloudflare's family-safe DNS servers (1.1.1.3) which block adult content
  */
+@SuppressLint("VpnServicePolicy")
 class ContentBlockerVpnService : VpnService() {
     
     private var vpnInterface: ParcelFileDescriptor? = null
     private var serviceScope: CoroutineScope? = null
     private var vpnJob: Job? = null
+    private var statisticsJob: Job? = null
     private val packetHandler = PacketHandler()
     private var isRunning = false
     
@@ -42,9 +44,18 @@ class ContentBlockerVpnService : VpnService() {
         const val ACTION_START = "$VPN_ID.START"
         const val ACTION_STOP = "$VPN_ID.STOP"
         
-        // Broadcast action for state changes
+        // Broadcast actions
         const val ACTION_STATE_CHANGED = "$VPN_ID.STATE_CHANGED"
+        const val ACTION_STATISTICS_CHANGED = "$VPN_ID.STATISTICS_CHANGED"
+        
+        // Extras
         const val EXTRA_STATE = "state"
+        const val EXTRA_BYTES_IN = "bytes_in"
+        const val EXTRA_BYTES_OUT = "bytes_out"
+        const val EXTRA_PACKETS_BLOCKED = "packets_blocked"
+        
+        // Statistics update interval
+        private const val STATISTICS_UPDATE_INTERVAL_MS = 1000L
     }
     
     override fun onCreate() {
@@ -80,6 +91,9 @@ class ContentBlockerVpnService : VpnService() {
             val notification = createNotification()
             startForeground(VpnConfig.NOTIFICATION_ID, notification)
             
+            // Reset statistics
+            packetHandler.resetStatistics()
+            
             // Establish VPN connection
             vpnInterface = establishVpnConnection()
             
@@ -90,6 +104,11 @@ class ContentBlockerVpnService : VpnService() {
                 // Start packet processing in coroutine
                 vpnJob = serviceScope?.launch {
                     processPackets()
+                }
+                
+                // Start statistics broadcasting
+                statisticsJob = serviceScope?.launch {
+                    broadcastStatisticsPeriodically()
                 }
                 
                 Timber.d("VPN started successfully")
@@ -161,12 +180,34 @@ class ContentBlockerVpnService : VpnService() {
         }
     }
     
+    private suspend fun broadcastStatisticsPeriodically() {
+        while (isRunning && serviceScope?.isActive == true) {
+            delay(STATISTICS_UPDATE_INTERVAL_MS)
+            
+            if (isRunning) {
+                val stats = packetHandler.getStatistics()
+                broadcastStatistics(stats)
+            }
+        }
+    }
+    
+    private fun broadcastStatistics(stats: VpnStatistics) {
+        val intent = Intent(ACTION_STATISTICS_CHANGED).apply {
+            putExtra(EXTRA_BYTES_IN, stats.bytesIn)
+            putExtra(EXTRA_BYTES_OUT, stats.bytesOut)
+            putExtra(EXTRA_PACKETS_BLOCKED, stats.packetsBlocked)
+        }
+        sendBroadcast(intent)
+    }
+    
     private fun stopVpn() {
         Timber.d("Stopping VPN service")
         
         isRunning = false
         
-        // Cancel coroutine job
+        // Cancel coroutine jobs
+        statisticsJob?.cancel()
+        statisticsJob = null
         vpnJob?.cancel()
         vpnJob = null
         
@@ -216,19 +257,17 @@ class ContentBlockerVpnService : VpnService() {
     }
     
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                VpnConfig.NOTIFICATION_CHANNEL_ID,
-                VpnConfig.NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = "Shows when content filtering VPN is active"
-                setShowBadge(false)
-            }
-            
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            VpnConfig.NOTIFICATION_CHANNEL_ID,
+            VpnConfig.NOTIFICATION_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = "Shows when content filtering VPN is active"
+            setShowBadge(false)
         }
+
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager?.createNotificationChannel(channel)
     }
     
     private fun createNotification(): Notification {

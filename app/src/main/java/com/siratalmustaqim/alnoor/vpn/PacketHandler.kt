@@ -30,9 +30,7 @@ class PacketHandler {
             }
             
             // Read IP header
-            val version = (packet.get(0).toInt() shr 4) and 0x0F
-            
-            when (version) {
+            when (val version = (packet.get(0).toInt() shr 4) and 0x0F) {
                 4 -> return processIPv4Packet(packet)
                 6 -> return processIPv6Packet(packet)
                 else -> {
