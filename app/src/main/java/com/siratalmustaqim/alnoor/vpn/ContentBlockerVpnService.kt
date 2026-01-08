@@ -125,9 +125,11 @@ class ContentBlockerVpnService : VpnService() {
     /**
      * Establish DNS-only VPN connection.
      * 
-     * This VPN only intercepts DNS traffic and directs it to Cloudflare's
-     * family-safe DNS servers. Regular internet traffic is NOT routed
-     * through the VPN, avoiding the infinite loop problem.
+     * This VPN configures the system to use Cloudflare's family-safe DNS servers
+     * for all DNS lookups. We DON'T route any traffic through the VPN tunnel -
+     * the DNS queries go directly to Cloudflare through the normal network.
+     * 
+     * The VPN is essentially a "DNS override" mechanism.
      */
     private fun establishVpnConnection(): ParcelFileDescriptor? {
         return try {
@@ -135,15 +137,12 @@ class ContentBlockerVpnService : VpnService() {
                 .setSession(VpnConfig.SESSION_NAME)
                 // Assign a virtual IP address to the VPN interface
                 .addAddress(VpnConfig.VPN_ADDRESS, 32)
-                // Only route DNS traffic (Cloudflare's DNS servers)
-                // This routes ONLY traffic destined for these IPs through VPN
-                .addRoute(VpnConfig.DNS_PRIMARY, 32)    // Route to 1.1.1.3
-                .addRoute(VpnConfig.DNS_SECONDARY, 32) // Route to 1.0.0.3
-                // Set family-safe DNS servers for all DNS lookups
-                .addDnsServer(VpnConfig.DNS_PRIMARY)
-                .addDnsServer(VpnConfig.DNS_SECONDARY)
+                // NO routes! We don't want to tunnel any traffic.
+                // Just set the DNS servers that the system should use.
+                .addDnsServer(VpnConfig.DNS_PRIMARY)   // Cloudflare 1.1.1.3 (family-safe)
+                .addDnsServer(VpnConfig.DNS_SECONDARY) // Cloudflare 1.0.0.3 (family-safe)
                 .setMtu(VpnConfig.VPN_MTU)
-                .setBlocking(true)
+                .setBlocking(false) // Non-blocking since we're not processing packets
                 .establish()
         } catch (e: Exception) {
             Timber.e(e, "Error establishing VPN")
