@@ -26,12 +26,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Power
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,8 +36,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,7 +48,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -145,14 +139,6 @@ private fun GuardScreenContent(
                 StatisticsCard(statistics = uiState.statistics)
                 Spacer(modifier = Modifier.height(24.dp))
             }
-
-            // Always-on VPN Toggle
-            AlwaysOnVpnCard(
-                enabled = uiState.alwaysOnVpn,
-                onCheckedChange = uiState.onAlwaysOnVpnChange
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             // Info Card
             InfoCard()
@@ -340,69 +326,7 @@ private fun StatisticsCard(statistics: VpnStatistics) {
 
 
 
-@Composable
-private fun AlwaysOnVpnCard(
-    enabled: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Gold.copy(alpha = 0.1f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.FlashOn,
-                        contentDescription = null,
-                        tint = Gold,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                Column {
-                    Text(
-                        text = stringResource(R.string.guard_always_on_vpn),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = stringResource(R.string.guard_auto_connect),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            Switch(
-                checked = enabled,
-                onCheckedChange = onCheckedChange,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                    checkedTrackColor = MaterialTheme.colorScheme.primary
-                )
-            )
-        }
-    }
-}
+
 
 @Composable
 private fun InfoCard() {
@@ -466,7 +390,6 @@ private fun GuardScreenConnectedPreview() {
         GuardScreenContent(
             uiState = GuardUiState(
                 vpnState = VpnState.CONNECTED,
-                alwaysOnVpn = true,
                 statistics = VpnStatistics(
                     bytesIn = 15_000_000,
                     bytesOut = 2_500_000,

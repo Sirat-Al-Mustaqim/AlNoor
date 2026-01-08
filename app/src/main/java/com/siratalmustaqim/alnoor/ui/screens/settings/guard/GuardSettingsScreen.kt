@@ -19,11 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.ShieldMoon
 import androidx.compose.material.icons.filled.Spa
-import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -115,35 +113,18 @@ private fun GuardSettingsScreenContent(
                 .padding(horizontal = 24.dp)
         ) {
             // Hero Section
-            HeroSection(isActive = uiState.alwaysOnVpn || uiState.alwaysOnProtection)
+            HeroSection(isActive = uiState.alwaysOnProtection)
 
             Spacer(modifier = Modifier.height(24.dp))
 
             // Settings Cards
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 GuardSettingCard(
-                    icon = Icons.Filled.VpnKey,
-                    title = stringResource(R.string.guard_settings_always_on_vpn),
-                    description = stringResource(R.string.guard_settings_always_on_vpn_desc),
-                    checked = uiState.alwaysOnVpn,
-                    onCheckedChange = uiState.onAlwaysOnVpnToggle
-                )
-
-                GuardSettingCard(
                     icon = Icons.Filled.Security,
                     title = stringResource(R.string.guard_settings_always_on_protection),
                     description = stringResource(R.string.guard_settings_always_on_protection_desc),
                     checked = uiState.alwaysOnProtection,
                     onCheckedChange = uiState.onAlwaysOnProtectionToggle
-                )
-
-                GuardSettingCard(
-                    icon = Icons.Filled.CloudOff,
-                    title = stringResource(R.string.guard_settings_offline_mode),
-                    description = stringResource(R.string.guard_settings_offline_mode_desc),
-                    checked = uiState.offlineMode,
-                    onCheckedChange = uiState.onOfflineModeToggle,
-                    isSecondary = true
                 )
             }
 
@@ -358,7 +339,6 @@ private fun GuardSettingsScreenPreview() {
         GuardSettingsScreenContent(
             uiStateFlow = MutableStateFlow(
                 GuardSettingsUiState(
-                    alwaysOnVpn = true,
                     alwaysOnProtection = true
                 )
             ),

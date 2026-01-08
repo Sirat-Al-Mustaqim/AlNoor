@@ -22,11 +22,9 @@ import javax.inject.Inject
 
 data class GuardUiState(
     val vpnState: VpnState = VpnState.DISCONNECTED,
-    val alwaysOnVpn: Boolean = false,
     val statistics: VpnStatistics = VpnStatistics(),
     val isConnecting: Boolean = false,
-    val onToggleVpn: () -> Unit = {},
-    val onAlwaysOnVpnChange: (Boolean) -> Unit = {}
+    val onToggleVpn: () -> Unit = {}
 ) {
     val isConnected: Boolean get() = vpnState == VpnState.CONNECTED
     val isDisconnected: Boolean get() = vpnState == VpnState.DISCONNECTED
@@ -58,23 +56,19 @@ class GuardViewModel @Inject constructor(
 
     val uiState: StateFlow<GuardUiState> = combine(
         guardRepository.vpnState,
-        guardRepository.alwaysOnVpn,
         guardRepository.vpnStatistics
-    ) { vpnState, alwaysOnVpn, statistics ->
+    ) { vpnState, statistics ->
         GuardUiState(
             vpnState = vpnState,
-            alwaysOnVpn = alwaysOnVpn,
             statistics = statistics,
             isConnecting = vpnState == VpnState.CONNECTING,
-            onToggleVpn = ::toggleVpn,
-            onAlwaysOnVpnChange = ::setAlwaysOnVpn
+            onToggleVpn = ::toggleVpn
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = GuardUiState(
-            onToggleVpn = ::toggleVpn,
-            onAlwaysOnVpnChange = ::setAlwaysOnVpn
+            onToggleVpn = ::toggleVpn
         )
     )
 
@@ -106,27 +100,7 @@ class GuardViewModel @Inject constructor(
         }
     }
 
-    private fun setAlwaysOnVpn(enabled: Boolean) {
-        viewModelScope.launch {
-            Timber.d("Setting always-on VPN preference: $enabled")
 
-            if (enabled) {
-                // Need VPN permission to enable always-on
-                val permissionIntent = guardRepository.prepareVpn()
-                if (permissionIntent != null) {
-                    _events.emit(GuardEvent.RequestVpnPermission(permissionIntent))
-                    return@launch
-                }
-            }
-
-            // Set the preference (and start VPN if enabling)
-            val result = guardRepository.setAlwaysOnVpn(enabled)
-            handleVpnResult(
-                result,
-                if (enabled) R.string.guard_always_on_enabled else R.string.guard_always_on_disabled
-            )
-        }
-    }
 
     fun onVpnPermissionResult(granted: Boolean) {
         viewModelScope.launch {
