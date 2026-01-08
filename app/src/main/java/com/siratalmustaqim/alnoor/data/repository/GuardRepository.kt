@@ -1,11 +1,14 @@
 package com.siratalmustaqim.alnoor.data.repository
 
+import android.app.admin.DevicePolicyManager
+import android.content.Context
 import android.content.Intent
 import com.siratalmustaqim.alnoor.data.preferences.SettingsDataStore
 import com.siratalmustaqim.alnoor.vpn.VpnManager
 import com.siratalmustaqim.alnoor.vpn.VpnResult
 import com.siratalmustaqim.alnoor.vpn.VpnState
 import com.siratalmustaqim.alnoor.vpn.VpnStatistics
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
@@ -19,8 +22,17 @@ import javax.inject.Singleton
 @Singleton
 class GuardRepository @Inject constructor(
     private val vpnManager: VpnManager,
-    private val settingsDataStore: SettingsDataStore
+    private val settingsDataStore: SettingsDataStore,
+    @param:ApplicationContext private val context: Context
 ) {
+
+    /**
+     * Check if the app is device owner (for always-on protection)
+     */
+    val isDeviceOwner: Boolean by lazy {
+        val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        dpm.isDeviceOwnerApp(context.packageName)
+    }
 
     /**
      * Get always-on protection state from settings

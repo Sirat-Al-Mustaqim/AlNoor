@@ -108,6 +108,7 @@
     <string name="guard_settings_title">Guard Settings</string>
     <string name="guard_settings_always_on_protection">Always-on Protection</string>
     <string name="guard_settings_always_on_protection_desc">Prevent disabling during prayer times &amp; focus sessions.</string>
+    <string name="guard_settings_device_owner_required">⚠️ Requires Device Owner mode. Set up via ADB for full protection.</string>
     <string name="guard_settings_status_active">STATUS: ACTIVE</string>
     <string name="guard_settings_status_inactive">STATUS: INACTIVE</string>
     <string name="guard_settings_guard_is_up">Your Guard is Up</string>

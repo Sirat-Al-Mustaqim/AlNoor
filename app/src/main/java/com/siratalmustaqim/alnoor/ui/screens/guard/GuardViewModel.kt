@@ -24,6 +24,7 @@ data class GuardUiState(
     val vpnState: VpnState = VpnState.DISCONNECTED,
     val statistics: VpnStatistics = VpnStatistics(),
     val alwaysOnProtection: Boolean = false,
+    val isDeviceOwner: Boolean = false,
     val isConnecting: Boolean = false,
     val onToggleVpn: () -> Unit = {},
     val onAlwaysOnProtectionChange: (Boolean) -> Unit = {}
@@ -65,6 +66,7 @@ class GuardViewModel @Inject constructor(
             vpnState = vpnState,
             statistics = statistics,
             alwaysOnProtection = alwaysOnProtection,
+            isDeviceOwner = guardRepository.isDeviceOwner,
             isConnecting = vpnState == VpnState.CONNECTING,
             onToggleVpn = ::toggleVpn,
             onAlwaysOnProtectionChange = ::setAlwaysOnProtection
@@ -73,6 +75,7 @@ class GuardViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = GuardUiState(
+            isDeviceOwner = guardRepository.isDeviceOwner,
             onToggleVpn = ::toggleVpn,
             onAlwaysOnProtectionChange = ::setAlwaysOnProtection
         )
