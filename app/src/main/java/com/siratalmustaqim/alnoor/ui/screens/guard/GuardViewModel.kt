@@ -40,8 +40,8 @@ data class GuardUiState(
 
 sealed class GuardEvent {
     data class RequestVpnPermission(val intent: Intent) : GuardEvent()
-    data class ShowError(@StringRes val messageRes: Int) : GuardEvent()
-    data class ShowMessage(@StringRes val messageRes: Int) : GuardEvent()
+    data class ShowError(@param:StringRes val messageRes: Int) : GuardEvent()
+    data class ShowMessage(@param:StringRes val messageRes: Int) : GuardEvent()
 }
 
 @HiltViewModel

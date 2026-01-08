@@ -1,5 +1,6 @@
 package com.siratalmustaqim.alnoor.ui.screens.guard
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -60,15 +61,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 import com.siratalmustaqim.alnoor.ui.theme.Gold
 import com.siratalmustaqim.alnoor.vpn.VpnState
 import com.siratalmustaqim.alnoor.vpn.VpnStatistics
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun GuardScreen(
     viewModel: GuardViewModel = hiltViewModel()
@@ -178,25 +178,25 @@ private fun ShieldButton(
     val scale by animateFloatAsState(
         targetValue = if (isConnected) 1.05f else 1f,
         animationSpec = tween(500),
-        label = stringResource(R.string.anim_label_scale)
+        label = "scale"
     )
 
     val backgroundColor by animateColorAsState(
         targetValue = if (isConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
         animationSpec = tween(500),
-        label = stringResource(R.string.anim_label_background_color)
+        label = "backgroundColor"
     )
 
     val borderColor by animateColorAsState(
         targetValue = if (isConnected) Gold else MaterialTheme.colorScheme.outline,
         animationSpec = tween(500),
-        label = stringResource(R.string.anim_label_border_color)
+        label = "borderColor"
     )
 
     val iconColor by animateColorAsState(
         targetValue = if (isConnected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
         animationSpec = tween(500),
-        label = stringResource(R.string.anim_label_icon_color)
+        label = "iconColor"
     )
 
     Box(
