@@ -237,13 +237,17 @@ class ContentBlockerVpnService : VpnService() {
         super.onTaskRemoved(rootIntent)
         Timber.d("Task removed, ensuring VPN continues running")
         
-        // If VPN is running, restart the service to keep it alive
+        // If VPN is running, ensure foreground notification stays active
         // This ensures the VPN stays active when app is swiped from recents
         if (isRunning) {
-            val restartIntent = Intent(this, ContentBlockerVpnService::class.java).apply {
-                action = ACTION_START
+            try {
+                // Re-establish foreground notification to keep service alive
+                val notification = createNotification()
+                startForeground(VpnConfig.NOTIFICATION_ID, notification)
+                Timber.d("Foreground notification re-established after task removal")
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to re-establish foreground notification")
             }
-            startForegroundService(restartIntent)
         }
     }
 
