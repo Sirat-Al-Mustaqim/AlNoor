@@ -129,20 +129,25 @@ class ContentBlockerVpnService : VpnService() {
      * for all DNS lookups. We DON'T route any traffic through the VPN tunnel -
      * the DNS queries go directly to Cloudflare through the normal network.
      * 
-     * The VPN is essentially a "DNS override" mechanism.
+     * Both IPv4 and IPv6 DNS servers are configured to ensure complete coverage.
      */
     private fun establishVpnConnection(): ParcelFileDescriptor? {
         return try {
             Builder()
                 .setSession(VpnConfig.SESSION_NAME)
-                // Assign a virtual IP address to the VPN interface
+                // Assign virtual IP addresses (both IPv4 and IPv6)
                 .addAddress(VpnConfig.VPN_ADDRESS, 32)
+                .addAddress(VpnConfig.VPN_ADDRESS_V6, 128)
                 // NO routes! We don't want to tunnel any traffic.
                 // Just set the DNS servers that the system should use.
-                .addDnsServer(VpnConfig.DNS_PRIMARY)   // Cloudflare 1.1.1.3 (family-safe)
-                .addDnsServer(VpnConfig.DNS_SECONDARY) // Cloudflare 1.0.0.3 (family-safe)
+                // IPv4 DNS (Cloudflare family-safe)
+                .addDnsServer(VpnConfig.DNS_PRIMARY)    // 1.1.1.3
+                .addDnsServer(VpnConfig.DNS_SECONDARY)  // 1.0.0.3
+                // IPv6 DNS (Cloudflare family-safe)
+                .addDnsServer(VpnConfig.DNS_PRIMARY_V6)   // 2606:4700:4700::1113
+                .addDnsServer(VpnConfig.DNS_SECONDARY_V6) // 2606:4700:4700::1003
                 .setMtu(VpnConfig.VPN_MTU)
-                .setBlocking(false) // Non-blocking since we're not processing packets
+                .setBlocking(false)
                 .establish()
         } catch (e: Exception) {
             Timber.e(e, "Error establishing VPN")
