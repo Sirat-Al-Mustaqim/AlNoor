@@ -233,6 +233,20 @@ class ContentBlockerVpnService : VpnService() {
         stopVpn()
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        Timber.d("Task removed, ensuring VPN continues running")
+        
+        // If VPN is running, restart the service to keep it alive
+        // This ensures the VPN stays active when app is swiped from recents
+        if (isRunning) {
+            val restartIntent = Intent(this, ContentBlockerVpnService::class.java).apply {
+                action = ACTION_START
+            }
+            startForegroundService(restartIntent)
+        }
+    }
+
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             VpnConfig.NOTIFICATION_CHANNEL_ID,
