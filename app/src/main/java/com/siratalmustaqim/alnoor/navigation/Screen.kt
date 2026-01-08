@@ -15,5 +15,4 @@ sealed class Screen(val route: String) {
     // Settings sub-screens
     data object QuranSettings : Screen("settings/quran")
     data object PrayerSettings : Screen("settings/prayer")
-    data object GuardSettings : Screen("settings/guard")
 }

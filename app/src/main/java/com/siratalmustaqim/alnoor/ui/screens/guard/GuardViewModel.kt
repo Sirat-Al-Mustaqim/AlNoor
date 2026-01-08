@@ -23,8 +23,10 @@ import javax.inject.Inject
 data class GuardUiState(
     val vpnState: VpnState = VpnState.DISCONNECTED,
     val statistics: VpnStatistics = VpnStatistics(),
+    val alwaysOnProtection: Boolean = false,
     val isConnecting: Boolean = false,
-    val onToggleVpn: () -> Unit = {}
+    val onToggleVpn: () -> Unit = {},
+    val onAlwaysOnProtectionChange: (Boolean) -> Unit = {}
 ) {
     val isConnected: Boolean get() = vpnState == VpnState.CONNECTED
     val isDisconnected: Boolean get() = vpnState == VpnState.DISCONNECTED
@@ -56,19 +58,23 @@ class GuardViewModel @Inject constructor(
 
     val uiState: StateFlow<GuardUiState> = combine(
         guardRepository.vpnState,
-        guardRepository.vpnStatistics
-    ) { vpnState, statistics ->
+        guardRepository.vpnStatistics,
+        guardRepository.alwaysOnProtection
+    ) { vpnState, statistics, alwaysOnProtection ->
         GuardUiState(
             vpnState = vpnState,
             statistics = statistics,
+            alwaysOnProtection = alwaysOnProtection,
             isConnecting = vpnState == VpnState.CONNECTING,
-            onToggleVpn = ::toggleVpn
+            onToggleVpn = ::toggleVpn,
+            onAlwaysOnProtectionChange = ::setAlwaysOnProtection
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = GuardUiState(
-            onToggleVpn = ::toggleVpn
+            onToggleVpn = ::toggleVpn,
+            onAlwaysOnProtectionChange = ::setAlwaysOnProtection
         )
     )
 
@@ -101,6 +107,13 @@ class GuardViewModel @Inject constructor(
     }
 
 
+
+    private fun setAlwaysOnProtection(enabled: Boolean) {
+        viewModelScope.launch {
+            Timber.d("Setting always-on protection: $enabled")
+            guardRepository.setAlwaysOnProtection(enabled)
+        }
+    }
 
     fun onVpnPermissionResult(granted: Boolean) {
         viewModelScope.launch {

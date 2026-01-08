@@ -12,7 +12,6 @@ import com.siratalmustaqim.alnoor.ui.screens.more.MoreScreen
 import com.siratalmustaqim.alnoor.ui.screens.qibla.QiblaScreen
 import com.siratalmustaqim.alnoor.ui.screens.quran.QuranScreen
 import com.siratalmustaqim.alnoor.ui.screens.settings.SettingsScreen
-import com.siratalmustaqim.alnoor.ui.screens.settings.guard.GuardSettingsScreen
 import com.siratalmustaqim.alnoor.ui.screens.settings.prayer.PrayerSettingsScreen
 import com.siratalmustaqim.alnoor.ui.screens.settings.quran.QuranSettingsScreen
 
@@ -60,7 +59,6 @@ fun BottomNavGraph(
                 onBackClick = { navController.popBackStack() },
                 onQuranSettingsClick = { navController.navigate(Screen.QuranSettings.route) },
                 onPrayerSettingsClick = { navController.navigate(Screen.PrayerSettings.route) },
-                onGuardSettingsClick = { navController.navigate(Screen.GuardSettings.route) }
             )
         }
 
@@ -70,9 +68,6 @@ fun BottomNavGraph(
         }
         composable(route = Screen.PrayerSettings.route) {
             PrayerSettingsScreen(onBackClick = { navController.popBackStack() })
-        }
-        composable(route = Screen.GuardSettings.route) {
-            GuardSettingsScreen(onBackClick = { navController.popBackStack() })
         }
     }
 }

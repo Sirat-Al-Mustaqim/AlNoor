@@ -68,7 +68,6 @@ fun SettingsScreen(
     onBackClick: () -> Unit = {},
     onQuranSettingsClick: () -> Unit = {},
     onPrayerSettingsClick: () -> Unit = {},
-    onGuardSettingsClick: () -> Unit = {},
     onAppearanceClick: () -> Unit = {},
     onLanguageClick: () -> Unit = {},
     onAboutClick: () -> Unit = {}
@@ -119,8 +118,7 @@ fun SettingsScreen(
             // Primary Settings Cards
             PrimarySettingsSection(
                 onQuranClick = onQuranSettingsClick,
-                onPrayerClick = onPrayerSettingsClick,
-                onGuardClick = onGuardSettingsClick
+                onPrayerClick = onPrayerSettingsClick
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -196,8 +194,7 @@ private fun HeroSection() {
 @Composable
 private fun PrimarySettingsSection(
     onQuranClick: () -> Unit,
-    onPrayerClick: () -> Unit,
-    onGuardClick: () -> Unit
+    onPrayerClick: () -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         // Quran Settings Card
@@ -214,15 +211,6 @@ private fun PrimarySettingsSection(
             title = stringResource(R.string.settings_prayer_title),
             subtitle = stringResource(R.string.settings_prayer_subtitle),
             onClick = onPrayerClick
-        )
-
-        // Guard Settings Card (highlighted)
-        PrimarySettingsCard(
-            icon = Icons.Filled.Security,
-            title = stringResource(R.string.settings_guard_title),
-            subtitle = stringResource(R.string.settings_guard_subtitle),
-            onClick = onGuardClick,
-            isHighlighted = true
         )
     }
 }
