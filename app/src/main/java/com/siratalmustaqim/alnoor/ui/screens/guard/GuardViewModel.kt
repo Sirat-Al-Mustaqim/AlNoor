@@ -95,12 +95,12 @@ class GuardViewModel @Inject constructor(
                     return@launch
                 }
 
-                // Start VPN
-                val result = guardRepository.setAlwaysOnVpn(true)
+                // Start VPN (not always-on, just immediate start)
+                val result = guardRepository.startVpn()
                 handleVpnResult(result, R.string.guard_connected_message)
             } else {
                 // Stop VPN
-                val result = guardRepository.setAlwaysOnVpn(false)
+                val result = guardRepository.stopVpn()
                 handleVpnResult(result, R.string.guard_disconnected_message)
             }
         }
@@ -108,9 +108,10 @@ class GuardViewModel @Inject constructor(
 
     private fun setAlwaysOnVpn(enabled: Boolean) {
         viewModelScope.launch {
-            Timber.d("Setting always-on VPN: $enabled")
+            Timber.d("Setting always-on VPN preference: $enabled")
 
             if (enabled) {
+                // Need VPN permission to enable always-on
                 val permissionIntent = guardRepository.prepareVpn()
                 if (permissionIntent != null) {
                     _events.emit(GuardEvent.RequestVpnPermission(permissionIntent))
@@ -118,6 +119,7 @@ class GuardViewModel @Inject constructor(
                 }
             }
 
+            // Set the preference (and start VPN if enabling)
             val result = guardRepository.setAlwaysOnVpn(enabled)
             handleVpnResult(
                 result,
@@ -130,7 +132,7 @@ class GuardViewModel @Inject constructor(
         viewModelScope.launch {
             if (granted) {
                 Timber.d("VPN permission granted, starting VPN")
-                val result = guardRepository.setAlwaysOnVpn(true)
+                val result = guardRepository.startVpn()
                 handleVpnResult(result, R.string.guard_connected_message)
             } else {
                 Timber.d("VPN permission denied")

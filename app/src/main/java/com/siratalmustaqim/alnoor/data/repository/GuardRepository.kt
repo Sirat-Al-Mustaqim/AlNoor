@@ -23,7 +23,7 @@ class GuardRepository @Inject constructor(
 ) {
 
     /**
-     * Get always-on VPN state from settings
+     * Get always-on VPN state from settings (auto-start on boot)
      */
     val alwaysOnVpn: Flow<Boolean> = settingsDataStore.alwaysOnVpn
 
@@ -48,22 +48,41 @@ class GuardRepository @Inject constructor(
     val vpnStatistics: StateFlow<VpnStatistics> = vpnManager.statistics
 
     /**
-     * Enable or disable always-on VPN
-     * @param enabled Whether to enable VPN
+     * Start the VPN service (immediate action)
      * @return VpnResult indicating success or error
      */
-    suspend fun setAlwaysOnVpn(enabled: Boolean): VpnResult {
-        Timber.d("Setting always-on VPN: $enabled")
+    fun startVpn(): VpnResult {
+        Timber.d("Starting VPN")
+        return vpnManager.startVpn()
+    }
 
-        // Update settings first
+    /**
+     * Stop the VPN service (immediate action)
+     * @return VpnResult indicating success or error
+     */
+    fun stopVpn(): VpnResult {
+        Timber.d("Stopping VPN")
+        return vpnManager.stopVpn()
+    }
+
+    /**
+     * Set always-on VPN preference (auto-start on device boot)
+     * If enabling, also starts VPN immediately
+     * If disabling, does NOT stop VPN - just changes boot behavior
+     */
+    suspend fun setAlwaysOnVpn(enabled: Boolean): VpnResult {
+        Timber.d("Setting always-on VPN preference: $enabled")
+        
+        // Update settings preference
         settingsDataStore.updateAlwaysOnVpn(enabled)
 
-        // Start or stop VPN service
-        return if (enabled) {
-            vpnManager.startVpn()
-        } else {
-            vpnManager.stopVpn()
+        // If enabling, also start VPN immediately
+        if (enabled) {
+            return vpnManager.startVpn()
         }
+        
+        // If disabling, don't stop VPN - just save the preference
+        return VpnResult.Success
     }
 
     /**
@@ -72,9 +91,6 @@ class GuardRepository @Inject constructor(
     suspend fun setAlwaysOnProtection(enabled: Boolean) {
         Timber.d("Setting always-on protection: $enabled")
         settingsDataStore.updateAlwaysOnProtection(enabled)
-
-        // If always-on is enabled and VPN is enabled, ensure VPN stays running
-        // This could be enhanced with additional logic to prevent VPN from being disabled
     }
 
     /**
@@ -84,9 +100,6 @@ class GuardRepository @Inject constructor(
     suspend fun setOfflineMode(enabled: Boolean) {
         Timber.d("Setting offline mode: $enabled")
         settingsDataStore.updateOfflineMode(enabled)
-
-        // Offline mode would require additional packet filtering logic
-        // For now, we just store the preference
     }
 
     /**
