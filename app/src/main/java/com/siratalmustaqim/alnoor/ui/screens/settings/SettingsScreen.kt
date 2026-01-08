@@ -1,6 +1,5 @@
 package com.siratalmustaqim.alnoor.ui.screens.settings
 
-import com.siratalmustaqim.alnoor.BuildConfig
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
@@ -204,7 +204,7 @@ private fun PrimarySettingsSection(
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         // Quran Settings Card
         PrimarySettingsCard(
-            icon = Icons.Filled.MenuBook,
+            icon = Icons.AutoMirrored.Filled.MenuBook,
             title = stringResource(R.string.settings_quran_title),
             subtitle = stringResource(R.string.settings_quran_subtitle),
             onClick = onQuranClick
