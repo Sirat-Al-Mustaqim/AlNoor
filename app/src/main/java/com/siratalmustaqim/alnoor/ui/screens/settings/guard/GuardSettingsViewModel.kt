@@ -64,7 +64,7 @@ class GuardSettingsViewModel @Inject constructor(
     private fun toggleAlwaysOnVpn(enabled: Boolean) {
         viewModelScope.launch {
             Timber.d("Toggling always-on VPN: $enabled")
-            
+
             if (enabled) {
                 // Check VPN permission first
                 val permissionIntent = guardRepository.prepareVpn()
@@ -74,14 +74,13 @@ class GuardSettingsViewModel @Inject constructor(
                     return@launch
                 }
             }
-            
+
             // Enable or disable VPN
-            val result = guardRepository.setAlwaysOnVpn(enabled)
-            
-            when (result) {
+            when (val result = guardRepository.setAlwaysOnVpn(enabled)) {
                 is VpnResult.Success -> {
                     Timber.d("Always-on VPN toggled successfully")
                 }
+
                 is VpnResult.Error -> {
                     Timber.e("Failed to toggle always-on VPN: ${result.message}")
                     _events.emit(GuardSettingsEvent.ShowError(result.message))

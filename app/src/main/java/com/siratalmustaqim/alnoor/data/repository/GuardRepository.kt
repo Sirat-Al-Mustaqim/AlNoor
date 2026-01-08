@@ -21,32 +21,32 @@ class GuardRepository @Inject constructor(
     private val vpnManager: VpnManager,
     private val settingsDataStore: SettingsDataStore
 ) {
-    
+
     /**
      * Get always-on VPN state from settings
      */
     val alwaysOnVpn: Flow<Boolean> = settingsDataStore.alwaysOnVpn
-    
+
     /**
      * Get always-on protection state from settings
      */
     val alwaysOnProtection: Flow<Boolean> = settingsDataStore.alwaysOnProtection
-    
+
     /**
      * Get offline mode state from settings
      */
     val offlineMode: Flow<Boolean> = settingsDataStore.offlineMode
-    
+
     /**
      * Get current VPN state
      */
     val vpnState: StateFlow<VpnState> = vpnManager.vpnState
-    
+
     /**
      * Get VPN statistics
      */
     val vpnStatistics: StateFlow<VpnStatistics> = vpnManager.statistics
-    
+
     /**
      * Enable or disable always-on VPN
      * @param enabled Whether to enable VPN
@@ -54,10 +54,10 @@ class GuardRepository @Inject constructor(
      */
     suspend fun setAlwaysOnVpn(enabled: Boolean): VpnResult {
         Timber.d("Setting always-on VPN: $enabled")
-        
+
         // Update settings first
         settingsDataStore.updateAlwaysOnVpn(enabled)
-        
+
         // Start or stop VPN service
         return if (enabled) {
             vpnManager.startVpn()
@@ -65,18 +65,18 @@ class GuardRepository @Inject constructor(
             vpnManager.stopVpn()
         }
     }
-    
+
     /**
      * Enable or disable always-on protection
      */
     suspend fun setAlwaysOnProtection(enabled: Boolean) {
         Timber.d("Setting always-on protection: $enabled")
         settingsDataStore.updateAlwaysOnProtection(enabled)
-        
+
         // If always-on is enabled and VPN is enabled, ensure VPN stays running
         // This could be enhanced with additional logic to prevent VPN from being disabled
     }
-    
+
     /**
      * Enable or disable offline mode
      * Offline mode blocks all internet traffic
@@ -84,11 +84,11 @@ class GuardRepository @Inject constructor(
     suspend fun setOfflineMode(enabled: Boolean) {
         Timber.d("Setting offline mode: $enabled")
         settingsDataStore.updateOfflineMode(enabled)
-        
+
         // Offline mode would require additional packet filtering logic
         // For now, we just store the preference
     }
-    
+
     /**
      * Prepare VPN - check if permission is granted
      * @return Intent to request permission, or null if granted
@@ -96,7 +96,7 @@ class GuardRepository @Inject constructor(
     fun prepareVpn(): Intent? {
         return vpnManager.prepareVpn()
     }
-    
+
     /**
      * Check if VPN is currently connected
      */

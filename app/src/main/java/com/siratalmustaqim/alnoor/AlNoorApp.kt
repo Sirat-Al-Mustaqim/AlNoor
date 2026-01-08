@@ -6,10 +6,10 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class AlNoorApp : Application() {
-    
+
     override fun onCreate() {
         super.onCreate()
-        
+
         // Initialize Timber for logging
         if (BuildConfig.DEBUG) {
             // Plant a debug tree for debug builds

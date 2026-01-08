@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.PlayArrow
@@ -29,7 +30,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,15 +65,15 @@ fun HomeScreen() {
     ) {
         // Salah Times Section
         SalahTimesSection()
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         // Surah of the Day Section
         SurahOfTheDaySection()
-        
+
         // Dua of the Day Section
         DuaOfTheDaySection()
-        
+
         // Bottom spacing for navigation bar
         Spacer(modifier = Modifier.height(100.dp))
     }
@@ -113,10 +113,10 @@ private fun SalahTimesSection() {
                 )
             }
         }
-        
+
         // Hero Card: Current Prayer
         CurrentPrayerHeroCard()
-        
+
         // Prayer List Card
         PrayerListCard()
     }
@@ -145,7 +145,7 @@ private fun CurrentPrayerHeroCard() {
                 .align(Alignment.TopEnd)
                 .border(1.dp, Gold.copy(alpha = 0.1f), CircleShape)
         )
-        
+
         // Content
         Column(
             modifier = Modifier
@@ -173,7 +173,7 @@ private fun CurrentPrayerHeroCard() {
                 color = White.copy(alpha = 0.8f)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Next prayer countdown
             Row(
                 modifier = Modifier
@@ -238,7 +238,7 @@ private fun PrayerTimeRow(name: String, time: String, isActive: Boolean) {
     } else {
         Modifier.fillMaxWidth()
     }
-    
+
     Row(
         modifier = bgModifier.padding(vertical = 12.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -256,7 +256,7 @@ private fun PrayerTimeRow(name: String, time: String, isActive: Boolean) {
             )
             if (isActive) {
                 Icon(
-                    imageVector = Icons.Filled.VolumeUp,
+                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(16.dp)
@@ -284,7 +284,7 @@ private fun SurahOfTheDaySection() {
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
-        
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -327,12 +327,12 @@ private fun SurahOfTheDaySection() {
                         )
                     }
                 }
-                
+
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 16.dp),
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                 )
-                
+
                 // Arabic text
                 Text(
                     text = stringResource(R.string.home_surah_verse),
@@ -342,9 +342,9 @@ private fun SurahOfTheDaySection() {
                     lineHeight = 40.sp,
                     modifier = Modifier.fillMaxWidth()
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Translation
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Box(
@@ -361,9 +361,9 @@ private fun SurahOfTheDaySection() {
                         modifier = Modifier.padding(start = 12.dp)
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Read button
                 Button(
                     onClick = { },
@@ -395,7 +395,7 @@ private fun DuaOfTheDaySection() {
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
-        
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -423,7 +423,7 @@ private fun DuaOfTheDaySection() {
                         )
                     )
             )
-            
+
             Column(
                 modifier = Modifier.padding(24.dp)
             ) {
@@ -446,9 +446,9 @@ private fun DuaOfTheDaySection() {
                         fontWeight = FontWeight.Bold
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Arabic dua
                 Text(
                     text = stringResource(R.string.home_dua_arabic),
@@ -458,9 +458,9 @@ private fun DuaOfTheDaySection() {
                     lineHeight = 36.sp,
                     modifier = Modifier.fillMaxWidth()
                 )
-                
+
                 Spacer(modifier = Modifier.height(12.dp))
-                
+
                 // Translation
                 Text(
                     text = stringResource(R.string.home_dua_translation),
@@ -469,9 +469,9 @@ private fun DuaOfTheDaySection() {
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
-                
+
                 Spacer(modifier = Modifier.height(20.dp))
-                
+
                 // Action buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -484,7 +484,12 @@ private fun DuaOfTheDaySection() {
                             contentColor = White
                         ),
                         border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
-                            brush = Brush.linearGradient(listOf(White.copy(alpha = 0.2f), White.copy(alpha = 0.2f)))
+                            brush = Brush.linearGradient(
+                                listOf(
+                                    White.copy(alpha = 0.2f),
+                                    White.copy(alpha = 0.2f)
+                                )
+                            )
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -503,7 +508,12 @@ private fun DuaOfTheDaySection() {
                             contentColor = White
                         ),
                         border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
-                            brush = Brush.linearGradient(listOf(White.copy(alpha = 0.2f), White.copy(alpha = 0.2f)))
+                            brush = Brush.linearGradient(
+                                listOf(
+                                    White.copy(alpha = 0.2f),
+                                    White.copy(alpha = 0.2f)
+                                )
+                            )
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -522,7 +532,8 @@ private fun DuaOfTheDaySection() {
 }
 
 @Composable
-private fun Modifier.width(dp: androidx.compose.ui.unit.Dp): Modifier = this.then(Modifier.size(width = dp, height = 0.dp))
+private fun Modifier.width(dp: androidx.compose.ui.unit.Dp): Modifier =
+    this.then(Modifier.size(width = dp, height = 0.dp))
 
 @Preview(showBackground = true)
 @Composable

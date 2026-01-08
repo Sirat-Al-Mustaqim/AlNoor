@@ -116,9 +116,9 @@ private fun GuardSettingsScreenContent(
         ) {
             // Hero Section
             HeroSection(isActive = uiState.alwaysOnVpn || uiState.alwaysOnProtection)
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             // Settings Cards
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 GuardSettingCard(
@@ -128,7 +128,7 @@ private fun GuardSettingsScreenContent(
                     checked = uiState.alwaysOnVpn,
                     onCheckedChange = uiState.onAlwaysOnVpnToggle
                 )
-                
+
                 GuardSettingCard(
                     icon = Icons.Filled.Security,
                     title = stringResource(R.string.guard_settings_always_on_protection),
@@ -136,7 +136,7 @@ private fun GuardSettingsScreenContent(
                     checked = uiState.alwaysOnProtection,
                     onCheckedChange = uiState.onAlwaysOnProtectionToggle
                 )
-                
+
                 GuardSettingCard(
                     icon = Icons.Filled.CloudOff,
                     title = stringResource(R.string.guard_settings_offline_mode),
@@ -146,12 +146,12 @@ private fun GuardSettingsScreenContent(
                     isSecondary = true
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(40.dp))
-            
+
             // Footer
             FooterSection()
-            
+
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
@@ -208,22 +208,26 @@ private fun HeroSection(isActive: Boolean) {
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(20.dp))
-        
+
         // Status
         Text(
-            text = if (isActive) stringResource(R.string.guard_settings_status_active) else stringResource(R.string.guard_settings_status_inactive),
+            text = if (isActive) stringResource(R.string.guard_settings_status_active) else stringResource(
+                R.string.guard_settings_status_inactive
+            ),
             style = MaterialTheme.typography.labelSmall,
             color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Medium,
             letterSpacing = 2.sp
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         Text(
-            text = if (isActive) stringResource(R.string.guard_settings_guard_is_up) else stringResource(R.string.guard_settings_guard_is_down),
+            text = if (isActive) stringResource(R.string.guard_settings_guard_is_up) else stringResource(
+                R.string.guard_settings_guard_is_down
+            ),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -260,9 +264,9 @@ private fun GuardSettingCard(
                     .size(48.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isSecondary) 
-                            MaterialTheme.colorScheme.surfaceVariant 
-                        else 
+                        if (isSecondary)
+                            MaterialTheme.colorScheme.surfaceVariant
+                        else
                             MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                     ),
                 contentAlignment = Alignment.Center
@@ -270,16 +274,16 @@ private fun GuardSettingCard(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = if (isSecondary) 
-                        MaterialTheme.colorScheme.onSurfaceVariant 
-                    else 
+                    tint = if (isSecondary)
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    else
                         Gold,
                     modifier = Modifier.size(24.dp)
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             // Text content
             Column(
                 modifier = Modifier.weight(1f)
@@ -298,9 +302,9 @@ private fun GuardSettingCard(
                     lineHeight = 20.sp
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             // Switch
             Switch(
                 checked = checked,

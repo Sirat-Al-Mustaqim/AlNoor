@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object VpnModule {
-    
+
     @Provides
     @Singleton
     fun provideVpnManager(
@@ -25,7 +25,7 @@ object VpnModule {
     ): VpnManager {
         return VpnManager(context)
     }
-    
+
     @Provides
     @Singleton
     fun provideGuardRepository(

@@ -85,7 +85,10 @@ private fun QuranSettingsScreenContent(
                 value = uiState.ayahTextSize,
                 onValueChange = uiState.onTextSizeChange,
                 valueRange = 14f..32f,
-                valueLabel = stringResource(R.string.quran_settings_ayah_text_size, uiState.ayahTextSize.toInt())
+                valueLabel = stringResource(
+                    R.string.quran_settings_ayah_text_size,
+                    uiState.ayahTextSize.toInt()
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))

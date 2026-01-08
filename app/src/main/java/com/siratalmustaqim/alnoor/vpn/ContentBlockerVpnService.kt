@@ -31,98 +31,98 @@ import java.nio.ByteBuffer
  */
 @SuppressLint("VpnServicePolicy")
 class ContentBlockerVpnService : VpnService() {
-    
+
     private var vpnInterface: ParcelFileDescriptor? = null
     private var serviceScope: CoroutineScope? = null
     private var vpnJob: Job? = null
     private var statisticsJob: Job? = null
     private val packetHandler = PacketHandler()
     private var isRunning = false
-    
+
     companion object {
         const val VPN_ID = "${BuildConfig.APPLICATION_ID}.vpn"
         const val ACTION_START = "$VPN_ID.START"
         const val ACTION_STOP = "$VPN_ID.STOP"
-        
+
         // Broadcast actions
         const val ACTION_STATE_CHANGED = "$VPN_ID.STATE_CHANGED"
         const val ACTION_STATISTICS_CHANGED = "$VPN_ID.STATISTICS_CHANGED"
-        
+
         // Extras
         const val EXTRA_STATE = "state"
         const val EXTRA_STATISTICS = "statistics"
-        
+
         // Statistics update interval
         private const val STATISTICS_UPDATE_INTERVAL_MS = 1000L
     }
-    
+
     override fun onCreate() {
         super.onCreate()
         Timber.d("ContentBlockerVpnService created")
         serviceScope = CoroutineScope(Dispatchers.IO)
     }
-    
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("ContentBlockerVpnService onStartCommand")
-        
+
         when (intent?.action) {
             ACTION_START -> startVpn()
             ACTION_STOP -> stopVpn()
         }
-        
+
         return START_STICKY
     }
-    
+
     private fun startVpn() {
         if (isRunning) {
             Timber.d("VPN already running")
             return
         }
-        
+
         try {
             Timber.d("Starting VPN service")
-            
+
             // Create notification channel
             createNotificationChannel()
-            
+
             // Start foreground service with notification
             val notification = createNotification()
             startForeground(VpnConfig.NOTIFICATION_ID, notification)
-            
+
             // Reset statistics
             packetHandler.resetStatistics()
-            
+
             // Establish VPN connection
             vpnInterface = establishVpnConnection()
-            
+
             if (vpnInterface != null) {
                 isRunning = true
                 broadcastStateChange(VpnState.CONNECTED)
-                
+
                 // Start packet processing in coroutine
                 vpnJob = serviceScope?.launch {
                     processPackets()
                 }
-                
+
                 // Start statistics broadcasting
                 statisticsJob = serviceScope?.launch {
                     broadcastStatisticsPeriodically()
                 }
-                
+
                 Timber.d("VPN started successfully")
             } else {
                 Timber.e("Failed to establish VPN connection")
                 broadcastStateChange(VpnState.ERROR)
                 stopSelf()
             }
-            
+
         } catch (e: Exception) {
             Timber.e(e, "Error starting VPN")
             broadcastStateChange(VpnState.ERROR)
             stopSelf()
         }
     }
-    
+
     private fun establishVpnConnection(): ParcelFileDescriptor? {
         return try {
             Builder()
@@ -139,30 +139,30 @@ class ContentBlockerVpnService : VpnService() {
             null
         }
     }
-    
+
     private fun processPackets() {
         val vpnFd = vpnInterface ?: return
         val inputStream = FileInputStream(vpnFd.fileDescriptor)
         val outputStream = FileOutputStream(vpnFd.fileDescriptor)
         val buffer = ByteArray(VpnConfig.VPN_MTU)
-        
+
         try {
             while (isRunning && serviceScope?.isActive == true) {
                 // Read packet from VPN interface using blocking I/O
                 val length = inputStream.read(buffer)
-                
+
                 if (length > 0) {
                     // Wrap buffer in ByteBuffer for processing
                     val packet = ByteBuffer.wrap(buffer, 0, length)
-                    
+
                     // Process the packet
                     val processedPacket = packetHandler.processPacket(packet)
-                    
+
                     // Write processed packet back to VPN interface
                     if (processedPacket != null) {
                         val data = ByteArray(processedPacket.remaining())
                         processedPacket.get(data)
-                        
+
                         // Write all bytes using blocking I/O
                         outputStream.write(data)
                         packetHandler.recordBytesSent(data.size.toLong())
@@ -177,36 +177,36 @@ class ContentBlockerVpnService : VpnService() {
             Timber.d("Packet processing stopped")
         }
     }
-    
+
     private suspend fun broadcastStatisticsPeriodically() {
         while (isRunning && serviceScope?.isActive == true) {
             delay(STATISTICS_UPDATE_INTERVAL_MS)
-            
+
             if (isRunning) {
                 val stats = packetHandler.getStatistics()
                 broadcastStatistics(stats)
             }
         }
     }
-    
+
     private fun broadcastStatistics(stats: VpnStatistics) {
         val intent = Intent(ACTION_STATISTICS_CHANGED).apply {
             putExtra(EXTRA_STATISTICS, stats)
         }
         sendBroadcast(intent)
     }
-    
+
     private fun stopVpn() {
         Timber.d("Stopping VPN service")
-        
+
         isRunning = false
-        
+
         // Cancel coroutine jobs
         statisticsJob?.cancel()
         statisticsJob = null
         vpnJob?.cancel()
         vpnJob = null
-        
+
         // Close VPN interface
         try {
             vpnInterface?.close()
@@ -214,17 +214,17 @@ class ContentBlockerVpnService : VpnService() {
             Timber.e(e, "Error closing VPN interface")
         }
         vpnInterface = null
-        
+
         // Broadcast state change
         broadcastStateChange(VpnState.DISCONNECTED)
-        
+
         // Stop foreground service
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
-        
+
         Timber.d("VPN service stopped")
     }
-    
+
     /**
      * Broadcast VPN state change to listeners
      */
@@ -234,24 +234,24 @@ class ContentBlockerVpnService : VpnService() {
         }
         sendBroadcast(intent)
     }
-    
+
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("ContentBlockerVpnService destroyed")
-        
+
         stopVpn()
-        
+
         // Cancel coroutine scope
         serviceScope?.cancel()
         serviceScope = null
     }
-    
+
     override fun onRevoke() {
         super.onRevoke()
         Timber.d("VPN permission revoked")
         stopVpn()
     }
-    
+
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             VpnConfig.NOTIFICATION_CHANNEL_ID,
@@ -265,19 +265,19 @@ class ContentBlockerVpnService : VpnService() {
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager?.createNotificationChannel(channel)
     }
-    
+
     private fun createNotification(): Notification {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        
+
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
-        
+
         return NotificationCompat.Builder(this, VpnConfig.NOTIFICATION_CHANNEL_ID)
             .setContentTitle("AlNoor Content Guard Active")
             .setContentText("Your content is being filtered")

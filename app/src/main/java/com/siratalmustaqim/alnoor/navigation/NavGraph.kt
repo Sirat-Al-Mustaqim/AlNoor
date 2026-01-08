@@ -47,7 +47,7 @@ fun BottomNavGraph(
                 onSettingsClick = { navController.navigate(Screen.Settings.route) }
             )
         }
-        
+
         // Screens from More menu
         composable(route = Screen.Quran.route) {
             QuranScreen()
@@ -63,7 +63,7 @@ fun BottomNavGraph(
                 onGuardSettingsClick = { navController.navigate(Screen.GuardSettings.route) }
             )
         }
-        
+
         // Settings sub-screens
         composable(route = Screen.QuranSettings.route) {
             QuranSettingsScreen(onBackClick = { navController.popBackStack() })

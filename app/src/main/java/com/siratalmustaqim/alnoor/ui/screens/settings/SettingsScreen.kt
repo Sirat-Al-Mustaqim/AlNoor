@@ -6,13 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,7 +27,6 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Security
@@ -48,7 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -115,30 +113,30 @@ fun SettingsScreen(
         ) {
             // Hero Title Section
             HeroSection()
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             // Primary Settings Cards
             PrimarySettingsSection(
                 onQuranClick = onQuranSettingsClick,
                 onPrayerClick = onPrayerSettingsClick,
                 onGuardClick = onGuardSettingsClick
             )
-            
+
             Spacer(modifier = Modifier.height(32.dp))
-            
+
             // General Settings Section
             GeneralSettingsSection(
                 onAppearanceClick = onAppearanceClick,
                 onLanguageClick = onLanguageClick,
                 onAboutClick = onAboutClick
             )
-            
+
             Spacer(modifier = Modifier.height(32.dp))
-            
+
             // Footer
             FooterSection()
-            
+
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
@@ -174,9 +172,9 @@ private fun HeroSection() {
                 modifier = Modifier.size(24.dp)
             )
         }
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         // Title with colored span
         Text(
             text = buildAnnotatedString {
@@ -209,7 +207,7 @@ private fun PrimarySettingsSection(
             subtitle = stringResource(R.string.settings_quran_subtitle),
             onClick = onQuranClick
         )
-        
+
         // Prayer Settings Card
         PrimarySettingsCard(
             icon = Icons.Filled.Schedule,
@@ -217,7 +215,7 @@ private fun PrimarySettingsSection(
             subtitle = stringResource(R.string.settings_prayer_subtitle),
             onClick = onPrayerClick
         )
-        
+
         // Guard Settings Card (highlighted)
         PrimarySettingsCard(
             icon = Icons.Filled.Security,
@@ -264,7 +262,7 @@ private fun PrimarySettingsCard(
                         )
                 )
             }
-            
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -300,7 +298,7 @@ private fun PrimarySettingsCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
+
                 // Placeholder for image (using colored box for now)
                 Box(
                     modifier = Modifier
@@ -343,7 +341,7 @@ private fun GeneralSettingsSection(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
         )
-        
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -416,7 +414,7 @@ private fun GeneralSettingsRow(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
-        
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -469,7 +467,7 @@ private fun FooterSection() {
                 letterSpacing = 1.sp
             )
         }
-        
+
         // Version
         Text(
             text = stringResource(R.string.settings_app_version, BuildConfig.VERSION_NAME),

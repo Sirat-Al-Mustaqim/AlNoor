@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.DoNotDisturbOn
 import androidx.compose.material.icons.filled.EditLocation
 import androidx.compose.material.icons.filled.LocationOn
@@ -130,7 +131,7 @@ private fun PrayerSettingsScreenContent(
                 onLocationClick = uiState.onLocationClick,
                 onAutoDetectToggle = uiState.onAutoDetectToggle
             )
-            
+
             // Audio Preferences Section
             AudioSection(
                 volume = uiState.adhanVolume,
@@ -142,10 +143,10 @@ private fun PrayerSettingsScreenContent(
                 onSilentToggle = uiState.onSilentDuringPrayerToggle,
                 onEarlyReminderToggle = uiState.onEarlyReminderToggle
             )
-            
+
             // Calculation Methods Section
             CalculationSection()
-            
+
             Spacer(modifier = Modifier.height(60.dp))
         }
     }
@@ -183,7 +184,7 @@ private fun LocationSection(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(Icons.Filled.LocationOn, stringResource(R.string.prayer_settings_location))
-        
+
         // Location Card
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -208,7 +209,7 @@ private fun LocationSection(
                             )
                         )
                 )
-                
+
                 Column(modifier = Modifier.padding(20.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -237,7 +238,7 @@ private fun LocationSection(
                                 )
                             }
                         }
-                        
+
                         IconButton(
                             onClick = onLocationClick,
                             modifier = Modifier
@@ -252,12 +253,12 @@ private fun LocationSection(
                             )
                         }
                     }
-                    
+
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 16.dp),
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
-                    
+
                     // Auto-detect toggle
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -289,7 +290,7 @@ private fun LocationSection(
                 }
             }
         }
-        
+
         // Privacy notice
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -333,8 +334,8 @@ private fun AudioSection(
     onEarlyReminderToggle: (Boolean) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionHeader(Icons.Filled.VolumeUp, "Audio Preferences")
-        
+        SectionHeader(Icons.AutoMirrored.Filled.VolumeUp, "Audio Preferences")
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -358,7 +359,10 @@ private fun AudioSection(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = stringResource(R.string.prayer_settings_volume_percentage, (volume * 100).toInt()),
+                            text = stringResource(
+                                R.string.prayer_settings_volume_percentage,
+                                (volume * 100).toInt()
+                            ),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -375,9 +379,9 @@ private fun AudioSection(
                         )
                     )
                 }
-                
+
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                
+
                 // Reciter Selection
                 Row(
                     modifier = Modifier
@@ -424,9 +428,9 @@ private fun AudioSection(
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
+
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                
+
                 // Silent During Prayer
                 SettingsToggleRow(
                     icon = Icons.Filled.DoNotDisturbOn,
@@ -435,9 +439,9 @@ private fun AudioSection(
                     checked = silentDuringPrayer,
                     onCheckedChange = onSilentToggle
                 )
-                
+
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                
+
                 // Early Reminder
                 SettingsToggleRow(
                     icon = Icons.Filled.NotificationsActive,
@@ -513,7 +517,7 @@ private fun SettingsToggleRow(
 private fun CalculationSection() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(Icons.Filled.Tune, "Calculation Methods")
-        
+
         // Juristic Method
         Card(
             modifier = Modifier
@@ -564,7 +568,7 @@ private fun CalculationSection() {
                 }
             }
         }
-        
+
         // Time Correction
         Card(
             modifier = Modifier

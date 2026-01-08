@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Al Noor</string>
-    
+
     <!-- Bottom Navigation -->
     <string name="nav_home">Home</string>
     <string name="nav_qibla">Qibla</string>
     <string name="nav_guard">Guard</string>
     <string name="nav_more">More</string>
-    
+
     <!-- Home Screen -->
     <string name="home_salah_times">Salah Times</string>
     <string name="home_location">London, UK</string>
@@ -32,7 +32,7 @@
     <string name="home_dua_for_protection">FOR PROTECTION</string>
     <string name="home_dua_arabic">بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ</string>
     <string name="home_dua_translation">"In the Name of Allah, with Whose Name nothing is harmed on earth nor in heaven."</string>
-    
+
     <!-- Guard Screen -->
     <string name="guard_connected_desc">Connected</string>
     <string name="guard_disconnected_desc">Disconnected</string>
@@ -63,22 +63,22 @@
     <string name="guard_format_hours_minutes">%dh %dm</string>
     <string name="guard_format_minutes_seconds">%dm %ds</string>
     <string name="guard_format_seconds">%ds</string>
-    
+
     <!-- Qibla Screen -->
     <string name="qibla_emoji">🧭</string>
     <string name="qibla_finder">Qibla Finder</string>
     <string name="qibla_coming_soon">Coming Soon</string>
-    
+
     <!-- Duas Screen -->
     <string name="duas_emoji">🤲</string>
     <string name="duas_title">Duas</string>
     <string name="duas_coming_soon">Coming Soon</string>
-    
+
     <!-- Quran Screen -->
     <string name="quran_emoji">📖</string>
     <string name="quran_title">Quran</string>
     <string name="quran_coming_soon">Coming Soon</string>
-    
+
     <!-- More Screen -->
     <string name="more_title">More</string>
     <string name="more_quran_title">Quran</string>
@@ -88,7 +88,7 @@
     <string name="more_settings_title">Settings</string>
     <string name="more_settings_subtitle">App preferences</string>
     <string name="more_go_to">Go to %s</string>
-    
+
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
@@ -107,7 +107,7 @@
     <string name="settings_about">About Nur Blocker</string>
     <string name="settings_local_storage_only">LOCAL STORAGE ONLY</string>
     <string name="settings_app_version">Al Noor v%s</string>
-    
+
     <!-- Guard Settings Screen -->
     <string name="guard_settings_title">Guard Settings</string>
     <string name="guard_settings_always_on_vpn">Always-on VPN</string>
@@ -121,7 +121,7 @@
     <string name="guard_settings_guard_is_up">Your Guard is Up</string>
     <string name="guard_settings_guard_is_down">Guard is Down</string>
     <string name="guard_settings_peace_of_mind">Peace of mind, always.</string>
-    
+
     <!-- Prayer Settings Screen -->
     <string name="prayer_settings_title">Prayer Settings</string>
     <string name="prayer_settings_location">Location</string>
@@ -151,20 +151,20 @@
     <string name="prayer_settings_reciter_silent">Silent</string>
     <string name="prayer_settings_location_not_set">Not set</string>
     <string name="prayer_settings_location_unknown">Unknown</string>
-    
+
     <!-- Quran Settings Screen -->
     <string name="quran_settings_title">Quran Settings</string>
     <string name="quran_settings_ayah_text_size">%dsp</string>
     <string name="quran_settings_font_amiri">Amiri</string>
     <string name="quran_settings_font_scheherazade">Scheherazade</string>
     <string name="quran_settings_font_noto_naskh">Noto Naskh Arabic</string>
-    
+
     <!-- Content Descriptions (for accessibility) -->
     <string name="cd_collapse">Collapse</string>
     <string name="cd_expand">Expand</string>
     <string name="cd_play">Play</string>
     <string name="cd_back">Back</string>
-    
+
     <!-- Animation Labels (not visible to users but required) -->
     <string name="anim_label_scale">scale</string>
     <string name="anim_label_background_color">backgroundColor</string>

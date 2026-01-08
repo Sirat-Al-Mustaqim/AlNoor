@@ -89,9 +89,11 @@ fun GuardScreen(
                 is GuardEvent.RequestVpnPermission -> {
                     vpnPermissionLauncher.launch(event.intent)
                 }
+
                 is GuardEvent.ShowError -> {
                     snackbarHostState.showSnackbar(context.getString(event.messageRes))
                 }
+
                 is GuardEvent.ShowMessage -> {
                     snackbarHostState.showSnackbar(context.getString(event.messageRes))
                 }
@@ -249,7 +251,9 @@ private fun ShieldButton(
             } else {
                 Icon(
                     imageVector = if (isConnected) Icons.Filled.Shield else Icons.Filled.Power,
-                    contentDescription = if (isConnected) stringResource(R.string.guard_connected_desc) else stringResource(R.string.guard_disconnected_desc),
+                    contentDescription = if (isConnected) stringResource(R.string.guard_connected_desc) else stringResource(
+                        R.string.guard_disconnected_desc
+                    ),
                     tint = iconColor,
                     modifier = Modifier.size(72.dp)
                 )
@@ -273,7 +277,9 @@ private fun StatusSection(uiState: GuardUiState) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = if (uiState.isConnected) stringResource(R.string.guard_connection_secure) else stringResource(R.string.guard_tap_to_connect),
+            text = if (uiState.isConnected) stringResource(R.string.guard_connection_secure) else stringResource(
+                R.string.guard_tap_to_connect
+            ),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -344,7 +350,10 @@ private fun StatisticsCard(statistics: VpnStatistics) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = stringResource(R.string.guard_distractions_blocked, statistics.packetsBlocked),
+                        text = stringResource(
+                            R.string.guard_distractions_blocked,
+                            statistics.packetsBlocked
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
