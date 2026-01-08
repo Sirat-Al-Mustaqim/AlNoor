@@ -42,12 +42,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 import com.siratalmustaqim.alnoor.ui.theme.EmeraldDark
 import com.siratalmustaqim.alnoor.ui.theme.Gold
@@ -90,7 +92,7 @@ private fun SalahTimesSection() {
             verticalAlignment = Alignment.Bottom
         ) {
             Text(
-                text = "Salah Times",
+                text = stringResource(R.string.home_salah_times),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -105,7 +107,7 @@ private fun SalahTimesSection() {
                     modifier = Modifier.size(16.dp)
                 )
                 Text(
-                    text = "London, UK",
+                    text = stringResource(R.string.home_location),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -152,7 +154,7 @@ private fun CurrentPrayerHeroCard() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "NOW PRAYING",
+                text = stringResource(R.string.home_now_praying),
                 style = MaterialTheme.typography.labelSmall,
                 color = Gold,
                 letterSpacing = 2.sp,
@@ -160,13 +162,13 @@ private fun CurrentPrayerHeroCard() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Asr",
+                text = stringResource(R.string.home_prayer_asr),
                 style = MaterialTheme.typography.displaySmall,
                 color = White,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "04:45 PM",
+                text = stringResource(R.string.home_time_asr),
                 style = MaterialTheme.typography.titleLarge,
                 color = White.copy(alpha = 0.8f)
             )
@@ -189,7 +191,7 @@ private fun CurrentPrayerHeroCard() {
                     modifier = Modifier.size(16.dp)
                 )
                 Text(
-                    text = "Maghrib in 1h 25m",
+                    text = stringResource(R.string.home_next_prayer),
                     style = MaterialTheme.typography.bodySmall,
                     color = White
                 )
@@ -277,7 +279,7 @@ private fun SurahOfTheDaySection() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Surah of the Day",
+            text = stringResource(R.string.home_surah_of_day),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -300,13 +302,13 @@ private fun SurahOfTheDaySection() {
                 ) {
                     Column {
                         Text(
-                            text = "Al-Mulk",
+                            text = stringResource(R.string.home_surah_almulk),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "VERSE 13",
+                            text = stringResource(R.string.home_verse_number),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             letterSpacing = 1.sp
@@ -320,7 +322,7 @@ private fun SurahOfTheDaySection() {
                     ) {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "Play",
+                            contentDescription = stringResource(R.string.cd_play),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -333,7 +335,7 @@ private fun SurahOfTheDaySection() {
                 
                 // Arabic text
                 Text(
-                    text = "وَأَسِرُّوا قَوْلَكُمْ أَوِ اجْهَرُوا بِهِ ۖ إِنَّهُ عَلِيمٌ بِذَاتِ الصُّدُورِ",
+                    text = stringResource(R.string.home_surah_verse),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.End,
@@ -352,7 +354,7 @@ private fun SurahOfTheDaySection() {
                             .background(Gold)
                     )
                     Text(
-                        text = "\"And conceal your speech or publicize it; indeed, He is Knowing of that within the breasts.\"",
+                        text = stringResource(R.string.home_surah_translation),
                         style = MaterialTheme.typography.bodyMedium,
                         fontStyle = FontStyle.Italic,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -372,7 +374,7 @@ private fun SurahOfTheDaySection() {
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = "Read Full Surah",
+                        text = stringResource(R.string.home_read_full_surah),
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -388,7 +390,7 @@ private fun DuaOfTheDaySection() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Dua of the Day",
+            text = stringResource(R.string.home_dua_of_day),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -437,7 +439,7 @@ private fun DuaOfTheDaySection() {
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        text = "FOR PROTECTION",
+                        text = stringResource(R.string.home_dua_for_protection),
                         style = MaterialTheme.typography.labelSmall,
                         color = Gold,
                         letterSpacing = 2.sp,
@@ -449,7 +451,7 @@ private fun DuaOfTheDaySection() {
                 
                 // Arabic dua
                 Text(
-                    text = "بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ",
+                    text = stringResource(R.string.home_dua_arabic),
                     style = MaterialTheme.typography.titleLarge,
                     color = White,
                     textAlign = TextAlign.Center,
@@ -461,7 +463,7 @@ private fun DuaOfTheDaySection() {
                 
                 // Translation
                 Text(
-                    text = "\"In the Name of Allah, with Whose Name nothing is harmed on earth nor in heaven.\"",
+                    text = stringResource(R.string.home_dua_translation),
                     style = MaterialTheme.typography.bodyMedium,
                     color = White.copy(alpha = 0.8f),
                     textAlign = TextAlign.Center,

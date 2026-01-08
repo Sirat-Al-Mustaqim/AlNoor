@@ -25,9 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 
 data class MoreMenuItem(
@@ -46,20 +48,20 @@ fun MoreScreen(
     val menuItems = listOf(
         MoreMenuItem(
             icon = Icons.Filled.MenuBook,
-            title = "Quran",
-            subtitle = "Read and listen to the Quran",
+            title = stringResource(R.string.more_quran_title),
+            subtitle = stringResource(R.string.more_quran_subtitle),
             onClick = onQuranClick
         ),
         MoreMenuItem(
             icon = Icons.Filled.AutoStories,
-            title = "Duas",
-            subtitle = "Daily supplications",
+            title = stringResource(R.string.more_duas_title),
+            subtitle = stringResource(R.string.more_duas_subtitle),
             onClick = onDuasClick
         ),
         MoreMenuItem(
             icon = Icons.Filled.Settings,
-            title = "Settings",
-            subtitle = "App preferences",
+            title = stringResource(R.string.more_settings_title),
+            subtitle = stringResource(R.string.more_settings_subtitle),
             onClick = onSettingsClick
         )
     )
@@ -72,7 +74,7 @@ fun MoreScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "More",
+            text = stringResource(R.string.more_title),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
@@ -125,7 +127,7 @@ private fun MoreMenuCard(item: MoreMenuItem) {
             }
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Go to ${item.title}",
+                contentDescription = stringResource(R.string.more_go_to, item.title),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

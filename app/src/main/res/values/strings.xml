@@ -1,3 +1,173 @@
 <resources>
     <string name="app_name">Al Noor</string>
+    
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_qibla">Qibla</string>
+    <string name="nav_guard">Guard</string>
+    <string name="nav_more">More</string>
+    
+    <!-- Home Screen -->
+    <string name="home_salah_times">Salah Times</string>
+    <string name="home_location">London, UK</string>
+    <string name="home_now_praying">NOW PRAYING</string>
+    <string name="home_prayer_asr">Asr</string>
+    <string name="home_time_asr">04:45 PM</string>
+    <string name="home_next_prayer">Maghrib in 1h 25m</string>
+    <string name="home_prayer_fajr">Fajr</string>
+    <string name="home_time_fajr">05:30 AM</string>
+    <string name="home_prayer_dhuhr">Dhuhr</string>
+    <string name="home_time_dhuhr">12:15 PM</string>
+    <string name="home_prayer_maghrib">Maghrib</string>
+    <string name="home_time_maghrib">06:10 PM</string>
+    <string name="home_prayer_isha">Isha</string>
+    <string name="home_time_isha">07:45 PM</string>
+    <string name="home_surah_of_day">Surah of the Day</string>
+    <string name="home_surah_almulk">Al-Mulk</string>
+    <string name="home_verse_number">VERSE 13</string>
+    <string name="home_surah_verse">وَأَسِرُّوا قَوْلَكُمْ أَوِ اجْهَرُوا بِهِ ۖ إِنَّهُ عَلِيمٌ بِذَاتِ الصُّدُورِ</string>
+    <string name="home_surah_translation">"And conceal your speech or publicize it; indeed, He is Knowing of that within the breasts."</string>
+    <string name="home_read_full_surah">Read Full Surah</string>
+    <string name="home_dua_of_day">Dua of the Day</string>
+    <string name="home_dua_for_protection">FOR PROTECTION</string>
+    <string name="home_dua_arabic">بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ</string>
+    <string name="home_dua_translation">"In the Name of Allah, with Whose Name nothing is harmed on earth nor in heaven."</string>
+    
+    <!-- Guard Screen -->
+    <string name="guard_connected_desc">Connected</string>
+    <string name="guard_disconnected_desc">Disconnected</string>
+    <string name="guard_connection_secure">Your connection is secure</string>
+    <string name="guard_tap_to_connect">Tap the shield to connect</string>
+    <string name="guard_session_statistics">SESSION STATISTICS</string>
+    <string name="guard_stat_duration">Duration</string>
+    <string name="guard_stat_downloaded">Downloaded</string>
+    <string name="guard_stat_uploaded">Uploaded</string>
+    <string name="guard_distractions_blocked">%d distractions blocked</string>
+    <string name="guard_always_on_vpn">Always-on VPN</string>
+    <string name="guard_auto_connect">Auto-connect on device boot</string>
+    <string name="guard_info_message">Guard filters distracting content locally on your device. Your browsing data never leaves your phone.</string>
+    <string name="guard_status_protected">Protected</string>
+    <string name="guard_status_protection_off">Protection Off</string>
+    <string name="guard_status_connecting">Connecting…</string>
+    <string name="guard_status_disconnecting">Disconnecting…</string>
+    <string name="guard_status_error">Connection Error</string>
+    <string name="guard_connected_message">Connected</string>
+    <string name="guard_disconnected_message">Disconnected</string>
+    <string name="guard_always_on_enabled">Always-on VPN enabled</string>
+    <string name="guard_always_on_disabled">Always-on VPN disabled</string>
+    <string name="guard_vpn_permission_required">VPN permission is required</string>
+    <string name="guard_format_gb">%.1f GB</string>
+    <string name="guard_format_mb">%.1f MB</string>
+    <string name="guard_format_kb">%.1f KB</string>
+    <string name="guard_format_b">%d B</string>
+    <string name="guard_format_hours_minutes">%dh %dm</string>
+    <string name="guard_format_minutes_seconds">%dm %ds</string>
+    <string name="guard_format_seconds">%ds</string>
+    
+    <!-- Qibla Screen -->
+    <string name="qibla_emoji">🧭</string>
+    <string name="qibla_finder">Qibla Finder</string>
+    <string name="qibla_coming_soon">Coming Soon</string>
+    
+    <!-- Duas Screen -->
+    <string name="duas_emoji">🤲</string>
+    <string name="duas_title">Duas</string>
+    <string name="duas_coming_soon">Coming Soon</string>
+    
+    <!-- Quran Screen -->
+    <string name="quran_emoji">📖</string>
+    <string name="quran_title">Quran</string>
+    <string name="quran_coming_soon">Coming Soon</string>
+    
+    <!-- More Screen -->
+    <string name="more_title">More</string>
+    <string name="more_quran_title">Quran</string>
+    <string name="more_quran_subtitle">Read and listen to the Quran</string>
+    <string name="more_duas_title">Duas</string>
+    <string name="more_duas_subtitle">Daily supplications</string>
+    <string name="more_settings_title">Settings</string>
+    <string name="more_settings_subtitle">App preferences</string>
+    <string name="more_go_to">Go to %s</string>
+    
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_hero_configure">Configure your </string>
+    <string name="settings_hero_spiritual_shield">spiritual shield</string>
+    <string name="settings_quran_title">Quran Settings</string>
+    <string name="settings_quran_subtitle">Recitation audio, translation scripts, and reading goals.</string>
+    <string name="settings_prayer_title">Prayer Settings</string>
+    <string name="settings_prayer_subtitle">Calculation methods, Adhan notifications, and location.</string>
+    <string name="settings_guard_title">Guard Settings</string>
+    <string name="settings_guard_subtitle">Website blocking, strict mode, and active hours.</string>
+    <string name="settings_general">GENERAL</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_value">English</string>
+    <string name="settings_about">About Nur Blocker</string>
+    <string name="settings_local_storage_only">LOCAL STORAGE ONLY</string>
+    <string name="settings_app_version">Al Noor v%s</string>
+    
+    <!-- Guard Settings Screen -->
+    <string name="guard_settings_title">Guard Settings</string>
+    <string name="guard_settings_always_on_vpn">Always-on VPN</string>
+    <string name="guard_settings_always_on_vpn_desc">Filter distractions securely via encrypted tunnel.</string>
+    <string name="guard_settings_always_on_protection">Always-on Protection</string>
+    <string name="guard_settings_always_on_protection_desc">Prevent disabling during prayer times &amp; focus sessions.</string>
+    <string name="guard_settings_offline_mode">Offline Mode</string>
+    <string name="guard_settings_offline_mode_desc">Block all internet traffic.</string>
+    <string name="guard_settings_status_active">STATUS: ACTIVE</string>
+    <string name="guard_settings_status_inactive">STATUS: INACTIVE</string>
+    <string name="guard_settings_guard_is_up">Your Guard is Up</string>
+    <string name="guard_settings_guard_is_down">Guard is Down</string>
+    <string name="guard_settings_peace_of_mind">Peace of mind, always.</string>
+    
+    <!-- Prayer Settings Screen -->
+    <string name="prayer_settings_title">Prayer Settings</string>
+    <string name="prayer_settings_location">Location</string>
+    <string name="prayer_settings_current_city">CURRENT CITY</string>
+    <string name="prayer_settings_edit_location">Edit location</string>
+    <string name="prayer_settings_auto_detect">Auto-detect Location</string>
+    <string name="prayer_settings_auto_detect_desc">Updates based on GPS</string>
+    <string name="prayer_settings_privacy_notice">Your location data never leaves this device. We calculate prayer times locally to ensure complete privacy.</string>
+    <string name="prayer_settings_audio">Audio Preferences</string>
+    <string name="prayer_settings_adhan_volume">Adhan Volume</string>
+    <string name="prayer_settings_volume_percentage">%d%%</string>
+    <string name="prayer_settings_adhan_reciter">Adhan Reciter</string>
+    <string name="prayer_settings_silent_during_prayer">Silent During Prayer</string>
+    <string name="prayer_settings_silent_during_prayer_desc">Mutes device for 15 mins</string>
+    <string name="prayer_settings_early_reminder">Early Reminder</string>
+    <string name="prayer_settings_early_reminder_desc">Notify 15m before Adhan</string>
+    <string name="prayer_settings_calculation_methods">Calculation Methods</string>
+    <string name="prayer_settings_juristic_method">Juristic Method</string>
+    <string name="prayer_settings_juristic_method_value">Standard (Shafi, Hanbli, Maliki)</string>
+    <string name="prayer_settings_time_correction">Time Correction</string>
+    <string name="prayer_settings_time_correction_desc">Manual adjustments per prayer</string>
+    <string name="prayer_settings_configure">Configure</string>
+    <string name="prayer_settings_reciter_mishary">Mishary Rashid Alafasy</string>
+    <string name="prayer_settings_reciter_abdul_basit">Abdul Basit</string>
+    <string name="prayer_settings_reciter_masjid_haram">Masjid Al-Haram</string>
+    <string name="prayer_settings_reciter_masjid_nabawi">Masjid An-Nabawi</string>
+    <string name="prayer_settings_reciter_silent">Silent</string>
+    <string name="prayer_settings_location_not_set">Not set</string>
+    <string name="prayer_settings_location_unknown">Unknown</string>
+    
+    <!-- Quran Settings Screen -->
+    <string name="quran_settings_title">Quran Settings</string>
+    <string name="quran_settings_ayah_text_size">%dsp</string>
+    <string name="quran_settings_font_amiri">Amiri</string>
+    <string name="quran_settings_font_scheherazade">Scheherazade</string>
+    <string name="quran_settings_font_noto_naskh">Noto Naskh Arabic</string>
+    
+    <!-- Content Descriptions (for accessibility) -->
+    <string name="cd_collapse">Collapse</string>
+    <string name="cd_expand">Expand</string>
+    <string name="cd_play">Play</string>
+    <string name="cd_back">Back</string>
+    
+    <!-- Animation Labels (not visible to users but required) -->
+    <string name="anim_label_scale">scale</string>
+    <string name="anim_label_background_color">backgroundColor</string>
+    <string name="anim_label_border_color">borderColor</string>
+    <string name="anim_label_icon_color">iconColor</string>
 </resources>

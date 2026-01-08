@@ -53,12 +53,15 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 import com.siratalmustaqim.alnoor.ui.theme.Gold
 import com.siratalmustaqim.alnoor.vpn.VpnState
@@ -72,6 +75,7 @@ fun GuardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     val vpnPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -86,10 +90,10 @@ fun GuardScreen(
                     vpnPermissionLauncher.launch(event.intent)
                 }
                 is GuardEvent.ShowError -> {
-                    snackbarHostState.showSnackbar(event.message)
+                    snackbarHostState.showSnackbar(context.getString(event.messageRes))
                 }
                 is GuardEvent.ShowMessage -> {
-                    snackbarHostState.showSnackbar(event.message)
+                    snackbarHostState.showSnackbar(context.getString(event.messageRes))
                 }
             }
         }
@@ -174,25 +178,25 @@ private fun ShieldButton(
     val scale by animateFloatAsState(
         targetValue = if (isConnected) 1.05f else 1f,
         animationSpec = tween(500),
-        label = "scale"
+        label = stringResource(R.string.anim_label_scale)
     )
 
     val backgroundColor by animateColorAsState(
         targetValue = if (isConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
         animationSpec = tween(500),
-        label = "backgroundColor"
+        label = stringResource(R.string.anim_label_background_color)
     )
 
     val borderColor by animateColorAsState(
         targetValue = if (isConnected) Gold else MaterialTheme.colorScheme.outline,
         animationSpec = tween(500),
-        label = "borderColor"
+        label = stringResource(R.string.anim_label_border_color)
     )
 
     val iconColor by animateColorAsState(
         targetValue = if (isConnected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
         animationSpec = tween(500),
-        label = "iconColor"
+        label = stringResource(R.string.anim_label_icon_color)
     )
 
     Box(
@@ -249,7 +253,7 @@ private fun ShieldButton(
             } else {
                 Icon(
                     imageVector = if (isConnected) Icons.Filled.Shield else Icons.Filled.Power,
-                    contentDescription = if (isConnected) "Connected" else "Disconnected",
+                    contentDescription = if (isConnected) stringResource(R.string.guard_connected_desc) else stringResource(R.string.guard_disconnected_desc),
                     tint = iconColor,
                     modifier = Modifier.size(72.dp)
                 )
@@ -264,7 +268,7 @@ private fun StatusSection(uiState: GuardUiState) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = uiState.statusText,
+            text = stringResource(uiState.statusTextRes),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = if (uiState.isConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
@@ -273,7 +277,7 @@ private fun StatusSection(uiState: GuardUiState) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = if (uiState.isConnected) "Your connection is secure" else "Tap the shield to connect",
+            text = if (uiState.isConnected) stringResource(R.string.guard_connection_secure) else stringResource(R.string.guard_tap_to_connect),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -295,7 +299,7 @@ private fun StatisticsCard(statistics: VpnStatistics) {
             modifier = Modifier.padding(20.dp)
         ) {
             Text(
-                text = "SESSION STATISTICS",
+                text = stringResource(R.string.guard_session_statistics),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
@@ -310,18 +314,18 @@ private fun StatisticsCard(statistics: VpnStatistics) {
             ) {
                 StatItem(
                     icon = Icons.Filled.Timer,
-                    label = "Duration",
-                    value = formatDuration(statistics.connectionTime)
+                    label = stringResource(R.string.guard_stat_duration),
+                    value = formatDuration(seconds = statistics.connectionTime)
                 )
                 StatItem(
                     icon = Icons.Filled.Download,
-                    label = "Downloaded",
-                    value = formatBytes(statistics.bytesIn)
+                    label = stringResource(R.string.guard_stat_downloaded),
+                    value = formatBytes(bytes = statistics.bytesIn)
                 )
                 StatItem(
                     icon = Icons.Filled.Upload,
-                    label = "Uploaded",
-                    value = formatBytes(statistics.bytesOut)
+                    label = stringResource(R.string.guard_stat_uploaded),
+                    value = formatBytes(bytes = statistics.bytesOut)
                 )
             }
 
@@ -344,7 +348,7 @@ private fun StatisticsCard(statistics: VpnStatistics) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "${statistics.packetsBlocked} distractions blocked",
+                        text = stringResource(R.string.guard_distractions_blocked, statistics.packetsBlocked),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
@@ -433,13 +437,13 @@ private fun AlwaysOnVpnCard(
                 }
                 Column {
                     Text(
-                        text = "Always-on VPN",
+                        text = stringResource(R.string.guard_always_on_vpn),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Auto-connect on device boot",
+                        text = stringResource(R.string.guard_auto_connect),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -478,7 +482,7 @@ private fun InfoCard() {
                 modifier = Modifier.size(20.dp)
             )
             Text(
-                text = "Guard filters distracting content locally on your device. Your browsing data never leaves your phone.",
+                text = stringResource(R.string.guard_info_message),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                 lineHeight = 18.sp
@@ -487,23 +491,25 @@ private fun InfoCard() {
     }
 }
 
+@Composable
 private fun formatDuration(seconds: Long): String {
     val hours = seconds / 3600
     val minutes = (seconds % 3600) / 60
     val secs = seconds % 60
     return when {
-        hours > 0 -> "${hours}h ${minutes}m"
-        minutes > 0 -> "${minutes}m ${secs}s"
-        else -> "${secs}s"
+        hours > 0 -> stringResource(R.string.guard_format_hours_minutes, hours, minutes)
+        minutes > 0 -> stringResource(R.string.guard_format_minutes_seconds, minutes, secs)
+        else -> stringResource(R.string.guard_format_seconds, secs)
     }
 }
 
+@Composable
 private fun formatBytes(bytes: Long): String {
     return when {
-        bytes >= 1_000_000_000 -> String.format("%.1f GB", bytes / 1_000_000_000.0)
-        bytes >= 1_000_000 -> String.format("%.1f MB", bytes / 1_000_000.0)
-        bytes >= 1_000 -> String.format("%.1f KB", bytes / 1_000.0)
-        else -> "$bytes B"
+        bytes >= 1_000_000_000 -> stringResource(R.string.guard_format_gb, bytes / 1_000_000_000.0)
+        bytes >= 1_000_000 -> stringResource(R.string.guard_format_mb, bytes / 1_000_000.0)
+        bytes >= 1_000 -> stringResource(R.string.guard_format_kb, bytes / 1_000.0)
+        else -> stringResource(R.string.guard_format_b, bytes)
     }
 }
 

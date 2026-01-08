@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.siratalmustaqim.alnoor.BuildConfig
+import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 import com.siratalmustaqim.alnoor.ui.theme.Gold
 
@@ -77,7 +80,7 @@ fun SettingsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Settings",
+                        text = stringResource(R.string.settings_title),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
@@ -87,7 +90,7 @@ fun SettingsScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.settings_back),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -177,9 +180,10 @@ private fun HeroSection() {
         // Title with colored span
         Text(
             text = buildAnnotatedString {
-                append("Configure your\n")
+                append(stringResource(R.string.settings_hero_configure))
+                append("\n")
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                    append("spiritual shield")
+                    append(stringResource(R.string.settings_hero_spiritual_shield))
                 }
             },
             style = MaterialTheme.typography.headlineSmall,
@@ -201,24 +205,24 @@ private fun PrimarySettingsSection(
         // Quran Settings Card
         PrimarySettingsCard(
             icon = Icons.Filled.MenuBook,
-            title = "Quran Settings",
-            subtitle = "Recitation audio, translation scripts, and reading goals.",
+            title = stringResource(R.string.settings_quran_title),
+            subtitle = stringResource(R.string.settings_quran_subtitle),
             onClick = onQuranClick
         )
         
         // Prayer Settings Card
         PrimarySettingsCard(
             icon = Icons.Filled.Schedule,
-            title = "Prayer Settings",
-            subtitle = "Calculation methods, Adhan notifications, and location.",
+            title = stringResource(R.string.settings_prayer_title),
+            subtitle = stringResource(R.string.settings_prayer_subtitle),
             onClick = onPrayerClick
         )
         
         // Guard Settings Card (highlighted)
         PrimarySettingsCard(
             icon = Icons.Filled.Security,
-            title = "Guard Settings",
-            subtitle = "Website blocking, strict mode, and active hours.",
+            title = stringResource(R.string.settings_guard_title),
+            subtitle = stringResource(R.string.settings_guard_subtitle),
             onClick = onGuardClick,
             isHighlighted = true
         )
@@ -332,7 +336,7 @@ private fun GeneralSettingsSection(
 ) {
     Column {
         Text(
-            text = "GENERAL",
+            text = stringResource(R.string.settings_general),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             letterSpacing = 2.sp,
@@ -351,20 +355,20 @@ private fun GeneralSettingsSection(
             Column {
                 GeneralSettingsRow(
                     icon = Icons.Filled.Palette,
-                    title = "Appearance",
+                    title = stringResource(R.string.settings_appearance),
                     onClick = onAppearanceClick
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                 GeneralSettingsRow(
                     icon = Icons.Filled.Language,
-                    title = "Language",
-                    value = "English",
+                    title = stringResource(R.string.settings_language),
+                    value = stringResource(R.string.settings_language_value),
                     onClick = onLanguageClick
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                 GeneralSettingsRow(
                     icon = Icons.Filled.Info,
-                    title = "About Nur Blocker",
+                    title = stringResource(R.string.settings_about),
                     onClick = onAboutClick
                 )
             }
@@ -458,7 +462,7 @@ private fun FooterSection() {
                 modifier = Modifier.size(16.dp)
             )
             Text(
-                text = "LOCAL STORAGE ONLY",
+                text = stringResource(R.string.settings_local_storage_only),
                 style = MaterialTheme.typography.labelSmall,
                 color = Gold,
                 fontWeight = FontWeight.SemiBold,
@@ -468,7 +472,7 @@ private fun FooterSection() {
         
         // Version
         Text(
-            text = "Al Noor v${BuildConfig.VERSION_NAME}",
+            text = stringResource(R.string.settings_app_version, BuildConfig.VERSION_NAME),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

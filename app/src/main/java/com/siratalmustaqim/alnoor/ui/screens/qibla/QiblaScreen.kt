@@ -10,8 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 
 @Composable
@@ -25,16 +27,16 @@ fun QiblaScreen() {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "🧭",
+            text = stringResource(R.string.qibla_emoji),
             style = MaterialTheme.typography.displayLarge
         )
         Text(
-            text = "Qibla Finder",
+            text = stringResource(R.string.qibla_finder),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
-            text = "Coming Soon",
+            text = stringResource(R.string.qibla_coming_soon),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
