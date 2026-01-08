@@ -143,7 +143,7 @@ class ContentBlockerVpnService : VpnService() {
                 .addDnsServer(VpnConfig.DNS_PRIMARY)
                 .addDnsServer(VpnConfig.DNS_SECONDARY)
                 .setMtu(VpnConfig.VPN_MTU)
-                .setBlocking(false)
+                .setBlocking(true)
                 .establish()
         } catch (e: Exception) {
             Timber.e(e, "Error establishing VPN")
