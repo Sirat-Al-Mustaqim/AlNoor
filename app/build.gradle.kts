@@ -37,8 +37,8 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = ".dev"
             isDebuggable = true
-            // For debug, testOnly=false allows setting device owner via ADB
-            manifestPlaceholders["testOnly"] = "false"
+            // For debug, testOnly=true allows app reinstall even on debug mode
+            manifestPlaceholders["testOnly"] = "true"
         }
     }
 
@@ -93,4 +93,53 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+// Device Owner management tasks for debug builds
+val packageName = "com.siratalmustaqim.alnoor"
+val debugPackageName = "$packageName.dev"
+val adminReceiver = "$packageName.admin.AlNoorDeviceAdminReceiver"
+
+tasks.register("removeDeviceOwner") {
+    group = "device admin"
+    description = "Remove device owner before installing (pre-install)"
+    doLast {
+        val process = ProcessBuilder(
+            "adb", "shell", "dpm", "remove-active-admin", "$debugPackageName/$adminReceiver"
+        ).redirectErrorStream(true).start()
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+        if (exitCode == 0 || output.contains("Unknown admin")) {
+            println("Device owner removed (or was not set)")
+        } else {
+            println("Note: Could not remove device owner - $output")
+        }
+    }
+}
+
+tasks.register("setDeviceOwner") {
+    group = "device admin"
+    description = "Set device owner after installing (post-install)"
+    doLast {
+        val process = ProcessBuilder(
+            "adb", "shell", "dpm", "set-device-owner", "$debugPackageName/$adminReceiver"
+        ).redirectErrorStream(true).start()
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+        if (exitCode == 0) {
+            println("Device owner set successfully")
+        } else {
+            println("Failed to set device owner: $output")
+            println("Make sure there are no accounts on the device")
+        }
+    }
+}
+
+// Hook into debug install tasks
+afterEvaluate {
+    // We use named() for lazy configuration
+    tasks.named("installDebug") {
+        dependsOn("removeDeviceOwner")
+        finalizedBy("setDeviceOwner")
+    }
 }
