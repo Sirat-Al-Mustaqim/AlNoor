@@ -93,6 +93,7 @@ class GuardRepository @Inject constructor(
     /**
      * Enable or disable app protection using Device Policy Manager
      * This makes Force Stop and Clear Data buttons unclickable in Settings
+     * and sets the VPN as always-on
      */
     private fun setAppProtection(enabled: Boolean) {
         if (!isDeviceOwner) {
@@ -101,6 +102,14 @@ class GuardRepository @Inject constructor(
         }
 
         try {
+            // Set this app as the always-on VPN package
+            devicePolicyManager.setAlwaysOnVpnPackage(
+                adminComponent,
+                if (enabled) context.packageName else null,
+                enabled // lockdownEnabled - block all network traffic if VPN is not connected
+            )
+            Timber.d("Always-on VPN package set: ${if (enabled) context.packageName else "null"}")
+
             // Block uninstall of this app
             devicePolicyManager.setUninstallBlocked(
                 adminComponent,
