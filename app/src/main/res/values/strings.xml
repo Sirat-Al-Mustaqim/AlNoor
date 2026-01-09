@@ -52,6 +52,7 @@
     <string name="guard_connected_message">Connected</string>
     <string name="guard_disconnected_message">Disconnected</string>
     <string name="guard_vpn_permission_required">VPN permission is required</string>
+    <string name="guard_cannot_stop_always_on">Cannot stop VPN while always-on protection is enabled</string>
     <string name="guard_format_gb">%.1f GB</string>
     <string name="guard_format_mb">%.1f MB</string>
     <string name="guard_format_kb">%.1f KB</string>

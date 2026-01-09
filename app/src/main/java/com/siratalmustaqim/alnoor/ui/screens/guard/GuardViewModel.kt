@@ -84,10 +84,11 @@ class GuardViewModel @Inject constructor(
     private fun toggleVpn() {
         viewModelScope.launch {
             val currentState = uiState.value.vpnState
+            val alwaysOnEnabled = uiState.value.alwaysOnProtection
             val shouldConnect =
                 currentState == VpnState.DISCONNECTED || currentState == VpnState.ERROR
 
-            Timber.d("Toggle VPN: shouldConnect=$shouldConnect, currentState=$currentState")
+            Timber.d("Toggle VPN: shouldConnect=$shouldConnect, currentState=$currentState, alwaysOn=$alwaysOnEnabled")
 
             if (shouldConnect) {
                 // Check VPN permission first
@@ -102,6 +103,13 @@ class GuardViewModel @Inject constructor(
                 val result = guardRepository.startVpn()
                 handleVpnResult(result, R.string.guard_connected_message)
             } else {
+                // Check if always-on protection is enabled - prevent stopping
+                if (alwaysOnEnabled) {
+                    Timber.d("Cannot stop VPN: always-on protection is enabled")
+                    _events.emit(GuardEvent.ShowError(R.string.guard_cannot_stop_always_on))
+                    return@launch
+                }
+
                 // Stop VPN
                 val result = guardRepository.stopVpn()
                 handleVpnResult(result, R.string.guard_disconnected_message)
