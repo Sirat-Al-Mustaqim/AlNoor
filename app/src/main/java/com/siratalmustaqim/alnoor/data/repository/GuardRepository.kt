@@ -90,9 +90,6 @@ class GuardRepository @Inject constructor(
         // Apply DPM protection if device owner
         if (isDeviceOwner) {
             setAppProtection(enabled)
-            if (!BuildConfig.DEBUG) {
-                setAdbProtection(enabled)
-            }
         }
     }
 
@@ -166,48 +163,6 @@ class GuardRepository @Inject constructor(
             }
         } catch (e: SecurityException) {
             Timber.e(e, "Failed to set app protection")
-        }
-    }
-
-    private fun setAdbProtection(enabled: Boolean) {
-        if (!isDeviceOwner) {
-            Timber.w("Cannot set ADB protection: not device owner")
-            return
-        }
-
-        try {
-            if (enabled) {
-                // 1. Physically turn off the USB Debugging toggle in the system
-                devicePolicyManager.setGlobalSetting(
-                    adminComponent,
-                    Settings.Global.ADB_ENABLED,
-                    "0"
-                )
-
-                // 2. Block the user from enabling any debugging features
-                devicePolicyManager.addUserRestriction(
-                    adminComponent,
-                    UserManager.DISALLOW_DEBUGGING_FEATURES
-                )
-
-                // 3. Hide the "Developer Options" menu entirely from Settings
-                // This prevents turning ADB back on via the UI
-                devicePolicyManager.addUserRestriction(
-                    adminComponent,
-                    "no_config_developer_options"  // Not a public constant in UserManager
-                )
-
-                Timber.d("Al Noor: ADB and Developer Options have been sealed.")
-            } else {
-                // Restore settings only after 13 Ayahs + Cooldown
-                devicePolicyManager.clearUserRestriction(adminComponent, UserManager.DISALLOW_DEBUGGING_FEATURES)
-                devicePolicyManager.clearUserRestriction(adminComponent, "no_config_developer_options")
-
-                // Note: You may need to manually re-enable ADB if you need it for dev work
-                devicePolicyManager.setGlobalSetting(adminComponent, Settings.Global.ADB_ENABLED, "1")
-            }
-        } catch (e: SecurityException) {
-            Timber.e(e, "Failed to modify ADB settings")
         }
     }
 

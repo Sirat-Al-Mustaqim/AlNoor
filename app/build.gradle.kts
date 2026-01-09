@@ -30,11 +30,15 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // For release, testOnly should be false (production app)
+            manifestPlaceholders["testOnly"] = "false"
         }
         debug {
             applicationIdSuffix = ".dev"
             versionNameSuffix = ".dev"
             isDebuggable = true
+            // For debug, testOnly=false allows setting device owner via ADB
+            manifestPlaceholders["testOnly"] = "false"
         }
     }
 
