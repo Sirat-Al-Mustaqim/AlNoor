@@ -4,6 +4,7 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.UserManager
 import com.siratalmustaqim.alnoor.admin.AlNoorDeviceAdminReceiver
 import com.siratalmustaqim.alnoor.data.preferences.SettingsDataStore
@@ -83,7 +84,7 @@ class GuardRepository @Inject constructor(
     suspend fun setAlwaysOnProtection(enabled: Boolean) {
         Timber.d("Setting always-on protection: $enabled")
         settingsDataStore.updateAlwaysOnProtection(enabled)
-        
+
         // Apply DPM protection if device owner
         if (isDeviceOwner) {
             setAppProtection(enabled)
@@ -126,13 +127,37 @@ class GuardRepository @Inject constructor(
                     UserManager.DISALLOW_APPS_CONTROL
                 )
                 Timber.d("Added DISALLOW_APPS_CONTROL restriction")
+
+                // Requires API 29+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    // Prevent users from configuring private DNS
+                    devicePolicyManager.addUserRestriction(
+                        adminComponent,
+                        UserManager.DISALLOW_CONFIG_PRIVATE_DNS
+                    )
+                    Timber.d("Added DISALLOW_CONFIG_PRIVATE_DNS restriction")
+
+                    // Clear private DNS by setting to opportunistic mode (automatic)
+                    devicePolicyManager.setGlobalPrivateDnsModeOpportunistic(adminComponent)
+                    Timber.d("Cleared private DNS - set to opportunistic mode")
+                } else {
+                    // TODO: need WRITE_SECURE_SETTINGS permission
+                }
             } else {
-                // Remove the restriction
+                // Remove the restrictions
                 devicePolicyManager.clearUserRestriction(
                     adminComponent,
                     UserManager.DISALLOW_APPS_CONTROL
                 )
                 Timber.d("Removed DISALLOW_APPS_CONTROL restriction")
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    devicePolicyManager.clearUserRestriction(
+                        adminComponent,
+                        UserManager.DISALLOW_CONFIG_PRIVATE_DNS
+                    )
+                    Timber.d("Removed DISALLOW_CONFIG_PRIVATE_DNS restriction")
+                }
             }
         } catch (e: SecurityException) {
             Timber.e(e, "Failed to set app protection")
