@@ -37,7 +37,7 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = ".dev"
             isDebuggable = true
-            // For debug, testOnly=true allows app reinstall even on debug mode
+            // For debug, testOnly=true to allows disable device owner after enabling it
             manifestPlaceholders["testOnly"] = "true"
         }
     }

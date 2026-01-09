@@ -85,6 +85,13 @@ class GuardRepository @Inject constructor(
      */
     suspend fun setAlwaysOnProtection(enabled: Boolean) {
         Timber.d("Setting always-on protection: $enabled")
+
+        // Start VPN first if enabling always-on protection
+        if (enabled) {
+            Timber.d("Starting VPN before enabling always-on protection")
+            startVpn()
+        }
+
         settingsDataStore.updateAlwaysOnProtection(enabled)
 
         // Apply DPM protection if device owner
