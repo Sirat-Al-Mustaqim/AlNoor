@@ -279,7 +279,7 @@ class ContentBlockerVpnService : VpnService() {
         return NotificationCompat.Builder(this, VpnConfig.NOTIFICATION_CHANNEL_ID)
             .setContentTitle("AlNoor Content Guard Active")
             .setContentText("DNS filtering is protecting your browsing")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)

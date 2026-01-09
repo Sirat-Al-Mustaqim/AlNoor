@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- Base theme -->
     <style name="Theme.AlNoor" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Splash Screen theme -->
+    <style name="Theme.AlNoor.Splash" parent="Theme.AlNoor">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
 </resources>
