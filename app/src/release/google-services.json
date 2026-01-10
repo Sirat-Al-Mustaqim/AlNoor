@@ -1,0 +1,29 @@
+{
+    "project_info": {
+        "project_number": "YOUR_RELEASE_PROJECT_NUMBER",
+        "project_id": "your-release-project-id",
+        "storage_bucket": "your-release-project-id.appspot.com"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:YOUR_RELEASE_APP_ID:android:YOUR_RELEASE_HASH",
+                "android_client_info": {
+                    "package_name": "com.siratalmustaqim.alnoor"
+                }
+            },
+            "oauth_client": [],
+            "api_key": [
+                {
+                    "current_key": "YOUR_RELEASE_API_KEY"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": []
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}

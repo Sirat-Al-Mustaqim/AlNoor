@@ -43,14 +43,34 @@ class DnsObserverService : Service() {
         private const val PRIVATE_DNS_MODE = "private_dns_mode"
         private const val PRIVATE_DNS_SPECIFIER = "private_dns_specifier"
 
+        private val lock = Any()
+
+        @Volatile
+        var isRunning: Boolean = false
+            private set
+
         fun start(context: Context) {
-            val intent = Intent(context, DnsObserverService::class.java)
-            context.startForegroundService(intent)
+            synchronized(lock) {
+                if (isRunning) {
+                    Timber.d("DnsObserverService is already running, skipping start")
+                    return
+                }
+                isRunning = true
+
+                val intent = Intent(context, DnsObserverService::class.java)
+                context.startForegroundService(intent)
+            }
         }
 
         fun stop(context: Context) {
             val intent = Intent(context, DnsObserverService::class.java)
             context.stopService(intent)
+        }
+
+        internal fun setRunning(running: Boolean) {
+            synchronized(lock) {
+                isRunning = running
+            }
         }
     }
 
@@ -85,6 +105,7 @@ class DnsObserverService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        setRunning(false)
         Timber.d("DnsObserverService destroyed")
         unregisterDnsObserver()
         serviceScope.cancel()

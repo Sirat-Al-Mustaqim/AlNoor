@@ -6,6 +6,8 @@ import androidx.work.Configuration
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.firebase.messaging.FirebaseMessaging
+import com.siratalmustaqim.alnoor.service.GuardMessagingService
 import com.siratalmustaqim.alnoor.worker.DnsEnforcementWorker
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -33,6 +35,9 @@ class AlNoorApp : Application(), Configuration.Provider {
 
         // Schedule DNS enforcement worker
         scheduleDnsEnforcementWork()
+        
+        // Subscribe to FCM topic for guard heartbeat
+        subscribeToGuardTopic()
     }
 
     private fun scheduleDnsEnforcementWork() {
@@ -47,5 +52,16 @@ class AlNoorApp : Application(), Configuration.Provider {
         )
 
         Timber.d("DNS enforcement work scheduled")
+    }
+
+    private fun subscribeToGuardTopic() {
+        FirebaseMessaging.getInstance().subscribeToTopic(GuardMessagingService.TOPIC_GUARD_CHECK)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Timber.d("Subscribed to ${GuardMessagingService.TOPIC_GUARD_CHECK} topic")
+                } else {
+                    Timber.e(task.exception, "Failed to subscribe to guard topic")
+                }
+            }
     }
 }

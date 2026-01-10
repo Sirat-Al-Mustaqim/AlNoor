@@ -38,6 +38,14 @@
                 android:value="dns_protection" />
         </service>
 
+        <service
+            android:name=".service.GuardMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <receiver
             android:name=".receiver.BootReceiver"
             android:exported="false"
