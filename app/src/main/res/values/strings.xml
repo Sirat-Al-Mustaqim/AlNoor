@@ -34,32 +34,18 @@
     <string name="home_dua_translation">"In the Name of Allah, with Whose Name nothing is harmed on earth nor in heaven."</string>
 
     <!-- Guard Screen -->
-    <string name="guard_connected_desc">Connected</string>
-    <string name="guard_disconnected_desc">Disconnected</string>
-    <string name="guard_connection_secure">Your connection is secure</string>
-    <string name="guard_tap_to_connect">Tap the shield to connect</string>
-    <string name="guard_session_statistics">SESSION STATISTICS</string>
-    <string name="guard_stat_duration">Duration</string>
-    <string name="guard_stat_downloaded">Downloaded</string>
-    <string name="guard_stat_uploaded">Uploaded</string>
-    <string name="guard_distractions_blocked">%d distractions blocked</string>
-    <string name="guard_info_message">Guard filters distracting content locally on your device. Your browsing data never leaves your phone.</string>
+    <string name="guard_connected_desc">Protected</string>
+    <string name="guard_disconnected_desc">Not Protected</string>
+    <string name="guard_connection_secure">Your browsing is protected</string>
+    <string name="guard_tap_to_connect">Tap the shield to enable protection</string>
+    <string name="guard_info_message">Guard uses secure private DNS to filter inappropriate content at the network level. This protection persists even when the app is closed.</string>
     <string name="guard_status_protected">Protected</string>
     <string name="guard_status_protection_off">Protection Off</string>
-    <string name="guard_status_connecting">Connecting…</string>
-    <string name="guard_status_disconnecting">Disconnecting…</string>
-    <string name="guard_status_error">Connection Error</string>
-    <string name="guard_connected_message">Connected</string>
-    <string name="guard_disconnected_message">Disconnected</string>
-    <string name="guard_vpn_permission_required">VPN permission is required</string>
-    <string name="guard_cannot_stop_always_on">Cannot stop VPN while always-on protection is enabled</string>
-    <string name="guard_format_gb">%.1f GB</string>
-    <string name="guard_format_mb">%.1f MB</string>
-    <string name="guard_format_kb">%.1f KB</string>
-    <string name="guard_format_b">%d B</string>
-    <string name="guard_format_hours_minutes">%dh %dm</string>
-    <string name="guard_format_minutes_seconds">%dm %ds</string>
-    <string name="guard_format_seconds">%ds</string>
+    <string name="guard_protection_enabled">Protection enabled</string>
+    <string name="guard_protection_disabled">Protection disabled</string>
+    <string name="guard_cannot_disable_always_on">Cannot disable protection while always-on is enabled</string>
+    <string name="guard_device_owner_required">Device Owner mode is required. Set up via ADB.</string>
+
 
     <!-- Qibla Screen -->
     <string name="qibla_emoji">🧭</string>

@@ -41,13 +41,6 @@ class SettingsDataStore @Inject constructor(
     // Guard Settings Keys
     private object GuardKeys {
         val ALWAYS_ON_PROTECTION = booleanPreferencesKey("always_on_protection")
-        val MODE = stringPreferencesKey("guard_mode")
-    }
-
-    // Guard Mode enum
-    enum class GuardMode {
-        VPN,
-        PRIVATE_DNS
     }
 
     // Quran Settings
@@ -143,19 +136,5 @@ class SettingsDataStore @Inject constructor(
         }
     }
 
-    val guardMode: Flow<GuardMode> = dataStore.data.map { prefs ->
-        val modeName = prefs[GuardKeys.MODE] ?: GuardMode.VPN.name
-        try {
-            GuardMode.valueOf(modeName)
-        } catch (e: IllegalArgumentException) {
-            GuardMode.VPN
-        }
-    }
-
-    suspend fun updateGuardMode(mode: GuardMode) {
-        dataStore.edit { prefs ->
-            prefs[GuardKeys.MODE] = mode.name
-        }
-    }
-
 }
+
