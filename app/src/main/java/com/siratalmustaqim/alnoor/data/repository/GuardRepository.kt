@@ -78,8 +78,12 @@ class GuardRepository @Inject constructor(
 
         try {
             val mode = devicePolicyManager.getGlobalPrivateDnsMode(adminComponent)
-            _protectionEnabled.value = mode == DevicePolicyManager.PRIVATE_DNS_MODE_PROVIDER_HOSTNAME
-            Timber.d("Protection state updated: ${_protectionEnabled.value}, mode: $mode")
+            val host = devicePolicyManager.getGlobalPrivateDnsHost(adminComponent)
+            
+            // Protection is enabled only if mode is hostname AND host is our family DNS
+            _protectionEnabled.value = mode == DevicePolicyManager.PRIVATE_DNS_MODE_PROVIDER_HOSTNAME 
+                    && host == FAMILY_DNS_HOST
+            Timber.d("Protection state updated: ${_protectionEnabled.value}, mode: $mode, host: $host")
         } catch (e: SecurityException) {
             Timber.e(e, "Failed to get private DNS mode")
             _protectionEnabled.value = false
