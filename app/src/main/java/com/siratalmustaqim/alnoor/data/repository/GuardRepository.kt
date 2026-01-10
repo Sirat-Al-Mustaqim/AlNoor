@@ -114,24 +114,32 @@ class GuardRepository @Inject constructor(
      */
     private fun onDnsSettingsChanged() {
         repositoryScope.launch {
-            val isAlwaysOn = settingsDataStore.alwaysOnProtection.first()
+            enforceProtectionIfNeeded()
+        }
+    }
+
+    /**
+     * Check and enforce DNS protection if always-on is enabled
+     * Called by ContentObserver and WorkManager
+     */
+    suspend fun enforceProtectionIfNeeded() {
+        val isAlwaysOn = settingsDataStore.alwaysOnProtection.first()
+        
+        if (isAlwaysOn && isDeviceOwner) {
+            // Check if DNS was changed away from our settings
+            val currentHost = devicePolicyManager.getGlobalPrivateDnsHost(adminComponent)
+            val currentMode = devicePolicyManager.getGlobalPrivateDnsMode(adminComponent)
             
-            if (isAlwaysOn && isDeviceOwner) {
-                // Check if DNS was changed away from our settings
-                val currentHost = devicePolicyManager.getGlobalPrivateDnsHost(adminComponent)
-                val currentMode = devicePolicyManager.getGlobalPrivateDnsMode(adminComponent)
-                
-                val isProtected = currentMode == DevicePolicyManager.PRIVATE_DNS_MODE_PROVIDER_HOSTNAME 
-                        && currentHost == FAMILY_DNS_HOST
-                
-                if (!isProtected) {
-                    Timber.w("DNS was changed while always-on is enabled! Reverting...")
-                    enableProtection()
-                }
-            } else {
-                // Just update the protection state
-                updateProtectionState()
+            val isProtected = currentMode == DevicePolicyManager.PRIVATE_DNS_MODE_PROVIDER_HOSTNAME 
+                    && currentHost == FAMILY_DNS_HOST
+            
+            if (!isProtected) {
+                Timber.w("DNS was changed while always-on is enabled! Reverting...")
+                enableProtection()
             }
+        } else {
+            // Just update the protection state
+            updateProtectionState()
         }
     }
 
