@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "YOUR_DEBUG_PROJECT_NUMBER",
-    "project_id": "your-debug-project-id",
-    "storage_bucket": "your-debug-project-id.appspot.com"
+    "project_number": "609849422294",
+    "project_id": "sirat-al-mustaqim-dev",
+    "storage_bucket": "sirat-al-mustaqim-dev.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:YOUR_DEBUG_APP_ID:android:YOUR_DEBUG_HASH",
+        "mobilesdk_app_id": "1:609849422294:android:2fa0419f12b9203339b477",
         "android_client_info": {
           "package_name": "com.siratalmustaqim.alnoor.dev"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "YOUR_DEBUG_API_KEY"
+          "current_key": "AIzaSyDBaCyQ4siOMO4FW1W5w4BVX8uQdwrTkOI"
         }
       ],
       "services": {
