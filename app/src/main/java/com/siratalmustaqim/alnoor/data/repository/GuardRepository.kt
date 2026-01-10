@@ -3,15 +3,23 @@ package com.siratalmustaqim.alnoor.data.repository
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
+import android.database.ContentObserver
+import android.os.Handler
+import android.os.Looper
 import android.os.UserManager
+import android.provider.Settings
 import com.siratalmustaqim.alnoor.admin.AlNoorDeviceAdminReceiver
 import com.siratalmustaqim.alnoor.data.preferences.SettingsDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -62,9 +70,69 @@ class GuardRepository @Inject constructor(
      */
     val alwaysOnProtection: Flow<Boolean> = settingsDataStore.alwaysOnProtection
 
+    // Coroutine scope for background operations
+    private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    // ContentObserver to monitor private DNS changes
+    private val dnsObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+        override fun onChange(selfChange: Boolean) {
+            super.onChange(selfChange)
+            Timber.d("Private DNS setting changed detected")
+            onDnsSettingsChanged()
+        }
+    }
+
     init {
         // Check current DNS state on init
         updateProtectionState()
+        
+        // Register ContentObserver for DNS changes
+        registerDnsObserver()
+    }
+
+    /**
+     * Register ContentObserver to monitor private DNS settings changes
+     */
+    private fun registerDnsObserver() {
+        try {
+            val modeUri = Settings.Global.getUriFor(PRIVATE_DNS_MODE)
+            val specifierUri = Settings.Global.getUriFor(PRIVATE_DNS_SPECIFIER)
+            
+            context.contentResolver.registerContentObserver(modeUri, false, dnsObserver)
+            context.contentResolver.registerContentObserver(specifierUri, false, dnsObserver)
+            
+            Timber.d("DNS ContentObserver registered")
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to register DNS observer")
+        }
+    }
+
+    /**
+     * Called when DNS settings change
+     * If alwaysOnProtection is enabled, reverts to family DNS
+     * Otherwise, just updates the protection state
+     */
+    private fun onDnsSettingsChanged() {
+        repositoryScope.launch {
+            val isAlwaysOn = settingsDataStore.alwaysOnProtection.first()
+            
+            if (isAlwaysOn && isDeviceOwner) {
+                // Check if DNS was changed away from our settings
+                val currentHost = devicePolicyManager.getGlobalPrivateDnsHost(adminComponent)
+                val currentMode = devicePolicyManager.getGlobalPrivateDnsMode(adminComponent)
+                
+                val isProtected = currentMode == DevicePolicyManager.PRIVATE_DNS_MODE_PROVIDER_HOSTNAME 
+                        && currentHost == FAMILY_DNS_HOST
+                
+                if (!isProtected) {
+                    Timber.w("DNS was changed while always-on is enabled! Reverting...")
+                    enableProtection()
+                }
+            } else {
+                // Just update the protection state
+                updateProtectionState()
+            }
+        }
     }
 
     /**
