@@ -29,6 +29,10 @@ class GuardRepository @Inject constructor(
     companion object {
         // Cloudflare Family DNS for content filtering
         private const val FAMILY_DNS_HOST = "family.cloudflare-dns.com"
+
+        // Global settings keys for private DNS
+        private const val PRIVATE_DNS_MODE = "private_dns_mode"
+        private const val PRIVATE_DNS_SPECIFIER = "private_dns_specifier"
     }
 
     private val devicePolicyManager: DevicePolicyManager by lazy {
@@ -100,6 +104,11 @@ class GuardRepository @Inject constructor(
                 FAMILY_DNS_HOST
             )
 
+            // Also set via global settings as backup
+            Timber.d("Set private DNS via global settings as backup")
+            devicePolicyManager.setGlobalSetting(adminComponent, PRIVATE_DNS_MODE, "hostname")
+            devicePolicyManager.setGlobalSetting(adminComponent, PRIVATE_DNS_SPECIFIER, FAMILY_DNS_HOST)
+
             val success = result == DevicePolicyManager.PRIVATE_DNS_SET_NO_ERROR
             if (success) {
                 _protectionEnabled.value = true
@@ -127,6 +136,12 @@ class GuardRepository @Inject constructor(
         try {
             Timber.d("Disabling protection - setting private DNS to opportunistic mode")
             devicePolicyManager.setGlobalPrivateDnsModeOpportunistic(adminComponent)
+
+            // Also reset via global settings
+            Timber.d("Reset private DNS via global settings")
+            devicePolicyManager.setGlobalSetting(adminComponent, PRIVATE_DNS_MODE, "opportunistic")
+            devicePolicyManager.setGlobalSetting(adminComponent, PRIVATE_DNS_SPECIFIER, "")
+
             _protectionEnabled.value = false
             Timber.d("Private DNS cleared successfully")
         } catch (e: Exception) {
