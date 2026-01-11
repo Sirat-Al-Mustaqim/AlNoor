@@ -23,16 +23,36 @@ jobs:
           git config --global user.email \
             "github-actions[bot]@users.noreply.github.com"
 
+      - name: Check if version bump commit
+        id: check_skip
+        run: |
+          # Skip if the last commit is a version bump to prevent loops
+          LAST_MSG=$(git log -1 --pretty=%B)
+          if [[ "$LAST_MSG" == "chore: bump version to"* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Last commit was a version bump, skipping..."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Bump version
+        if: steps.check_skip.outputs.skip == 'false'
         id: bump
         run: |
           BUILD_FILE="app/build.gradle.kts"
 
           # Extract current versionCode and versionName
           CURRENT_VERSION_CODE=$(grep -oP \
-            'versionCode = \K\d+' "$BUILD_FILE")
+            'versionCode = \K\d+' "$BUILD_FILE" || echo "")
           CURRENT_VERSION_NAME=$(grep -oP \
-            'versionName = "\K[^"]+' "$BUILD_FILE")
+            'versionName = "\K[^"]+' "$BUILD_FILE" || echo "")
+
+          # Validate extraction was successful
+          if [[ -z "$CURRENT_VERSION_CODE" ]] || \
+             [[ -z "$CURRENT_VERSION_NAME" ]]; then
+            echo "Error: Could not extract version from $BUILD_FILE"
+            exit 1
+          fi
 
           echo "Current versionCode: $CURRENT_VERSION_CODE"
           echo "Current versionName: $CURRENT_VERSION_NAME"
@@ -47,6 +67,12 @@ jobs:
           MINOR="${VERSION_PARTS[1]:-0}"
           PATCH="${VERSION_PARTS[2]:-0}"
 
+          # Validate version parts are numbers
+          if ! [[ "$MAJOR" =~ ^[0-9]+$ ]]; then
+            echo "Error: Invalid version format: $CURRENT_VERSION_NAME"
+            exit 1
+          fi
+
           # Increment patch version
           PATCH=$((PATCH + 1))
           NEW_VERSION_NAME="${MAJOR}.${MINOR}.${PATCH}"
@@ -54,12 +80,18 @@ jobs:
           echo "New versionCode: $NEW_VERSION_CODE"
           echo "New versionName: $NEW_VERSION_NAME"
 
+          # Escape special characters for sed
+          ESCAPED_CURRENT_VERSION=$(printf '%s\n' \
+            "$CURRENT_VERSION_NAME" | sed 's/[.[\*^$()+?{|]/\\&/g')
+          ESCAPED_NEW_VERSION=$(printf '%s\n' \
+            "$NEW_VERSION_NAME" | sed 's/[[\*^$()+?{|]/\\&/g')
+
           # Update the build.gradle.kts file
           sed -i \
             "s/versionCode = $CURRENT_VERSION_CODE/versionCode = $NEW_VERSION_CODE/" \
             "$BUILD_FILE"
           sed -i \
-            "s/versionName = \"$CURRENT_VERSION_NAME\"/versionName = \"$NEW_VERSION_NAME\"/" \
+            "s/versionName = \"$ESCAPED_CURRENT_VERSION\"/versionName = \"$ESCAPED_NEW_VERSION\"/" \
             "$BUILD_FILE"
 
           # Export for later use
@@ -70,6 +102,7 @@ jobs:
           echo "version_changed=true" >> $GITHUB_OUTPUT
 
       - name: Check for changes
+        if: steps.check_skip.outputs.skip == 'false'
         id: check_changes
         run: |
           if git diff --quiet; then
@@ -81,8 +114,16 @@ jobs:
           fi
 
       - name: Commit and push version bump
-        if: steps.check_changes.outputs.has_changes == 'true'
+        if: |
+          steps.check_skip.outputs.skip == 'false' &&
+          steps.check_changes.outputs.has_changes == 'true'
         run: |
+          # Pull latest changes to avoid conflicts
+          git pull --rebase origin develop || {
+            echo "Failed to pull latest changes"
+            exit 1
+          }
+          
           git add app/build.gradle.kts
           NEW_V="${{ steps.bump.outputs.new_version_name }}"
           NEW_C="${{ steps.bump.outputs.new_version_code }}"
@@ -90,7 +131,9 @@ jobs:
           git push origin develop
 
       - name: Summary
-        if: steps.check_changes.outputs.has_changes == 'true'
+        if: |
+          steps.check_skip.outputs.skip == 'false' &&
+          steps.check_changes.outputs.has_changes == 'true'
         run: |
           echo "### Version Bump Summary :rocket:" \
             >> $GITHUB_STEP_SUMMARY
