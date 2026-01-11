@@ -22,6 +22,7 @@ import com.siratalmustaqim.alnoor.ui.screens.settings.quran.QuranSettingsScreen
 @Composable
 fun BottomNavGraph(
     navController: NavHostController,
+    rootNavController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -37,7 +38,11 @@ fun BottomNavGraph(
             QiblaScreen()
         }
         composable(route = Screen.Guard.route) {
-            GuardScreen()
+            GuardScreen(
+                onNavigateToVerification = {
+                    rootNavController.navigate(Screen.AyahVerification.route)
+                }
+            )
         }
         composable(route = Screen.More.route) {
             MoreScreen(

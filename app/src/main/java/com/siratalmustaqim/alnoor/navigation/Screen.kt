@@ -15,4 +15,7 @@ sealed class Screen(val route: String) {
     // Settings sub-screens
     data object QuranSettings : Screen("settings/quran")
     data object PrayerSettings : Screen("settings/prayer")
+    
+    // Verification screens
+    data object AyahVerification : Screen("ayah_verification")
 }

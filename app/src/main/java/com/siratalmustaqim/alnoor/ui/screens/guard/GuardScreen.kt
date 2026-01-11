@@ -60,6 +60,7 @@ import com.siratalmustaqim.alnoor.ui.theme.Gold
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun GuardScreen(
+    onNavigateToVerification: () -> Unit,
     viewModel: GuardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -75,6 +76,10 @@ fun GuardScreen(
 
                 is GuardEvent.ShowMessage -> {
                     snackbarHostState.showSnackbar(context.getString(event.messageRes))
+                }
+                
+                is GuardEvent.NavigateToVerification -> {
+                    onNavigateToVerification()
                 }
             }
         }

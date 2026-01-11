@@ -31,6 +31,7 @@ data class GuardUiState(
 sealed class GuardEvent {
     data class ShowError(@param:StringRes val messageRes: Int) : GuardEvent()
     data class ShowMessage(@param:StringRes val messageRes: Int) : GuardEvent()
+    data object NavigateToVerification : GuardEvent()
 }
 
 @HiltViewModel
@@ -95,6 +96,15 @@ class GuardViewModel @Inject constructor(
     private fun setAlwaysOnProtection(enabled: Boolean) {
         viewModelScope.launch {
             Timber.d("Setting always-on protection: $enabled")
+            
+            // If trying to disable always-on protection, require verification
+            if (!enabled && uiState.value.alwaysOnProtection) {
+                Timber.d("Disabling always-on protection requires verification")
+                _events.emit(GuardEvent.NavigateToVerification)
+                return@launch
+            }
+            
+            // Enable directly
             guardRepository.setAlwaysOnProtection(enabled)
         }
     }

@@ -5,12 +5,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.siratalmustaqim.alnoor.navigation.BottomNavGraph
 import com.siratalmustaqim.alnoor.ui.components.BottomNavigationBar
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    rootNavController: NavHostController
+) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -21,6 +24,7 @@ fun MainScreen() {
     ) { innerPadding ->
         BottomNavGraph(
             navController = navController,
+            rootNavController = rootNavController,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -30,6 +34,7 @@ fun MainScreen() {
 @Composable
 private fun MainScreenPreview() {
     com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme {
-        MainScreen()
+        MainScreen(rootNavController = rememberNavController())
     }
 }
+

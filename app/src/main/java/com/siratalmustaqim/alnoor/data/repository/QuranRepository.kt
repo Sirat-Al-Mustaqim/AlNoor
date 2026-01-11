@@ -87,4 +87,13 @@ class QuranRepository @Inject constructor(
      * Get all surah numbers.
      */
     suspend fun getAllSurahNumbers(): List<Int> = ayahDao.getAllSurahNumbers()
+    
+    /**
+     * Check if an exact ayah text exists in the database.
+     * 
+     * @param ayahText The exact ayah text to search for
+     * @return true if the ayah exists, false otherwise
+     */
+    suspend fun searchAyahExact(ayahText: String): Boolean = 
+        ayahDao.ayahExists(ayahText)
 }

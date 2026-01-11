@@ -88,4 +88,13 @@ interface AyahDao {
      */
     @Query("SELECT DISTINCT surah_number FROM ayahs ORDER BY surah_number ASC")
     suspend fun getAllSurahNumbers(): List<Int>
+    
+    /**
+     * Check if an exact ayah text exists in the database.
+     * 
+     * @param ayahText The exact ayah text to search for
+     * @return true if the ayah exists, false otherwise
+     */
+    @Query("SELECT EXISTS(SELECT 1 FROM ayahs WHERE text = :ayahText)")
+    suspend fun ayahExists(ayahText: String): Boolean
 }
