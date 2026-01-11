@@ -40,8 +40,16 @@ for TYPE in $ACCOUNT_TYPES; do
     PKG=$(echo "$ACCOUNT_DUMP" | grep "type=$TYPE}" | awk -F'ComponentInfo{' '{print $2}' | awk -F'/' '{print $1}' | tr -d '\r' | head -1)
     
     if [ -z "$PKG" ]; then
-        # Fallback: append .account to the type (e.g., com.xiaomi -> com.xiaomi.account)
-        PKG="${TYPE}.account"
+        # Count the number of parts in the type (separated by dots)
+        PART_COUNT=$(echo "$TYPE" | tr '.' '\n' | wc -l | tr -d ' ')
+        
+        if [ "$PART_COUNT" -eq 2 ]; then
+            # Only append .account if type has exactly 2 parts (e.g., com.xiaomi -> com.xiaomi.account)
+            PKG="${TYPE}.account"
+        else
+            # Type already has 3+ parts, use it as-is (e.g., com.google.android.gms)
+            PKG="$TYPE"
+        fi
     fi
     
     if [ -n "$PKG" ]; then
