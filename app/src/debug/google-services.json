@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "609849422294",
+    "project_id": "sirat-al-mustaqim-dev",
+    "storage_bucket": "sirat-al-mustaqim-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609849422294:android:2fa0419f12b9203339b477",
+        "android_client_info": {
+          "package_name": "com.siratalmustaqim.alnoor.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBaCyQ4siOMO4FW1W5w4BVX8uQdwrTkOI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

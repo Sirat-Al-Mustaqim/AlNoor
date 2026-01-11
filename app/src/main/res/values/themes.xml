@@ -3,8 +3,15 @@
     <!-- Base theme -->
     <style name="Theme.AlNoor" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <!-- Splash Screen theme -->
-    <style name="Theme.AlNoor.Splash" parent="Theme.AlNoor">
-        <item name="android:windowBackground">@drawable/splash_background</item>
+    <!-- Splash Screen theme using SplashScreen compat library (works on API 23+) -->
+    <style name="Theme.AlNoor.Splash" parent="Theme.SplashScreen">
+        <!-- Background color for splash screen -->
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <!-- Center icon displayed during splash -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_noor_shield</item>
+        <!-- Duration to keep the splash icon visible (in ms) -->
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <!-- Theme to apply after splash completes -->
+        <item name="postSplashScreenTheme">@style/Theme.AlNoor</item>
     </style>
 </resources>

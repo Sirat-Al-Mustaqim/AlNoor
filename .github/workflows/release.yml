@@ -1,0 +1,106 @@
+---
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version information
+        id: version
+        run: |
+          # Extract VERSION_NAME from gradle.properties
+          VERSION_NAME=$(grep -oP '^VERSION_NAME=\K[^\s]+' gradle.properties)
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION_NAME"
+          
+          # Extract release notes for this specific version from CHANGELOG.md
+          # Format: # 0.1.0 (2026-01-11)
+          # Extract content between "# $VERSION_NAME" and the next "# " header
+          RELEASE_NOTES=$(awk "/^# $VERSION_NAME /{flag=1; next} /^# /{flag=0} flag" CHANGELOG.md)
+          
+          # If no content found, provide a default message
+          if [ -z "$RELEASE_NOTES" ]; then
+            RELEASE_NOTES="Release version $VERSION_NAME"
+          fi
+          
+          # Save to file for GitHub release
+          echo "$RELEASE_NOTES" > release_notes.txt
+          
+          echo "Release notes extracted for version $VERSION_NAME"
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 -d > app/keystore.jks
+          echo "✓ Keystore decoded"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build signed release APK
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          ./gradlew assembleRelease --console=plain --no-daemon
+          echo "✓ Release APK built and signed"
+
+      - name: Rename APK
+        run: |
+          # Find the release APK and rename it
+          find app/build/outputs/apk/release -name "*.apk" -exec cp {} al-noor.apk \;
+          ls -lh al-noor.apk
+          echo "✓ APK renamed to al-noor.apk"
+
+      - name: Fetch tags
+        run: |
+          git fetch --tags
+          echo "✓ Tags fetched"
+
+      - name: Verify tag exists
+        id: check_tag
+        run: |
+          TAG="v${{ steps.version.outputs.version_name }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+            echo "✓ Tag $TAG exists"
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+            echo "⚠ Tag $TAG does not exist - release will fail!"
+            exit 1
+          fi
+
+      - name: Create GitHub Release
+        if: steps.check_tag.outputs.tag_exists == 'true'
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version_name }}
+          name: AlNoor ${{ steps.version.outputs.version_name }}
+          body_path: release_notes.txt
+          files: al-noor.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
