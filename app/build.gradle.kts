@@ -24,8 +24,35 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Load signing properties from .env file (local) or environment variables (CI/CD)
+    signingConfigs {
+        create("release") {
+            // For local builds: check if keystore.jks exists in app directory
+            val keystoreFile = file("keystore.jks")
+            
+            // Get signing properties from environment variables
+            val storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+            val keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+            val keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            
+            if (keystoreFile.exists() && storePassword != null && keyAlias != null && keyPassword != null) {
+                storeFile = keystoreFile
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+                println("✓ Release signing configured with keystore: ${keystoreFile.name}")
+            } else {
+                println("⚠ Release signing not configured - keystore or credentials missing")
+                println("  Keystore exists: ${keystoreFile.exists()}")
+                println("  Environment variables set: ${storePassword != null && keyAlias != null && keyPassword != null}")
+            }
+        }
+    }
+
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

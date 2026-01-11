@@ -1,0 +1,112 @@
+---
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version information
+        id: version
+        run: |
+          # Extract VERSION_NAME from gradle.properties
+          VERSION_NAME=$(grep -oP '^VERSION_NAME=\K[^\s]+' gradle.properties)
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION_NAME"
+          
+          # Extract release notes from CHANGELOG.md (between first and second version headers)
+          RELEASE_NOTES=$(awk '/^# [0-9]+\.[0-9]+\.[0-9]+/{if(++count==2) exit; if(count==1) next} count==1' CHANGELOG.md)
+          
+          # Save to file for GitHub release
+          echo "$RELEASE_NOTES" > release_notes.txt
+          
+          echo "Release notes extracted"
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 -d > app/keystore.jks
+          echo "✓ Keystore decoded"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build signed release APK
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          ./gradlew assembleRelease --console=plain --no-daemon
+          echo "✓ Release APK built and signed"
+
+      - name: Rename APK
+        run: |
+          # Find the release APK and rename it
+          find app/build/outputs/apk/release -name "*.apk" -exec cp {} al-noor.apk \;
+          ls -lh al-noor.apk
+          echo "✓ APK renamed to al-noor.apk"
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version_name }}
+          name: AlNoor ${{ steps.version.outputs.version_name }}
+          body_path: release_notes.txt
+          files: al-noor.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clear CHANGELOG.md
+        run: |
+          cat > CHANGELOG.md << 'EOF'
+          # Changelog
+          
+          All notable changes to this project will be documented in this file.
+          
+          The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+          and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+          
+          ## [Unreleased]
+          EOF
+          
+          echo "✓ CHANGELOG.md cleared"
+
+      - name: Commit and push changelog to develop
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Commit the cleared changelog on main
+          git add CHANGELOG.md
+          git commit -m "chore: clear changelog after release ${{ steps.version.outputs.version_name }} [skip ci]"
+          
+          # Push to develop branch
+          git fetch origin develop:develop
+          git checkout develop
+          git cherry-pick main
+          git push origin develop
+          
+          echo "✓ Changelog cleared and pushed to develop"
