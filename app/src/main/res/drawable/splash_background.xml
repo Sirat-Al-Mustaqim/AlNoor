@@ -3,13 +3,10 @@
     <!-- Background color - dark green -->
     <item android:drawable="@color/splash_background" />
 
-    <!-- Logo centered and scaled -->
+    <!-- Shield icon centered -->
     <item
-        android:width="150dp"
-        android:height="150dp"
-        android:gravity="center">
-        <bitmap
-            android:gravity="fill"
-            android:src="@drawable/splash_logo" />
-    </item>
+        android:width="140dp"
+        android:height="168dp"
+        android:gravity="center"
+        android:drawable="@drawable/ic_noor_shield" />
 </layer-list>

@@ -87,7 +87,7 @@
     <string name="settings_appearance">Appearance</string>
     <string name="settings_language">Language</string>
     <string name="settings_language_value">English</string>
-    <string name="settings_about">About Nur Blocker</string>
+    <string name="settings_about">About Al Noor</string>
     <string name="settings_local_storage_only">LOCAL STORAGE ONLY</string>
     <string name="settings_app_version">Al Noor v%s</string>
 
@@ -164,7 +164,11 @@
     <string name="verification_clear_all">Clear All</string>
     <string name="verification_validate_locked">Validate</string>
     <string name="verification_activate_protection">Activate Protection</string>
-    <string name="verification_footer">Nur Blocker • Local Encryption Active</string>
+    <string name="verification_footer">Al Noor • Local Encryption Active</string>
     <string name="verification_paste_disabled_toast">Paste is disabled. Please type the ayah.</string>
     <string name="verification_success">Verification successful!</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_tagline">Secure. Private. Local.</string>
+    <string name="splash_offline_protection">Offline Protection Active</string>
 </resources>
