@@ -135,17 +135,6 @@ private fun SplashScreenContent(
                     .scale(logoScale)
                     .alpha(logoAlpha)
             ) {
-                // Ambient glow behind the logo
-                Box(
-                    modifier = Modifier
-                        .size(160.dp)
-                        .blur(60.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                            shape = CircleShape
-                        )
-                )
-
                 // Logo image
                 Image(
                     painter = painterResource(R.drawable.ic_noor_shield),
