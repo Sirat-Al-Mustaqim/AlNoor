@@ -1,9 +1,6 @@
 package com.siratalmustaqim.alnoor.ui.screens.guard
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -20,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,10 +25,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Power
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -58,41 +52,34 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 import com.siratalmustaqim.alnoor.ui.theme.Gold
-import com.siratalmustaqim.alnoor.vpn.VpnState
-import com.siratalmustaqim.alnoor.vpn.VpnStatistics
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun GuardScreen(
+    onNavigateToVerification: () -> Unit,
     viewModel: GuardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    val vpnPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        viewModel.onVpnPermissionResult(result.resultCode == Activity.RESULT_OK)
-    }
-
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is GuardEvent.RequestVpnPermission -> {
-                    vpnPermissionLauncher.launch(event.intent)
-                }
-
                 is GuardEvent.ShowError -> {
                     snackbarHostState.showSnackbar(context.getString(event.messageRes))
                 }
 
                 is GuardEvent.ShowMessage -> {
                     snackbarHostState.showSnackbar(context.getString(event.messageRes))
+                }
+
+                is GuardEvent.NavigateToVerification -> {
+                    onNavigateToVerification()
                 }
             }
         }
@@ -125,9 +112,8 @@ private fun GuardScreenContent(
 
             // Hero Shield Section
             ShieldButton(
-                isConnected = uiState.isConnected,
-                isConnecting = uiState.isConnecting,
-                onClick = uiState.onToggleVpn
+                isProtected = uiState.protectionEnabled,
+                onClick = uiState.onToggleProtection
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -136,12 +122,6 @@ private fun GuardScreenContent(
             StatusSection(uiState = uiState)
 
             Spacer(modifier = Modifier.height(40.dp))
-
-            // Statistics Card
-            if (uiState.isConnected) {
-                StatisticsCard(statistics = uiState.statistics)
-                Spacer(modifier = Modifier.height(24.dp))
-            }
 
             // Always-on Protection Toggle
             AlwaysOnProtectionCard(
@@ -167,30 +147,29 @@ private fun GuardScreenContent(
 
 @Composable
 private fun ShieldButton(
-    isConnected: Boolean,
-    isConnecting: Boolean,
+    isProtected: Boolean,
     onClick: () -> Unit
 ) {
     val scale by animateFloatAsState(
-        targetValue = if (isConnected) 1.05f else 1f,
+        targetValue = if (isProtected) 1.05f else 1f,
         animationSpec = tween(500),
         label = "scale"
     )
 
     val backgroundColor by animateColorAsState(
-        targetValue = if (isConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+        targetValue = if (isProtected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
         animationSpec = tween(500),
         label = "backgroundColor"
     )
 
     val borderColor by animateColorAsState(
-        targetValue = if (isConnected) Gold else MaterialTheme.colorScheme.outline,
+        targetValue = if (isProtected) Gold else MaterialTheme.colorScheme.outline,
         animationSpec = tween(500),
         label = "borderColor"
     )
 
     val iconColor by animateColorAsState(
-        targetValue = if (isConnected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+        targetValue = if (isProtected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
         animationSpec = tween(500),
         label = "iconColor"
     )
@@ -201,8 +180,8 @@ private fun ShieldButton(
             .scale(scale),
         contentAlignment = Alignment.Center
     ) {
-        // Outer glow for connected state
-        if (isConnected) {
+        // Outer glow for protected state
+        if (isProtected) {
             Box(
                 modifier = Modifier
                     .size(200.dp)
@@ -224,7 +203,7 @@ private fun ShieldButton(
             modifier = Modifier
                 .size(180.dp)
                 .border(
-                    width = if (isConnected) 3.dp else 1.dp,
+                    width = if (isProtected) 3.dp else 1.dp,
                     color = borderColor.copy(alpha = 0.5f),
                     shape = CircleShape
                 )
@@ -237,25 +216,17 @@ private fun ShieldButton(
                 .clip(CircleShape)
                 .background(backgroundColor)
                 .border(2.dp, borderColor, CircleShape)
-                .clickable(enabled = !isConnecting) { onClick() },
+                .clickable { onClick() },
             contentAlignment = Alignment.Center
         ) {
-            if (isConnecting) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(64.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    strokeWidth = 4.dp
-                )
-            } else {
-                Icon(
-                    imageVector = if (isConnected) Icons.Filled.Shield else Icons.Filled.Power,
-                    contentDescription = if (isConnected) stringResource(R.string.guard_connected_desc) else stringResource(
-                        R.string.guard_disconnected_desc
-                    ),
-                    tint = iconColor,
-                    modifier = Modifier.size(72.dp)
-                )
-            }
+            Icon(
+                imageVector = if (isProtected) Icons.Filled.Shield else Icons.Filled.Power,
+                contentDescription = if (isProtected) stringResource(R.string.guard_connected_desc) else stringResource(
+                    R.string.guard_disconnected_desc
+                ),
+                tint = iconColor,
+                modifier = Modifier.size(72.dp)
+            )
         }
     }
 }
@@ -269,13 +240,13 @@ private fun StatusSection(uiState: GuardUiState) {
             text = stringResource(uiState.statusTextRes),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = if (uiState.isConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+            color = if (uiState.protectionEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = if (uiState.isConnected) stringResource(R.string.guard_connection_secure) else stringResource(
+            text = if (uiState.protectionEnabled) stringResource(R.string.guard_connection_secure) else stringResource(
                 R.string.guard_tap_to_connect
             ),
             style = MaterialTheme.typography.bodyMedium,
@@ -284,60 +255,6 @@ private fun StatusSection(uiState: GuardUiState) {
         )
     }
 }
-
-@Composable
-private fun StatisticsCard(statistics: VpnStatistics) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Timer,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-            
-            Spacer(modifier = Modifier.width(16.dp))
-            
-            Column {
-                Text(
-                    text = stringResource(R.string.guard_stat_duration),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = formatDuration(seconds = statistics.connectionTime),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-    }
-}
-
-
-
 
 @Composable
 private fun AlwaysOnProtectionCard(
@@ -466,20 +383,6 @@ private fun InfoCard() {
     }
 }
 
-@Composable
-private fun formatDuration(seconds: Long): String {
-    val hours = seconds / 3600
-    val minutes = (seconds % 3600) / 60
-    val secs = seconds % 60
-    return when {
-        hours > 0 -> stringResource(R.string.guard_format_hours_minutes, hours, minutes)
-        minutes > 0 -> stringResource(R.string.guard_format_minutes_seconds, minutes, secs)
-        else -> stringResource(R.string.guard_format_seconds, secs)
-    }
-}
-
-
-
 @Preview(showBackground = true)
 @Composable
 private fun GuardScreenDisconnectedPreview() {
@@ -493,17 +396,11 @@ private fun GuardScreenDisconnectedPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun GuardScreenConnectedPreview() {
+private fun GuardScreenProtectedPreview() {
     AlNoorTheme {
         GuardScreenContent(
             uiState = GuardUiState(
-                vpnState = VpnState.CONNECTED,
-                statistics = VpnStatistics(
-                    bytesIn = 15_000_000,
-                    bytesOut = 2_500_000,
-                    packetsBlocked = 42,
-                    connectionTime = 3665
-                )
+                protectionEnabled = true
             ),
             snackbarHostState = SnackbarHostState()
         )
@@ -515,9 +412,8 @@ private fun GuardScreenConnectedPreview() {
 private fun GuardScreenDarkPreview() {
     AlNoorTheme(darkTheme = true) {
         GuardScreenContent(
-            uiState = GuardUiState(vpnState = VpnState.CONNECTED),
+            uiState = GuardUiState(protectionEnabled = true),
             snackbarHostState = SnackbarHostState()
         )
     }
 }
-

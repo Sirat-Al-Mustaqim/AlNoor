@@ -5,31 +5,28 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Prayer Settings - Nur Blocker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
+    <title>Nur Blocker - App Presentation</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet" />
+    <!-- Material Symbols -->
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Theme Configuration -->
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#0d7351",
-                        "primary-content": "#ffffff",
-                        "secondary": "#D7AF1B",
-                        "background-light": "#ffffff",
-                        "background-dark": "#1d1d20",
-                        "surface-light": "#f8fcfa",
-                        "surface-dark": "#2a2a2d",
-                        "text-main": "#0e1b17",
-                        "text-muted": "#6b7280",
+                        "primary": "#157947",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#122019",
                     },
                     fontFamily: {
                         "display": ["Manrope", "sans-serif"]
@@ -38,55 +35,29 @@
                         "DEFAULT": "0.25rem",
                         "lg": "0.5rem",
                         "xl": "0.75rem",
-                        "2xl": "1rem",
                         "full": "9999px"
                     },
                     boxShadow: {
-                        "soft": "0 4px 20px -2px rgba(13, 115, 81, 0.05)",
+                        'glow': '0 0 60px -15px rgba(21, 121, 71, 0.3)',
                     }
                 },
             },
         }
     </script>
     <style>
-        /* Custom range slider styling for Emerald Green theme */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #D4AF37 0%, #F3E5AB 50%, #B4941F 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #0d7351;
-            margin-top: -8px;
-            box-shadow: 0 0 0 4px #fff, 0 0 0 6px #D7AF1B;
-            cursor: pointer;
+        .gold-stroke {
+            stroke: #D4AF37;
         }
 
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: #e5e7eb;
-            border-radius: 2px;
-        }
-
-        input[type=range]:focus::-webkit-slider-runnable-track {
-            background: #e5e7eb;
-        }
-
-        /* Custom switch styling */
-        .toggle-checkbox:checked {
-            right: 0;
-            border-color: #0d7351;
-        }
-
-        .toggle-checkbox:checked+.toggle-label {
-            background-color: #0d7351;
+        .gold-fill {
+            fill: #D4AF37;
         }
     </style>
     <style>
@@ -96,187 +67,81 @@
     </style>
 </head>
 
-<body
-    class="bg-background-light dark:bg-background-dark text-text-main font-display antialiased min-h-screen flex flex-col">
-    <!-- Top Navigation -->
-    <header
-        class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
-        <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
-            <button
-                class="p-2 -ml-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800 text-text-main transition-colors">
-                <span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
-            </button>
-            <h1 class="text-lg font-bold text-text-main tracking-tight">Prayer Settings</h1>
-            <div class="w-10"></div> <!-- Spacer for optical centering -->
-        </div>
-    </header>
-    <main class="flex-1 w-full max-w-md mx-auto px-4 py-6 space-y-8 pb-20">
-        <!-- Location Section -->
-        <section class="space-y-4">
-            <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-outlined text-secondary"
-                    style="font-variation-settings: 'FILL' 1;">location_on</span>
-                <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Location</h2>
-            </div>
-            <div
-                class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 shadow-soft border border-gray-100 dark:border-gray-800 relative overflow-hidden group">
-                <!-- Decorative gold accent -->
-                <div
-                    class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-secondary/10 to-transparent rounded-bl-full -mr-4 -mt-4">
-                </div>
-                <div class="flex items-start justify-between gap-4 relative z-10">
-                    <div>
-                        <p class="text-xs font-semibold text-secondary mb-1">CURRENT CITY</p>
-                        <h3 class="text-xl font-bold text-text-main dark:text-white leading-tight">Mecca</h3>
-                        <p class="text-sm text-text-muted dark:text-gray-400">Saudi Arabia</p>
-                    </div>
-                    <button
-                        class="flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-gray-700 shadow-sm border border-gray-100 dark:border-gray-600 text-primary hover:bg-primary hover:text-white transition-all">
-                        <span class="material-symbols-outlined text-xl">edit_location</span>
-                    </button>
-                </div>
-                <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                    <div class="flex flex-col">
-                        <span class="text-base font-medium text-text-main dark:text-white">Auto-detect Location</span>
-                        <span class="text-xs text-text-muted dark:text-gray-400">Updates based on GPS</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input checked="" class="sr-only peer" type="checkbox" value="" />
-                        <div
-                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                        </div>
-                    </label>
-                </div>
-            </div>
-            <div class="bg-primary/5 rounded-xl p-4 flex gap-3 items-start border border-primary/10">
-                <span class="material-symbols-outlined text-primary text-xl mt-0.5">shield_lock</span>
-                <p class="text-xs text-primary/80 leading-relaxed font-medium">
-                    Your location data never leaves this device. We calculate prayer times locally to ensure complete
-                    privacy.
-                </p>
-            </div>
-        </section>
-        <!-- Audio Preferences Section -->
-        <section class="space-y-4">
-            <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-outlined text-secondary"
-                    style="font-variation-settings: 'FILL' 1;">volume_up</span>
-                <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Audio Preferences</h2>
-            </div>
-            <div
-                class="bg-white dark:bg-surface-dark rounded-2xl shadow-soft border border-gray-100 dark:border-gray-800 divide-y divide-gray-100 dark:divide-gray-800">
-                <!-- Volume Slider -->
-                <div class="p-5">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-base font-medium text-text-main dark:text-white">Adhan Volume</span>
-                        <span class="text-sm font-bold text-primary">85%</span>
-                    </div>
-                    <div class="relative h-6 flex items-center">
-                        <!-- Custom track background for gradient -->
-                        <div class="absolute w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div class="h-full bg-primary w-[85%]"></div>
-                        </div>
-                        <input class="absolute w-full z-10 opacity-0 cursor-pointer h-full" max="100" min="0"
-                            type="range" value="85" />
-                        <!-- Visual Thumb -->
-                        <div
-                            class="absolute left-[85%] w-5 h-5 bg-white border-2 border-secondary rounded-full shadow-md -translate-x-1/2 pointer-events-none flex items-center justify-center">
-                            <div class="w-2 h-2 bg-primary rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Reciter Selection -->
-                <div class="p-1">
-                    <button
-                        class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors group">
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary group-hover:bg-primary group-hover:text-white transition-colors">
-                                <span class="material-symbols-outlined">person</span>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-sm font-medium text-text-main dark:text-white">Adhan Reciter</p>
-                                <p class="text-xs text-primary font-medium">Mishary Rashid Alafasy</p>
-                            </div>
-                        </div>
-                        <span
-                            class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors">chevron_right</span>
-                    </button>
-                </div>
-                <!-- Silent Mode Toggle -->
-                <div class="p-5 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-600 dark:text-gray-300">
-                            <span class="material-symbols-outlined text-xl">do_not_disturb_on</span>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-base font-medium text-text-main dark:text-white">Silent During
-                                Prayer</span>
-                            <span class="text-xs text-text-muted dark:text-gray-400">Mutes device for 15 mins</span>
-                        </div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input class="sr-only peer" type="checkbox" value="" />
-                        <div
-                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                        </div>
-                    </label>
-                </div>
-                <!-- Pre-Prayer Reminder Toggle -->
-                <div class="p-5 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-600 dark:text-gray-300">
-                            <span class="material-symbols-outlined text-xl">notifications_active</span>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-base font-medium text-text-main dark:text-white">Early Reminder</span>
-                            <span class="text-xs text-text-muted dark:text-gray-400">Notify 15m before Adhan</span>
-                        </div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input checked="" class="sr-only peer" type="checkbox" value="" />
-                        <div
-                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                        </div>
-                    </label>
-                </div>
-            </div>
-        </section>
-        <!-- Advanced Adjustments (Correction) -->
-        <section class="space-y-4 pt-2">
-            <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-outlined text-secondary"
-                    style="font-variation-settings: 'FILL' 1;">tune</span>
-                <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Calculation Methods</h2>
-            </div>
-            <button
-                class="w-full bg-white dark:bg-surface-dark p-4 rounded-xl shadow-soft border border-gray-100 dark:border-gray-800 flex items-center justify-between group hover:border-secondary/50 transition-colors">
-                <div class="flex flex-col items-start">
-                    <span class="text-base font-medium text-text-main dark:text-white">Juristic Method</span>
-                    <span class="text-sm text-text-muted dark:text-gray-400 mt-1">Standard (Shafi, Hanbli,
-                        Maliki)</span>
-                </div>
-                <div class="flex items-center gap-2 text-primary font-medium text-sm">
-                    Change
-                    <span class="material-symbols-outlined text-lg">chevron_right</span>
-                </div>
-            </button>
-            <button
-                class="w-full bg-white dark:bg-surface-dark p-4 rounded-xl shadow-soft border border-gray-100 dark:border-gray-800 flex items-center justify-between group hover:border-secondary/50 transition-colors">
-                <div class="flex flex-col items-start">
-                    <span class="text-base font-medium text-text-main dark:text-white">Time Correction</span>
-                    <span class="text-sm text-text-muted dark:text-gray-400 mt-1">Manual adjustments per prayer</span>
-                </div>
-                <div class="flex items-center gap-2 text-primary font-medium text-sm">
-                    Configure
-                    <span class="material-symbols-outlined text-lg">chevron_right</span>
-                </div>
-            </button>
-        </section>
-    </main>
-    <!-- Bottom Decoration -->
+<body class="antialiased">
     <div
-        class="fixed bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white to-transparent dark:from-background-dark pointer-events-none z-10">
+        class="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-hidden font-display selection:bg-primary/20 selection:text-primary">
+        <!-- Subtle Background Pattern (Abstract Geometric) -->
+        <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+            data-alt="Minimalist dot pattern background for texture"
+            style="background-image: radial-gradient(#157947 1px, transparent 1px); background-size: 32px 32px;">
+        </div>
+        <!-- Main Content Area: Centered -->
+        <main class="flex-grow flex flex-col items-center justify-center relative z-10 w-full max-w-md mx-auto px-6">
+            <!-- Logo Composition -->
+            <div class="relative mb-10 group cursor-default">
+                <!-- Ambient Glow behind the shield -->
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-primary/20 rounded-full blur-3xl">
+                </div>
+                <!-- The Shield Icon -->
+                <!-- Deep Emerald Green Body with Gold Stroke -->
+                <div
+                    class="relative w-48 h-48 drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-[1.02]">
+                    <svg class="w-full h-full" viewbox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <lineargradient id="shieldGradient" x1="0%" x2="100%" y1="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1a8f55;stop-opacity:1"></stop>
+                                <stop offset="100%" style="stop-color:#0e5230;stop-opacity:1"></stop>
+                            </lineargradient>
+                        </defs>
+                        <!-- Shield Base Shape -->
+                        <path class="shadow-lg"
+                            d="M50 5 L10 20 V 50 C10 80 25 100 50 115 C75 100 90 80 90 50 V 20 L50 5 Z"
+                            fill="url(#shieldGradient)" stroke="#D4AF37" stroke-linejoin="round" stroke-width="1.5">
+                        </path>
+                        <!-- Inner Decorative Gold Line (Subtle) -->
+                        <path d="M50 12 L18 24 V 50 C18 75 30 90 50 102 C70 90 82 75 82 50 V 24 L50 12 Z" fill="none"
+                            stroke="#D4AF37" stroke-opacity="0.5" stroke-width="0.5"></path>
+                        <!-- Abstract Calligraphy 'Nur' Symbol -->
+                        <!-- Represents light/flow within the shield -->
+                        <g transform="translate(30, 40) scale(0.4)">
+                            <!-- Stylized Arabic-inspired curve -->
+                            <path
+                                d="M90 10 C 80 10, 70 30, 50 30 C 30 30, 20 10, 10 20 C -5 35, 10 80, 50 80 C 90 80, 100 40, 100 20"
+                                fill="none" stroke="#D4AF37" stroke-linecap="round" stroke-width="8"></path>
+                            <!-- The 'Dot' of the letter -->
+                            <circle cx="50" cy="0" fill="#D4AF37" r="6"></circle>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+            <!-- Typography Section -->
+            <div class="flex flex-col items-center gap-3 text-center">
+                <h1 class="text-4xl font-extrabold tracking-tight text-primary dark:text-white leading-tight">
+                    Nur Blocker
+                </h1>
+                <div class="flex items-center gap-3">
+                    <div class="h-[1px] w-8 bg-[#D4AF37]/50"></div>
+                    <p class="text-[#D4AF37] dark:text-[#E5C558] text-sm font-semibold tracking-[0.2em] uppercase">
+                        Secure. Private. Local.
+                    </p>
+                    <div class="h-[1px] w-8 bg-[#D4AF37]/50"></div>
+                </div>
+            </div>
+        </main>
+        <!-- Footer Info -->
+        <footer class="w-full p-8 flex flex-col items-center justify-center gap-4 relative z-10">
+            <!-- Security Badge -->
+            <div
+                class="flex items-center gap-2 px-4 py-2 bg-white/50 dark:bg-background-dark/50 border border-primary/10 dark:border-primary/20 rounded-full backdrop-blur-sm">
+                <span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+                <span class="text-primary/80 dark:text-primary/60 text-xs font-medium">Offline Protection Active</span>
+            </div>
+            <!-- Version -->
+            <p class="text-primary/40 dark:text-gray-500 text-[10px] font-medium tracking-wide">
+                v1.0.0
+            </p>
+        </footer>
     </div>
 </body>
 

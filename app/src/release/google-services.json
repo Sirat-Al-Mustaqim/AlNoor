@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "596917292386",
+    "project_id": "al-noor-7db33",
+    "storage_bucket": "al-noor-7db33.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596917292386:android:6ff6892abe6adcfdc0b03b",
+        "android_client_info": {
+          "package_name": "com.siratalmustaqim.alnoor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlywYha-gCGbgIUL8At5ajHlNslrmjA_A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
