@@ -75,15 +75,15 @@ class GuardRepository @Inject constructor(
      */
     suspend fun enforceProtectionIfNeeded() {
         val isAlwaysOn = settingsDataStore.alwaysOnProtection.first()
-        
+
         if (isAlwaysOn && isDeviceOwner) {
             // Check if DNS was changed away from our settings
             val currentHost = devicePolicyManager.getGlobalPrivateDnsHost(adminComponent)
             val currentMode = devicePolicyManager.getGlobalPrivateDnsMode(adminComponent)
-            
-            val isProtected = currentMode == DevicePolicyManager.PRIVATE_DNS_MODE_PROVIDER_HOSTNAME 
+
+            val isProtected = currentMode == DevicePolicyManager.PRIVATE_DNS_MODE_PROVIDER_HOSTNAME
                     && currentHost == FAMILY_DNS_HOST
-            
+
             if (!isProtected) {
                 Timber.w("DNS was changed while always-on is enabled! Reverting...")
                 enableProtection()
@@ -106,10 +106,11 @@ class GuardRepository @Inject constructor(
         try {
             val mode = devicePolicyManager.getGlobalPrivateDnsMode(adminComponent)
             val host = devicePolicyManager.getGlobalPrivateDnsHost(adminComponent)
-            
+
             // Protection is enabled only if mode is hostname AND host is our family DNS
-            _protectionEnabled.value = mode == DevicePolicyManager.PRIVATE_DNS_MODE_PROVIDER_HOSTNAME 
-                    && host == FAMILY_DNS_HOST
+            _protectionEnabled.value =
+                mode == DevicePolicyManager.PRIVATE_DNS_MODE_PROVIDER_HOSTNAME
+                        && host == FAMILY_DNS_HOST
             Timber.d("Protection state updated: ${_protectionEnabled.value}, mode: $mode, host: $host")
         } catch (e: SecurityException) {
             Timber.e(e, "Failed to get private DNS mode")
@@ -138,7 +139,11 @@ class GuardRepository @Inject constructor(
             // Also set via global settings as backup
             Timber.d("Set private DNS via global settings as backup")
             devicePolicyManager.setGlobalSetting(adminComponent, PRIVATE_DNS_MODE, "hostname")
-            devicePolicyManager.setGlobalSetting(adminComponent, PRIVATE_DNS_SPECIFIER, FAMILY_DNS_HOST)
+            devicePolicyManager.setGlobalSetting(
+                adminComponent,
+                PRIVATE_DNS_SPECIFIER,
+                FAMILY_DNS_HOST
+            )
 
             val success = result == DevicePolicyManager.PRIVATE_DNS_SET_NO_ERROR
             if (success) {

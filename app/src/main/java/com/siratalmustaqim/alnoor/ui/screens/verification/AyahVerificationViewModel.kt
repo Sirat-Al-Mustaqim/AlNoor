@@ -53,20 +53,20 @@ class AyahVerificationViewModel @Inject constructor(
     val events = _events.asSharedFlow()
 
     private fun updateInput(input: String) {
-        _uiState.update { 
+        _uiState.update {
             it.copy(
                 currentInput = input,
                 onInputChange = ::updateInput,
                 onAddAyah = ::addAyah,
                 onClearAll = ::clearAll,
                 onValidate = ::validate
-            ) 
+            )
         }
     }
 
     private fun addAyah() {
         val ayahText = _uiState.value.currentInput.trim()
-        
+
         if (ayahText.isBlank()) {
             viewModelScope.launch {
                 _events.emit(AyahVerificationEvent.ShowToast("Please enter an ayah"))
@@ -120,19 +120,19 @@ class AyahVerificationViewModel @Inject constructor(
         if (!_uiState.value.canValidate) return
 
         viewModelScope.launch {
-            _uiState.update { 
+            _uiState.update {
                 it.copy(
                     isValidating = true,
                     onInputChange = ::updateInput,
                     onAddAyah = ::addAyah,
                     onClearAll = ::clearAll,
                     onValidate = ::validate
-                ) 
+                )
             }
 
             try {
                 var allValid = true
-                
+
                 for (ayahText in _uiState.value.enteredAyahs) {
                     val results = quranRepository.searchAyahExact(ayahText)
                     if (!results) {
@@ -152,14 +152,14 @@ class AyahVerificationViewModel @Inject constructor(
                 _events.emit(AyahVerificationEvent.ShowToast("Error validating ayahs: ${e.message}"))
                 _events.emit(AyahVerificationEvent.VerificationFailed)
             } finally {
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
                         isValidating = false,
                         onInputChange = ::updateInput,
                         onAddAyah = ::addAyah,
                         onClearAll = ::clearAll,
                         onValidate = ::validate
-                    ) 
+                    )
                 }
             }
         }

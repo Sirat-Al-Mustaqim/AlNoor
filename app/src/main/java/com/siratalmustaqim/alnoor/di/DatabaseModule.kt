@@ -17,10 +17,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
-    
+
     /**
      * Provides the QuranDatabase instance.
-     * 
+     *
      * Uses createFromAsset to pre-populate the database from assets/quran.db
      * on first access. The database is read-only for Quran text.
      */
@@ -38,7 +38,7 @@ object DatabaseModule {
             .fallbackToDestructiveMigration(false)
             .build()
     }
-    
+
     /**
      * Provides the AyahDao for accessing Quran verses.
      */

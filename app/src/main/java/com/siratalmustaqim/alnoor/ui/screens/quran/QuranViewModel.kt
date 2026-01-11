@@ -29,15 +29,15 @@ data class QuranUiState(
 class QuranViewModel @Inject constructor(
     private val quranRepository: QuranRepository
 ) : ViewModel() {
-    
+
     private val _uiState = MutableStateFlow(QuranUiState())
     val uiState: StateFlow<QuranUiState> = _uiState.asStateFlow()
-    
+
     init {
         loadSurahList()
         loadSurah(1) // Load Al-Fatiha by default
     }
-    
+
     /**
      * Load the list of all surah numbers.
      */
@@ -53,7 +53,7 @@ class QuranViewModel @Inject constructor(
             }
         }
     }
-    
+
     /**
      * Load ayahs for a specific surah.
      */
@@ -78,7 +78,7 @@ class QuranViewModel @Inject constructor(
             }
         }
     }
-    
+
     /**
      * Navigate to the next surah.
      */
@@ -88,7 +88,7 @@ class QuranViewModel @Inject constructor(
             loadSurah(currentSurah + 1)
         }
     }
-    
+
     /**
      * Navigate to the previous surah.
      */

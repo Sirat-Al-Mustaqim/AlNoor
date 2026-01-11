@@ -7,6 +7,6 @@
     <item
         android:width="140dp"
         android:height="168dp"
-        android:gravity="center"
-        android:drawable="@drawable/ic_noor_shield" />
+        android:drawable="@drawable/ic_noor_shield"
+        android:gravity="center" />
 </layer-list>

@@ -35,7 +35,7 @@ class AlNoorApp : Application(), Configuration.Provider {
 
         // Schedule DNS enforcement worker
         scheduleDnsEnforcementWork()
-        
+
         // Subscribe to FCM topic for guard heartbeat
         subscribeToGuardTopic()
     }

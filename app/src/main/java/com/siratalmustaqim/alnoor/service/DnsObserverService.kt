@@ -28,7 +28,7 @@ import javax.inject.Inject
 /**
  * Persistent foreground service that monitors private DNS settings
  * and enforces protection when always-on is enabled.
- * 
+ *
  * This service runs in the background and uses a ContentObserver
  * to detect DNS setting changes immediately.
  */
@@ -90,7 +90,7 @@ class DnsObserverService : Service() {
     override fun onCreate() {
         super.onCreate()
         Timber.d("DnsObserverService created")
-        
+
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
         registerDnsObserver()

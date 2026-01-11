@@ -7,10 +7,12 @@ import androidx.navigation.compose.composable
 import com.siratalmustaqim.alnoor.ui.screens.MainScreen
 import com.siratalmustaqim.alnoor.ui.screens.duas.DuasScreen
 import com.siratalmustaqim.alnoor.ui.screens.quran.QuranScreen
+import com.siratalmustaqim.alnoor.ui.screens.splash.SplashScreen
 import com.siratalmustaqim.alnoor.ui.screens.verification.AyahVerificationScreen
 
 /**
  * Root navigation graph for the entire app.
+ * - Splash: Initial splash screen
  * - Main: Contains bottom navigation with Guard, Home, Settings
  * - Quran: Standalone screen without bottom nav
  * - Duas: Standalone screen without bottom nav
@@ -20,8 +22,17 @@ import com.siratalmustaqim.alnoor.ui.screens.verification.AyahVerificationScreen
 fun RootNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Main.route
+        startDestination = Screen.Splash.route
     ) {
+        composable(route = Screen.Splash.route) {
+            SplashScreen(
+                onSplashComplete = {
+                    navController.navigate(Screen.Main.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
         composable(route = Screen.Main.route) {
             MainScreen(rootNavController = navController)
         }

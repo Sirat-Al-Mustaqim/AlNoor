@@ -39,14 +39,14 @@ class GuardMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        
+
         Timber.d("FCM message received from: ${remoteMessage.from}")
-        
+
         val data = remoteMessage.data
         val action = data[ACTION_KEY]
-        
+
         Timber.d("FCM action: $action")
-        
+
         when (action) {
             ACTION_RESTART_GUARD -> handleRestartGuard()
             else -> Timber.d("Unknown FCM action: $action")
@@ -55,11 +55,11 @@ class GuardMessagingService : FirebaseMessagingService() {
 
     private fun handleRestartGuard() {
         Timber.d("Handling RESTART_GUARD action")
-        
+
         serviceScope.launch {
             try {
                 val isAlwaysOn = settingsDataStore.alwaysOnProtection.first()
-                
+
                 if (isAlwaysOn) {
                     Timber.d("Always-on protection is enabled, starting DnsObserverService")
                     DnsObserverService.start(applicationContext)

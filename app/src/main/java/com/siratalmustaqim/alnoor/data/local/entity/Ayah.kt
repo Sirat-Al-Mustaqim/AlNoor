@@ -14,13 +14,13 @@ data class Ayah(
     @PrimaryKey
     @ColumnInfo(name = "id")
     val id: Int,
-    
+
     @ColumnInfo(name = "surah_number")
     val surahNumber: Int,
-    
+
     @ColumnInfo(name = "ayah_number")
     val ayahNumber: Int,
-    
+
     @ColumnInfo(name = "text")
     val text: String
 )

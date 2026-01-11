@@ -77,7 +77,7 @@ fun GuardScreen(
                 is GuardEvent.ShowMessage -> {
                     snackbarHostState.showSnackbar(context.getString(event.messageRes))
                 }
-                
+
                 is GuardEvent.NavigateToVerification -> {
                     onNavigateToVerification()
                 }

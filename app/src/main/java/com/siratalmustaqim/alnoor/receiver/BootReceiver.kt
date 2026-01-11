@@ -28,16 +28,17 @@ class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED ||
-            intent.action == Intent.ACTION_LOCKED_BOOT_COMPLETED) {
-            
+            intent.action == Intent.ACTION_LOCKED_BOOT_COMPLETED
+        ) {
+
             Timber.d("Boot completed, checking always-on protection status")
 
             val pendingResult = goAsync()
-            
+
             scope.launch {
                 try {
                     val isAlwaysOn = settingsDataStore.alwaysOnProtection.first()
-                    
+
                     if (isAlwaysOn) {
                         Timber.d("Always-on protection is enabled, starting DnsObserverService")
                         DnsObserverService.start(context)

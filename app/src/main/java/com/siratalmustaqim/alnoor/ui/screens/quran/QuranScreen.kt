@@ -67,7 +67,7 @@ fun QuranScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var expanded by remember { mutableStateOf(false) }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,7 +89,7 @@ fun QuranScreen(
                     contentDescription = "Previous Surah"
                 )
             }
-            
+
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded },
@@ -107,14 +107,14 @@ fun QuranScreen(
                         textAlign = TextAlign.Center
                     )
                 )
-                
+
                 ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
                     uiState.surahNumbers.forEach { surahNumber ->
                         DropdownMenuItem(
-                            text = { 
+                            text = {
                                 Text("$surahNumber. ${surahNames.getOrElse(surahNumber - 1) { "" }}")
                             },
                             onClick = {
@@ -125,7 +125,7 @@ fun QuranScreen(
                     }
                 }
             }
-            
+
             IconButton(
                 onClick = { viewModel.nextSurah() },
                 enabled = uiState.selectedSurah < 114
@@ -136,9 +136,9 @@ fun QuranScreen(
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Content
         when {
             uiState.isLoading -> {
@@ -149,6 +149,7 @@ fun QuranScreen(
                     CircularProgressIndicator()
                 }
             }
+
             uiState.error != null -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -161,6 +162,7 @@ fun QuranScreen(
                     )
                 }
             }
+
             else -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -199,9 +201,9 @@ private fun AyahCard(ayah: Ayah) {
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             // Arabic text
             Text(
                 text = ayah.text,
