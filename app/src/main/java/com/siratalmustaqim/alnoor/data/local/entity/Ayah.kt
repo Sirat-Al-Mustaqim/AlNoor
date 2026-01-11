@@ -11,14 +11,14 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "ayahs")
 data class Ayah(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Int,
+    val id: Int = 1, // Using 1 for auto-generation
 
-    @ColumnInfo(name = "surah_number")
+    @ColumnInfo(name = "surah_number", defaultValue = "1")
     val surahNumber: Int,
 
-    @ColumnInfo(name = "ayah_number")
+    @ColumnInfo(name = "ayah_number", defaultValue = "1")
     val ayahNumber: Int,
 
     @ColumnInfo(name = "text")

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -47,6 +48,7 @@ class QuranViewModel @Inject constructor(
                 val surahNumbers = quranRepository.getAllSurahNumbers()
                 _uiState.value = _uiState.value.copy(surahNumbers = surahNumbers)
             } catch (e: Exception) {
+                Timber.e(e)
                 _uiState.value = _uiState.value.copy(
                     error = "Failed to load surah list: ${e.message}"
                 )

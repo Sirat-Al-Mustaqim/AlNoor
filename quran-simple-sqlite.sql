@@ -42,11 +42,11 @@
 --
 
 DROP TABLE IF EXISTS ayahs;
-CREATE TABLE ayahs (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  surah_number INTEGER NOT NULL default '0',
-  ayah_number INTEGER NOT NULL default '0',
-  text text NOT NULL
+CREATE TABLE IF NOT EXISTS ayahs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  surah_number INTEGER NOT NULL DEFAULT 1,
+  ayah_number INTEGER NOT NULL DEFAULT 1,
+  text TEXT NOT NULL
 );
 
 --
