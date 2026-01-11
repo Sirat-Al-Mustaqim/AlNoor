@@ -41,18 +41,18 @@ jobs:
         if: steps.check_skip.outputs.skip == 'false'
         id: bump
         run: |
-          BUILD_FILE="app/build.gradle.kts"
+          PROPS_FILE="gradle.properties"
 
           # Extract current versionCode and versionName
           CURRENT_VERSION_CODE=$(grep -oP \
-            'versionCode = \K\d+' "$BUILD_FILE" || echo "")
+            '^VERSION_CODE=\K\d+' "$PROPS_FILE" || echo "")
           CURRENT_VERSION_NAME=$(grep -oP \
-            'versionName = "\K[^"]+' "$BUILD_FILE" || echo "")
+            '^VERSION_NAME=\K[^\s]+' "$PROPS_FILE" || echo "")
 
           # Validate extraction was successful
           if [[ -z "$CURRENT_VERSION_CODE" ]] || \
              [[ -z "$CURRENT_VERSION_NAME" ]]; then
-            echo "Error: Could not extract version from $BUILD_FILE"
+            echo "Error: Could not extract version from $PROPS_FILE"
             exit 1
           fi
 
@@ -88,13 +88,13 @@ jobs:
           ESCAPED_NEW_VERSION=$(printf '%s\n' \
             "$NEW_VERSION_NAME" | sed 's/[[\*^$()+?{|]/\\&/g')
 
-          # Update the build.gradle.kts file
+          # Update the gradle.properties file
           sed -i \
-            "s/versionCode = $CURRENT_VERSION_CODE/versionCode = $NEW_VERSION_CODE/" \
-            "$BUILD_FILE"
+            "s/^VERSION_CODE=$CURRENT_VERSION_CODE$/VERSION_CODE=$NEW_VERSION_CODE/" \
+            "$PROPS_FILE"
           sed -i \
-            "s/versionName = \"$ESCAPED_CURRENT_VERSION\"/versionName = \"$ESCAPED_NEW_VERSION\"/" \
-            "$BUILD_FILE"
+            "s/^VERSION_NAME=$ESCAPED_CURRENT_VERSION$/VERSION_NAME=$ESCAPED_NEW_VERSION/" \
+            "$PROPS_FILE"
 
           # Export for later use
           echo "new_version_code=$NEW_VERSION_CODE" \
@@ -126,7 +126,7 @@ jobs:
             exit 1
           }
           
-          git add app/build.gradle.kts
+          git add gradle.properties
           NEW_V="${{ steps.bump.outputs.new_version_name }}"
           NEW_C="${{ steps.bump.outputs.new_version_code }}"
           git commit -m "chore: bump version to ${NEW_V} (code: ${NEW_C})"
