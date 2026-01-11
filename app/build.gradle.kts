@@ -43,8 +43,6 @@ android {
                 println("✓ Release signing configured with keystore: ${keystoreFile.name}")
             } else {
                 println("⚠ Release signing not configured - keystore or credentials missing")
-                println("  Keystore exists: ${keystoreFile.exists()}")
-                println("  Environment variables set: ${storePassword != null && keyAlias != null && keyPassword != null}")
             }
         }
     }
