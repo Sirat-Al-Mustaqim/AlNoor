@@ -158,7 +158,7 @@
     <string name="verification_progress_hint">Enter 13 Ayahs manually to unlock Always-On Protection</string>
     <string name="verification_arabic_input">Arabic Input</string>
     <string name="verification_pasting_disabled">Pasting Disabled</string>
-    <string name="verification_input_placeholder">اُدْعُ إِلَىٰ سَبِيلِ رَبِّكَ بِالْحِكْمَةِ…</string>
+    <string name="verification_input_placeholder">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</string>
     <string name="verification_add_ayah">Add Ayah to Sequence</string>
     <string name="verification_sequence">Verification Sequence</string>
     <string name="verification_clear_all">Clear All</string>

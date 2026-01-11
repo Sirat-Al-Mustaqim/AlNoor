@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.siratalmustaqim.alnoor.R
+import com.siratalmustaqim.alnoor.ui.components.RtlLayout
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
 import com.siratalmustaqim.alnoor.ui.theme.Gold
 
@@ -364,46 +365,46 @@ private fun ArabicInputSection(
         Spacer(modifier = Modifier.height(12.dp))
 
         // Text Input Field
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.02f))
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .padding(20.dp)
-        ) {
-            BasicTextField(
-                value = currentInput,
-                onValueChange = onInputChange,
-                enabled = isEnabled,
-                modifier = Modifier.fillMaxSize(),
-                textStyle = MaterialTheme.typography.titleLarge.copy(
-                    textAlign = TextAlign.End,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    lineHeight = 32.sp
-                ),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { onDone() }),
-                decorationBox = { innerTextField ->
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        if (currentInput.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.verification_input_placeholder),
-                                style = MaterialTheme.typography.titleLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-                                textAlign = TextAlign.End,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+        RtlLayout {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.02f))
+                    .border(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(20.dp)
+            ) {
+                BasicTextField(
+                    value = currentInput,
+                    onValueChange = onInputChange,
+                    enabled = isEnabled,
+                    modifier = Modifier.fillMaxSize(),
+                    textStyle = MaterialTheme.typography.titleLarge.copy(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        lineHeight = 32.sp
+                    ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { onDone() }),
+                    decorationBox = { innerTextField ->
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            if (currentInput.isEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.verification_input_placeholder),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                            innerTextField()
                         }
-                        innerTextField()
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
@@ -520,51 +521,52 @@ private fun AyahCard(
         Gold
     }
 
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = 12.dp),
-        shape = RoundedCornerShape(12.dp),
-        color = bgColor,
-        border = androidx.compose.foundation.BorderStroke(
-            width = if (isLast) 2.dp else 1.dp,
-            color = borderColor
-        ),
-        shadowElevation = 2.dp
-    ) {
-        Row(
-            modifier = Modifier
+    RtlLayout {
+        Surface(
+            modifier = modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(bottom = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            color = bgColor,
+            border = androidx.compose.foundation.BorderStroke(
+                width = if (isLast) 2.dp else 1.dp,
+                color = borderColor
+            ),
+            shadowElevation = 2.dp
         ) {
-            // Index Badge
-            Box(
+            Row(
                 modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(badgeBgColor),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // Index Badge
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(badgeBgColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = String.format("%02d", index),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = badgeTextColor
+                    )
+                }
+
+                // Arabic Text
                 Text(
-                    text = String.format("%02d", index),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = badgeTextColor
+                    text = text,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        lineHeight = 28.sp
+                    ),
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f)
                 )
             }
-
-            // Arabic Text
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    lineHeight = 28.sp
-                ),
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.End,
-                modifier = Modifier.weight(1f)
-            )
         }
     }
 }
