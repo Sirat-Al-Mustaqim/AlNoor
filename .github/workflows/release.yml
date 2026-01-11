@@ -73,7 +73,26 @@ jobs:
           ls -lh al-noor.apk
           echo "✓ APK renamed to al-noor.apk"
 
+      - name: Fetch tags
+        run: |
+          git fetch --tags
+          echo "✓ Tags fetched"
+
+      - name: Verify tag exists
+        id: check_tag
+        run: |
+          TAG="v${{ steps.version.outputs.version_name }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+            echo "✓ Tag $TAG exists"
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+            echo "⚠ Tag $TAG does not exist - release will fail!"
+            exit 1
+          fi
+
       - name: Create GitHub Release
+        if: steps.check_tag.outputs.tag_exists == 'true'
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
