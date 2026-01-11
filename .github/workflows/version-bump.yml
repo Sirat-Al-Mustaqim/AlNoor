@@ -1,0 +1,214 @@
+---
+name: Auto Version Bump
+
+'on':
+  push:
+    branches:
+      - develop
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email \
+            "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Node.js for semantic-release
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install semantic-release
+        run: |
+          npm install -g \
+            semantic-release@23 \
+            @semantic-release/changelog@6 \
+            @semantic-release/git@10 \
+            @semantic-release/exec@6
+
+      - name: Check if version bump commit
+        id: check_skip
+        run: |
+          # Skip if the last commit is a version bump to prevent loops
+          LAST_MSG=$(git log -1 --pretty=%B)
+          if [[ "$LAST_MSG" == "chore(release):"* ]] || \
+             [[ "$LAST_MSG" == "chore: bump version to"* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Last commit was a version bump, skipping..."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Analyze commits and determine version bump
+        if: steps.check_skip.outputs.skip == 'false'
+        id: analyze
+        run: |
+          PROPS_FILE="gradle.properties"
+          
+          # Extract current version
+          CURRENT_VERSION_CODE=$(grep -oP \
+            '^VERSION_CODE=\K\d+' "$PROPS_FILE" || echo "")
+          CURRENT_VERSION_NAME=$(grep -oP \
+            '^VERSION_NAME=\K[^\s]+' "$PROPS_FILE" || echo "")
+          
+          if [[ -z "$CURRENT_VERSION_CODE" ]] || \
+             [[ -z "$CURRENT_VERSION_NAME" ]]; then
+            echo "Error: Could not extract version from $PROPS_FILE"
+            exit 1
+          fi
+          
+          echo "Current VERSION_CODE: $CURRENT_VERSION_CODE"
+          echo "Current VERSION_NAME: $CURRENT_VERSION_NAME"
+          
+          # Get commits since last version bump
+          COMMITS=$(git log --pretty=format:"%s" \
+            --grep="^chore(release):" --grep="^chore: bump version" \
+            --invert-grep -1 | head -20)
+          
+          echo "Analyzing commits:"
+          echo "$COMMITS"
+          
+          # Determine bump type based on conventional commits
+          BUMP_TYPE="patch"
+          
+          if echo "$COMMITS" | grep -qiE "^(feat|feature)(\(.+\))?!:|^[^:]+!:|BREAKING CHANGE:"; then
+            BUMP_TYPE="major"
+            echo "Found breaking change - MAJOR bump"
+          elif echo "$COMMITS" | grep -qiE "^(feat|feature)(\(.+\))?:"; then
+            BUMP_TYPE="minor"
+            echo "Found feature - MINOR bump"
+          elif echo "$COMMITS" | grep -qiE "^(fix|bugfix|perf|refactor)(\(.+\))?:"; then
+            BUMP_TYPE="patch"
+            echo "Found fix/improvement - PATCH bump"
+          else
+            BUMP_TYPE="patch"
+            echo "No conventional commit found - defaulting to PATCH bump"
+          fi
+          
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          echo "current_version_code=$CURRENT_VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "current_version_name=$CURRENT_VERSION_NAME" >> $GITHUB_OUTPUT
+
+      - name: Calculate new version
+        if: steps.check_skip.outputs.skip == 'false'
+        id: bump
+        run: |
+          PROPS_FILE="gradle.properties"
+          BUMP_TYPE="${{ steps.analyze.outputs.bump_type }}"
+          CURRENT_VERSION_CODE="${{ steps.analyze.outputs.current_version_code }}"
+          CURRENT_VERSION_NAME="${{ steps.analyze.outputs.current_version_name }}"
+          
+          # Always increment versionCode
+          NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 1))
+          
+          # Parse current version
+          IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION_NAME"
+          MAJOR="${VERSION_PARTS[0]}"
+          MINOR="${VERSION_PARTS[1]:-0}"
+          PATCH="${VERSION_PARTS[2]:-0}"
+          
+          # Validate version format
+          if ! [[ "$MAJOR" =~ ^[0-9]+$ ]]; then
+            echo "Error: Invalid version format: $CURRENT_VERSION_NAME"
+            exit 1
+          fi
+          
+          # Calculate new version based on bump type
+          case "$BUMP_TYPE" in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+          
+          NEW_VERSION_NAME="${MAJOR}.${MINOR}.${PATCH}"
+          
+          echo "Bump type: $BUMP_TYPE"
+          echo "New VERSION_CODE: $NEW_VERSION_CODE"
+          echo "New VERSION_NAME: $NEW_VERSION_NAME"
+          
+          # Escape special characters for sed
+          ESCAPED_CURRENT=$(printf '%s\n' \
+            "$CURRENT_VERSION_NAME" | sed 's/[.[\*^$()+?{|]/\\&/g')
+          ESCAPED_NEW=$(printf '%s\n' \
+            "$NEW_VERSION_NAME" | sed 's/[[\*^$()+?{|]/\\&/g')
+          
+          # Update gradle.properties
+          sed -i \
+            "s/^VERSION_CODE=$CURRENT_VERSION_CODE$/VERSION_CODE=$NEW_VERSION_CODE/" \
+            "$PROPS_FILE"
+          sed -i \
+            "s/^VERSION_NAME=$ESCAPED_CURRENT$/VERSION_NAME=$ESCAPED_NEW/" \
+            "$PROPS_FILE"
+          
+          # Export for later use
+          echo "new_version_code=$NEW_VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "new_version_name=$NEW_VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+
+      - name: Check for changes
+        if: steps.check_skip.outputs.skip == 'false'
+        id: check_changes
+        run: |
+          if git diff --quiet; then
+            echo "No version changes detected"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Version changes detected"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push version bump
+        if: |
+          steps.check_skip.outputs.skip == 'false' &&
+          steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          # Pull latest changes to avoid conflicts
+          git pull --rebase origin develop || {
+            echo "Failed to pull latest changes"
+            exit 1
+          }
+          
+          git add gradle.properties
+          NEW_V="${{ steps.bump.outputs.new_version_name }}"
+          NEW_C="${{ steps.bump.outputs.new_version_code }}"
+          BUMP="${{ steps.bump.outputs.bump_type }}"
+          git commit -m "chore(release): ${BUMP} bump to ${NEW_V} (code: ${NEW_C})"
+          git push origin develop
+
+      - name: Summary
+        if: |
+          steps.check_skip.outputs.skip == 'false' &&
+          steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          echo "### Version Bump Summary :rocket:" \
+            >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Bump Type:** ${{ steps.bump.outputs.bump_type }}" \
+            >> $GITHUB_STEP_SUMMARY
+          NEW_C="${{ steps.bump.outputs.new_version_code }}"
+          echo "- **New versionCode:** ${NEW_C}" \
+            >> $GITHUB_STEP_SUMMARY
+          NEW_V="${{ steps.bump.outputs.new_version_name }}"
+          echo "- **New versionName:** ${NEW_V}" \
+            >> $GITHUB_STEP_SUMMARY
