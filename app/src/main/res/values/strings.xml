@@ -155,7 +155,7 @@
     <string name="verification_title">Spiritual Verification</string>
     <string name="verification_session_progress">Session Progress</string>
     <string name="verification_ayahs_added">Ayahs Added</string>
-    <string name="verification_progress_hint">Enter 13 Ayahs manually to unlock Always-On Protection</string>
+    <string name="verification_progress_hint">Enter %d Ayahs manually to unlock Always-On Protection</string>
     <string name="verification_arabic_input">Arabic Input</string>
     <string name="verification_pasting_disabled">Pasting Disabled</string>
     <string name="verification_input_placeholder">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</string>

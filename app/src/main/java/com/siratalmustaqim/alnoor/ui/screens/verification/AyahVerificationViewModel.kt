@@ -2,6 +2,7 @@ package com.siratalmustaqim.alnoor.ui.screens.verification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.siratalmustaqim.alnoor.BuildConfig
 import com.siratalmustaqim.alnoor.data.repository.GuardRepository
 import com.siratalmustaqim.alnoor.data.repository.QuranRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,17 +15,25 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Required number of ayahs for verification.
+ * Debug: 1 ayah (for testing)
+ * Release: 13 ayahs (for production)
+ */
+private val REQUIRED_AYAH_COUNT = if (BuildConfig.DEBUG) 1 else 13
+
 data class AyahVerificationUiState(
     val enteredAyahs: List<String> = emptyList(),
     val currentInput: String = "",
     val isValidating: Boolean = false,
+    val requiredCount: Int = REQUIRED_AYAH_COUNT,
     val onInputChange: (String) -> Unit = {},
     val onAddAyah: () -> Unit = {},
     val onClearAll: () -> Unit = {},
     val onValidate: () -> Unit = {}
 ) {
-    val canValidate: Boolean = enteredAyahs.size == 13
-    val remainingCount: Int = 13 - enteredAyahs.size
+    val canValidate: Boolean = enteredAyahs.size == requiredCount
+    val remainingCount: Int = requiredCount - enteredAyahs.size
 }
 
 sealed class AyahVerificationEvent {
@@ -82,10 +91,10 @@ class AyahVerificationViewModel @Inject constructor(
             return
         }
 
-        // Check if already have 13
-        if (_uiState.value.enteredAyahs.size >= 13) {
+        // Check if already have required count
+        if (_uiState.value.enteredAyahs.size >= REQUIRED_AYAH_COUNT) {
             viewModelScope.launch {
-                _events.emit(AyahVerificationEvent.ShowToast("You have already added 13 ayahs"))
+                _events.emit(AyahVerificationEvent.ShowToast("You have already added $REQUIRED_AYAH_COUNT ayahs"))
             }
             return
         }

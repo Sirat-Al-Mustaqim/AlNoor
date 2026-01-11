@@ -113,7 +113,7 @@ private fun AyahVerificationScreenContent(
     onInputChange: (String) -> Unit,
     onCancel: () -> Unit
 ) {
-    val progress = uiState.enteredAyahs.size / 13f
+    val progress = uiState.enteredAyahs.size / uiState.requiredCount.toFloat()
 
     Box(
         modifier = Modifier
@@ -135,6 +135,7 @@ private fun AyahVerificationScreenContent(
                 item {
                     ProgressSection(
                         enteredCount = uiState.enteredAyahs.size,
+                        requiredCount = uiState.requiredCount,
                         progress = progress
                     )
                 }
@@ -149,7 +150,7 @@ private fun AyahVerificationScreenContent(
                     ArabicInputSection(
                         currentInput = uiState.currentInput,
                         onInputChange = onInputChange,
-                        isEnabled = uiState.enteredAyahs.size < 13,
+                        isEnabled = uiState.enteredAyahs.size < uiState.requiredCount,
                         onDone = uiState.onAddAyah
                     )
                 }
@@ -158,7 +159,7 @@ private fun AyahVerificationScreenContent(
                 item {
                     AddAyahButton(
                         onClick = uiState.onAddAyah,
-                        isEnabled = uiState.currentInput.isNotBlank() && uiState.enteredAyahs.size < 13
+                        isEnabled = uiState.currentInput.isNotBlank() && uiState.enteredAyahs.size < uiState.requiredCount
                     )
                 }
 
@@ -230,6 +231,7 @@ private fun TopAppBar(onBack: () -> Unit) {
 @Composable
 private fun ProgressSection(
     enteredCount: Int,
+    requiredCount: Int,
     progress: Float
 ) {
     Column(
@@ -267,7 +269,7 @@ private fun ProgressSection(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "/13",
+                    text = "/${requiredCount}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
@@ -292,7 +294,7 @@ private fun ProgressSection(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = stringResource(R.string.verification_progress_hint),
+            text = stringResource(R.string.verification_progress_hint, requiredCount),
             style = MaterialTheme.typography.bodySmall,
             fontStyle = FontStyle.Italic,
             color = MaterialTheme.colorScheme.onSurfaceVariant
