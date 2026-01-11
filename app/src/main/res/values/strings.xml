@@ -163,7 +163,7 @@
     <string name="verification_sequence">Verification Sequence</string>
     <string name="verification_clear_all">Clear All</string>
     <string name="verification_validate_locked">Validate</string>
-    <string name="verification_activate_protection">Activate Protection</string>
+    <string name="verification_activate_protection">Deactivate Protection</string>
     <string name="verification_footer">Al Noor • Local Encryption Active</string>
     <string name="verification_paste_disabled_toast">Paste is disabled. Please type the ayah.</string>
     <string name="verification_success">Verification successful!</string>

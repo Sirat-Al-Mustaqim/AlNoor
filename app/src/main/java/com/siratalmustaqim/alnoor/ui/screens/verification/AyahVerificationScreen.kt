@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.siratalmustaqim.alnoor.BuildConfig
 import com.siratalmustaqim.alnoor.R
 import com.siratalmustaqim.alnoor.ui.components.RtlLayout
 import com.siratalmustaqim.alnoor.ui.theme.AlNoorTheme
@@ -93,7 +94,7 @@ fun AyahVerificationScreen(
     AyahVerificationScreenContent(
         uiState = uiState,
         onInputChange = { newValue ->
-            if (newValue.length - uiState.currentInput.length > 1) {
+            if (newValue.length - uiState.currentInput.length > 1 && !BuildConfig.DEBUG) {
                 Toast.makeText(
                     context,
                     context.getString(R.string.verification_paste_disabled_toast),
