@@ -27,13 +27,20 @@ jobs:
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "Version: $VERSION_NAME"
           
-          # Extract release notes from CHANGELOG.md (between first and second version headers)
-          RELEASE_NOTES=$(awk '/^# [0-9]+\.[0-9]+\.[0-9]+/{if(++count==2) exit; if(count==1) next} count==1' CHANGELOG.md)
+          # Extract release notes for this specific version from CHANGELOG.md
+          # Format: # 0.1.0 (2026-01-11)
+          # Extract content between "# $VERSION_NAME" and the next "# " header
+          RELEASE_NOTES=$(awk "/^# $VERSION_NAME /{flag=1; next} /^# /{flag=0} flag" CHANGELOG.md)
+          
+          # If no content found, provide a default message
+          if [ -z "$RELEASE_NOTES" ]; then
+            RELEASE_NOTES="Release version $VERSION_NAME"
+          fi
           
           # Save to file for GitHub release
           echo "$RELEASE_NOTES" > release_notes.txt
           
-          echo "Release notes extracted"
+          echo "Release notes extracted for version $VERSION_NAME"
 
       - name: Decode keystore
         run: |
@@ -78,35 +85,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Clear CHANGELOG.md
-        run: |
-          cat > CHANGELOG.md << 'EOF'
-          # Changelog
-          
-          All notable changes to this project will be documented in this file.
-          
-          The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-          and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-          
-          ## [Unreleased]
-          EOF
-          
-          echo "✓ CHANGELOG.md cleared"
-
-      - name: Commit and push changelog to develop
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Commit the cleared changelog on main
-          git add CHANGELOG.md
-          git commit -m "chore: clear changelog after release ${{ steps.version.outputs.version_name }} [skip ci]"
-          
-          # Push to develop branch
-          git fetch origin develop:develop
-          git checkout develop
-          git cherry-pick main
-          git push origin develop
-          
-          echo "✓ Changelog cleared and pushed to develop"
