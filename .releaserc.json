@@ -9,7 +9,7 @@
             "@semantic-release/exec",
             {
                 "prepareCmd": "bash .github/scripts/update-version.sh ${nextRelease.version}",
-                "publishCmd": "echo \"${nextRelease.notes}\" > /tmp/release_notes.txt && echo \"${nextRelease.version}\" > /tmp/release_version.txt"
+                "publishCmd": "echo \"${nextRelease.notes}\" > /tmp/release_notes.txt"
             }
         ],
         [
