@@ -2,6 +2,7 @@
     "branches": [
         "main"
     ],
+    "tagFormat": false,
     "plugins": [
         "@semantic-release/commit-analyzer",
         "@semantic-release/release-notes-generator",
@@ -24,10 +25,7 @@
         [
             "@semantic-release/github",
             {
-                "successComment": true,
-                "failComment": true,
-                "releasedLabels": true,
-                "addRelease": true,
+                "addRelease": false,
                 "assets": [
                     {
                         "path": "al-noor.apk",
