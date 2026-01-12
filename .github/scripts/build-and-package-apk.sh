@@ -1,8 +1,16 @@
 #!/bin/bash
 set -e
 
-# This script builds the signed release APK and packages it for semantic-release
-# It's called by semantic-release during the publish step
+# This script builds the signed release APK and packages it with version-specific naming
+# Usage: ./build-and-package-apk.sh <version>
+
+VERSION="$1"
+
+if [ -z "$VERSION" ]; then
+    echo "Error: Version parameter required"
+    echo "Usage: $0 <version>"
+    exit 1
+fi
 
 echo "Building signed release APK..."
 ./gradlew assembleRelease --console=plain --no-daemon
@@ -16,7 +24,10 @@ if [ -z "$APK_PATH" ]; then
 fi
 
 echo "Found APK: $APK_PATH"
-cp "$APK_PATH" al-noor.apk
-ls -lh al-noor.apk
 
-echo "✓ APK built and packaged successfully"
+# Copy with version-specific name
+OUTPUT_NAME="al-noor-v${VERSION}.apk"
+cp "$APK_PATH" "$OUTPUT_NAME"
+ls -lh "$OUTPUT_NAME"
+
+echo "✓ APK built and packaged successfully as $OUTPUT_NAME"

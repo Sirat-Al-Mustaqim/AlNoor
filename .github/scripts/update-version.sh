@@ -13,8 +13,8 @@ if [ -z "$NEW_VERSION_NAME" ]; then
     exit 1
 fi
 
-# Extract current VERSION_CODE
-CURRENT_VERSION_CODE=$(grep -oP '^VERSION_CODE=\K\d+' "$PROPS_FILE" || echo "0")
+# Extract current VERSION_CODE using portable sed
+CURRENT_VERSION_CODE=$(sed -n 's/^VERSION_CODE=\([0-9]*\)$/\1/p' "$PROPS_FILE")
 
 if [ -z "$CURRENT_VERSION_CODE" ]; then
     echo "Error: Could not extract VERSION_CODE from $PROPS_FILE"
