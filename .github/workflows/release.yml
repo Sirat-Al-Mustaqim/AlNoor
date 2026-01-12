@@ -81,6 +81,8 @@ jobs:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
+          # Force the remote to use the PAT for the push phase
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Sirat-Al-Mustaqim/AlNoor.git
           npx semantic-release
 
       - name: Summary
