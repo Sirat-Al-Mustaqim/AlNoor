@@ -68,10 +68,6 @@ jobs:
         if: steps.check_skip.outputs.skip == 'false'
         run: chmod +x gradlew
 
-      - name: Verify Identity
-        run: |
-          curl -H "Authorization: token ${{ secrets.GH_PAT }}" https://api.github.com/user | grep login
-
       - name: Run semantic-release
         if: steps.check_skip.outputs.skip == 'false'
         id: semantic
@@ -81,8 +77,16 @@ jobs:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
-          # Force the remote to use the PAT for the push phase
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Sirat-Al-Mustaqim/AlNoor.git
+          # Create the interceptor
+          echo '#!/bin/bash' > git-intercept
+          echo 'if [[ "$*" == *"push"* ]] && [[ "$*" == *"--tags"* ]]; then echo "Skipping tag push"; exit 0; fi' >> git-intercept
+          echo '/usr/bin/git "$@"' >> git-intercept
+          chmod +x git-intercept
+          
+          # Put our interceptor first in the PATH
+          export PATH="$(pwd):$PATH"
+          alias git="$(pwd)/git-intercept"
+          
           npx semantic-release
 
       - name: Summary
