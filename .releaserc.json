@@ -24,7 +24,6 @@
         [
             "@semantic-release/github",
             {
-                "addRelease": false,
                 "assets": [
                     {
                         "path": "AlNoor.apk",
