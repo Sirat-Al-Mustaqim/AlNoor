@@ -36,7 +36,8 @@ jobs:
             semantic-release@23 \
             @semantic-release/exec@6 \
             @semantic-release/git@10 \
-            @semantic-release/release-notes-generator@13
+            @semantic-release/release-notes-generator@13 \
+            @semantic-release/github@10
 
       - name: Check if version bump commit
         id: check_skip
