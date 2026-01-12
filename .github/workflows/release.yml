@@ -37,7 +37,8 @@ jobs:
           npm install -g \
             semantic-release \
             @semantic-release/exec \
-            @semantic-release/github
+            @semantic-release/github \
+            @semantic-release/git
 
       - name: Check if version bump commit
         id: check_skip
