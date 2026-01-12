@@ -9,7 +9,7 @@
             "@semantic-release/exec",
             {
                 "prepareCmd": "bash .github/scripts/update-version.sh ${nextRelease.version}",
-                "publishCmd": "echo \"${nextRelease.notes}\" > /tmp/release_notes.txt"
+                "publishCmd": "./gradlew assembleRelease --console=plain --no-daemon && find app/build/outputs/apk/release -name '*.apk' -exec cp {} al-noor.apk \\;"
             }
         ],
         [
@@ -27,7 +27,14 @@
                 "successComment": false,
                 "failComment": false,
                 "releasedLabels": false,
-                "addReleases": false
+                "draftRelease": true,
+                "assets": [
+                    {
+                        "path": "al-noor.apk",
+                        "name": "al-noor.apk",
+                        "label": "AlNoor APK"
+                    }
+                ]
             }
         ]
     ]

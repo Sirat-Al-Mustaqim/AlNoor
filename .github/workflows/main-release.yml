@@ -51,26 +51,6 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Run semantic-release
-        if: steps.check_skip.outputs.skip == 'false'
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-        run: |
-          npx semantic-release
-
-      - name: Extract version info
-        if: steps.check_skip.outputs.skip == 'false'
-        id: version
-        run: |
-          # Extract VERSION_NAME from gradle.properties (updated by semantic-release)
-          VERSION_NAME=$(grep -oP '^VERSION_NAME=\K[^\s]+' gradle.properties)
-          VERSION_CODE=$(grep -oP '^VERSION_CODE=\K\d+' gradle.properties)
-          
-          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
-          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
-          echo "Version: $VERSION_NAME (Code: $VERSION_CODE)"
-
       - name: Decode keystore
         if: steps.check_skip.outputs.skip == 'false'
         run: |
@@ -89,63 +69,33 @@ jobs:
         if: steps.check_skip.outputs.skip == 'false'
         run: chmod +x gradlew
 
-      - name: Build signed release APK
+      - name: Run semantic-release
         if: steps.check_skip.outputs.skip == 'false'
+        id: semantic
         env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
-          ./gradlew assembleRelease --console=plain --no-daemon
-          echo "✓ Release APK built and signed"
-
-      - name: Rename APK
-        if: steps.check_skip.outputs.skip == 'false'
-        run: |
-          # Find the release APK and rename it
-          find app/build/outputs/apk/release -name "*.apk" -exec cp {} al-noor.apk \;
-          ls -lh al-noor.apk
-          echo "✓ APK renamed to al-noor.apk"
-
-      - name: Get release notes from semantic-release
-        if: steps.check_skip.outputs.skip == 'false'
-        id: release_notes
-        run: |
-          # The exec plugin's publishCmd creates release notes in /tmp/release_notes.txt
-          if [ -f /tmp/release_notes.txt ]; then
-            cp /tmp/release_notes.txt release_notes.txt
-            echo "✓ Release notes captured from semantic-release exec plugin"
-          else
-            echo "Release version ${{ steps.version.outputs.version_name }}" > release_notes.txt
-            echo "No release notes file found, using default message"
-          fi
-
-      - name: Create or Update Draft Release
-        if: steps.check_skip.outputs.skip == 'false'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.version_name }}
-          name: AlNoor ${{ steps.version.outputs.version_name }}
-          body_path: release_notes.txt
-          files: al-noor.apk
-          draft: true
-          prerelease: false
-          make_latest: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          npx semantic-release
 
       - name: Summary
         if: steps.check_skip.outputs.skip == 'false'
         run: |
+          # Extract VERSION_NAME from gradle.properties (updated by semantic-release)
+          VERSION_NAME=$(grep -oP '^VERSION_NAME=\K[^\s]+' gradle.properties)
+          VERSION_CODE=$(grep -oP '^VERSION_CODE=\K\d+' gradle.properties)
+          
           echo "### Release Draft Summary :rocket:" \
             >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version:** ${{ steps.version.outputs.version_name }}" \
+          echo "- **Version:** $VERSION_NAME" \
             >> $GITHUB_STEP_SUMMARY
-          echo "- **Version Code:** ${{ steps.version.outputs.version_code }}" \
+          echo "- **Version Code:** $VERSION_CODE" \
             >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✓ Draft release created/updated for v${{ steps.version.outputs.version_name }}" \
+          echo "✓ Draft release created for v$VERSION_NAME" \
             >> $GITHUB_STEP_SUMMARY
           echo "✓ APK uploaded to release" \
             >> $GITHUB_STEP_SUMMARY
