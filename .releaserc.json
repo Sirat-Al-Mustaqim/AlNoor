@@ -9,7 +9,7 @@
             "@semantic-release/exec",
             {
                 "prepareCmd": "bash .github/scripts/update-version.sh ${nextRelease.version}",
-                "publishCmd": "./gradlew assembleRelease --console=plain --no-daemon && find app/build/outputs/apk/release -name '*.apk' -exec cp {} al-noor.apk \\;"
+                "publishCmd": "bash .github/scripts/build-and-package-apk.sh"
             }
         ],
         [
