@@ -24,8 +24,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email \
             "github-actions[bot]@users.noreply.github.com"
-          # Configure git to skip pushing tags
-          git config --global push.followTags false
+          # Clean up any stale git wrapper scripts
+          rm -f /tmp/git-wrapper.sh || true
 
       - name: Setup Node.js for semantic-release
         uses: actions/setup-node@v4
@@ -37,7 +37,7 @@ jobs:
           npm install -g \
             semantic-release \
             @semantic-release/exec \
-            @semantic-release/git \
+            @semantic-release/github
 
       - name: Check if version bump commit
         id: check_skip
