@@ -50,14 +50,19 @@ autolabeler:
       - '*.md'
   - label: 'enhancement'
     title: '/enhancement|fixes/i'
+
   - label: 'upgrades'
     title: '/⬆️/i'
+
   - label: 'bugfix'
     title: '/bugfix/i'
+
   - label: 'bug'
     title: '/🐛|🐞|bug/i'
+
   - label: 'auto-update'
     title: '/🤖/i'
+
   - label: 'feature'
     title: '/🚀|🎉/i'
 
