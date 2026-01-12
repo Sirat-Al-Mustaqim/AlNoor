@@ -86,6 +86,7 @@ jobs:
           VERSION_NAME=$(grep -oP '^VERSION_NAME=\K[^\s]+' gradle.properties)
           VERSION_CODE=$(grep -oP '^VERSION_CODE=\K\d+' gradle.properties)
           
+          
           echo "### Release Summary :rocket:" \
             >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
