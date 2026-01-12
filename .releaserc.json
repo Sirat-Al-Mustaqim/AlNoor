@@ -8,29 +8,9 @@
         [
             "@semantic-release/exec",
             {
+                "verifyReleaseCmd": "echo '${nextRelease.notes}' > release-notes.txt",
                 "prepareCmd": "bash .github/scripts/update-version.sh ${nextRelease.version}",
                 "publishCmd": "bash .github/scripts/build-and-package-apk.sh"
-            }
-        ],
-        [
-            "@semantic-release/git",
-            {
-                "assets": [
-                    "gradle.properties"
-                ],
-                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-            }
-        ],
-        [
-            "@semantic-release/github",
-            {
-                "assets": [
-                    {
-                        "path": "AlNoor.apk",
-                        "name": "AlNoor.apk",
-                        "label": "AlNoor APK"
-                    }
-                ]
             }
         ]
     ]
