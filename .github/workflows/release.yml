@@ -77,21 +77,7 @@ jobs:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
-          # Run semantic-release (will fail on tag push due to repo rules)
-          npx semantic-release || echo "⚠️ Semantic-release failed (expected if tag push was blocked)"
-
-      - name: Verify release was created
-        if: steps.check_skip.outputs.skip == 'false'
-        run: |
-          # Check if version was bumped (indicates release process worked)
-          if git log -1 --pretty=%B | grep -q "chore(release):"; then
-            echo "✓ Release commit was created successfully"
-            VERSION=$(grep -oP '^VERSION_NAME=\K[^\s]+' gradle.properties)
-            echo "VERSION=$VERSION" >> $GITHUB_ENV
-          else
-            echo "✗ Release commit not found - semantic-release may have failed completely"
-            exit 1
-          fi
+          npx semantic-release
 
       - name: Summary
         if: steps.check_skip.outputs.skip == 'false'
