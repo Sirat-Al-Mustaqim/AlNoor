@@ -24,10 +24,10 @@
         [
             "@semantic-release/github",
             {
-                "successComment": false,
-                "failComment": false,
-                "releasedLabels": false,
-                "draftRelease": true,
+                "successComment": true,
+                "failComment": true,
+                "releasedLabels": true,
+                "addRelease": true,
                 "assets": [
                     {
                         "path": "al-noor.apk",
