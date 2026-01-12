@@ -27,8 +27,8 @@
                 "addRelease": false,
                 "assets": [
                     {
-                        "path": "al-noor.apk",
-                        "name": "al-noor.apk",
+                        "path": "AlNoor.apk",
+                        "name": "AlNoor.apk",
                         "label": "AlNoor APK"
                     }
                 ]
