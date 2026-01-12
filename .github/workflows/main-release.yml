@@ -1,0 +1,156 @@
+---
+name: Main Branch Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Setup Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email \
+            "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Node.js for semantic-release
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install semantic-release
+        run: |
+          npm install -g \
+            semantic-release@23 \
+            @semantic-release/exec@6 \
+            @semantic-release/release-notes-generator@13
+
+      - name: Check if version bump commit
+        id: check_skip
+        run: |
+          # Skip if the last commit is a version bump to prevent loops
+          LAST_MSG=$(git log -1 --pretty=%B)
+          if [[ "$LAST_MSG" == "chore(release):"* ]] || [[ "$LAST_MSG" == *"[skip ci]"* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Last commit was a version bump or skip ci, skipping..."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run semantic-release
+        if: steps.check_skip.outputs.skip == 'false'
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          npx semantic-release
+
+      - name: Extract version info
+        if: steps.check_skip.outputs.skip == 'false'
+        id: version
+        run: |
+          # Extract VERSION_NAME from gradle.properties
+          VERSION_NAME=$(grep -oP '^VERSION_NAME=\K[^\s]+' gradle.properties)
+          VERSION_CODE=$(grep -oP '^VERSION_CODE=\K\d+' gradle.properties)
+          
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION_NAME (Code: $VERSION_CODE)"
+
+      - name: Decode keystore
+        if: steps.check_skip.outputs.skip == 'false'
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 -d > app/keystore.jks
+          echo "✓ Keystore decoded"
+
+      - name: Set up JDK 17
+        if: steps.check_skip.outputs.skip == 'false'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        if: steps.check_skip.outputs.skip == 'false'
+        run: chmod +x gradlew
+
+      - name: Build signed release APK
+        if: steps.check_skip.outputs.skip == 'false'
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          ./gradlew assembleRelease --console=plain --no-daemon
+          echo "✓ Release APK built and signed"
+
+      - name: Rename APK
+        if: steps.check_skip.outputs.skip == 'false'
+        run: |
+          # Find the release APK and rename it
+          find app/build/outputs/apk/release -name "*.apk" -exec cp {} al-noor.apk \;
+          ls -lh al-noor.apk
+          echo "✓ APK renamed to al-noor.apk"
+
+      - name: Get release notes from semantic-release
+        if: steps.check_skip.outputs.skip == 'false'
+        id: release_notes
+        run: |
+          # semantic-release generates release notes
+          # We need to capture them from the last run
+          # For now, we'll generate a basic message
+          echo "Release version ${{ steps.version.outputs.version_name }}" > release_notes.txt
+          
+          # Try to get commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            echo "" >> release_notes.txt
+            echo "## Changes" >> release_notes.txt
+            git log $LAST_TAG..HEAD --pretty=format:"* %s (%h)" >> release_notes.txt
+          fi
+
+      - name: Create or Update Draft Release
+        if: steps.check_skip.outputs.skip == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version_name }}
+          name: AlNoor ${{ steps.version.outputs.version_name }}
+          body_path: release_notes.txt
+          files: al-noor.apk
+          draft: true
+          prerelease: false
+          make_latest: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Summary
+        if: steps.check_skip.outputs.skip == 'false'
+        run: |
+          echo "### Release Draft Summary :rocket:" \
+            >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** ${{ steps.version.outputs.version_name }}" \
+            >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Code:** ${{ steps.version.outputs.version_code }}" \
+            >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✓ Draft release created/updated for v${{ steps.version.outputs.version_name }}" \
+            >> $GITHUB_STEP_SUMMARY
+          echo "✓ APK uploaded to release" \
+            >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note:** Release is in draft mode. Publish manually when ready." \
+            >> $GITHUB_STEP_SUMMARY

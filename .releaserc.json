@@ -1,30 +1,15 @@
 {
     "branches": [
-        "develop"
+        "main"
     ],
     "plugins": [
         "@semantic-release/commit-analyzer",
         "@semantic-release/release-notes-generator",
         [
-            "@semantic-release/changelog",
-            {
-                "changelogFile": "CHANGELOG.md"
-            }
-        ],
-        [
             "@semantic-release/exec",
             {
-                "prepareCmd": "bash .github/scripts/update-version.sh ${nextRelease.version}"
-            }
-        ],
-        [
-            "@semantic-release/git",
-            {
-                "assets": [
-                    "gradle.properties",
-                    "CHANGELOG.md"
-                ],
-                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+                "prepareCmd": "bash .github/scripts/update-version.sh ${nextRelease.version}",
+                "publishCmd": "echo \"VERSION=${nextRelease.version}\" >> $GITHUB_OUTPUT && echo \"NOTES<<EOF\" >> $GITHUB_OUTPUT && echo \"${nextRelease.notes}\" >> $GITHUB_OUTPUT && echo \"EOF\" >> $GITHUB_OUTPUT"
             }
         ]
     ]
