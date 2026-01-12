@@ -1,23 +1,29 @@
 # GitHub Workflows
 
-## Auto Version Bump
+## Main Branch Release
 
-The `version-bump.yml` workflow automatically updates the application version in `gradle.properties` whenever changes are pushed to the `develop` branch. It uses **semantic versioning** based on **conventional commit messages** to determine the bump type.
+The `main-release.yml` workflow automatically manages versioning and creates draft releases for the AlNoor app whenever changes are pushed to the `main` branch. It uses **semantic versioning** based on **conventional commit messages** and builds the release APK.
 
 ### How it works
 
-1. **Trigger**: Activates on every push to the `develop` branch (typically after a merge)
-2. **Loop Prevention**: Checks if the last commit was a version bump to prevent infinite loops
-3. **Commit Analysis**: Analyzes commit messages using conventional commits to determine bump type
-4. **Version Extraction**: Reads current `VERSION_CODE` and `VERSION_NAME` from `gradle.properties`
-5. **Validation**: Ensures version values are extracted successfully and in valid format
-6. **Version Calculation**:
-   - **MAJOR bump** (X.0.0): Breaking changes (`feat!:`, `BREAKING CHANGE:`)
-   - **MINOR bump** (0.X.0): New features (`feat:`, `feature:`)
-   - **PATCH bump** (0.0.X): Bug fixes and improvements (`fix:`, `perf:`, `refactor:`)
-   - `VERSION_CODE`: Always increments by 1
-7. **Update & Commit**: Updates `gradle.properties`, pulls latest changes with rebase, and commits back to `develop`
-8. **Summary**: Provides a summary showing bump type and new version
+1. **Trigger**: Activates on every push to the `main` branch
+2. **Loop Prevention**: Checks if the last commit was a version bump (`chore(release):`) to prevent infinite loops
+3. **Semantic Release**: 
+   - Analyzes commit messages using conventional commits
+   - Determines the next version (MAJOR, MINOR, or PATCH)
+   - Generates release notes from commits
+4. **Version Update**: 
+   - Updates `VERSION_CODE` (increments by 1) and `VERSION_NAME` in `gradle.properties`
+   - Commits changes back to `main` branch with `[skip ci]` tag
+5. **APK Build**: 
+   - Decodes keystore from secrets
+   - Builds and signs the release APK
+6. **Draft Release**: 
+   - Creates or updates a GitHub draft release
+   - Attaches the built APK
+   - Includes generated release notes
+   - Creates a tag (e.g., `v1.2.3`) but keeps release in draft mode
+7. **Manual Publishing**: Release remains in draft until manually published from GitHub
 
 ### Conventional Commits
 
@@ -61,6 +67,7 @@ VERSION_NAME=1.0.0
 # After workflow runs:
 VERSION_CODE=2
 VERSION_NAME=1.1.0  # MINOR bump
+# Draft release v1.1.0 created with APK
 ```
 
 **Example 2: Bug fix commit**
@@ -73,6 +80,7 @@ VERSION_NAME=1.1.0
 # After workflow runs:
 VERSION_CODE=3
 VERSION_NAME=1.1.1  # PATCH bump
+# Draft release v1.1.1 created with APK
 ```
 
 **Example 3: Breaking change**
@@ -85,22 +93,41 @@ VERSION_NAME=1.1.1
 # After workflow runs:
 VERSION_CODE=4
 VERSION_NAME=2.0.0  # MAJOR bump
+# Draft release v2.0.0 created with APK
 ```
 
 ### Features
 
 - **Semantic versioning**: Automatically determines version bump based on conventional commits
-- **Loop prevention**: Skips execution if last commit was a version bump
-- **Error handling**: Validates version extraction and format before proceeding
-- **Conflict resolution**: Pulls latest changes with rebase before pushing
-- **Security**: Explicit `contents: write` permission scope
-- **Fallback**: Defaults to PATCH bump if no conventional commit format is found
+- **Draft releases**: All releases start as drafts for manual review before publishing
+- **Automated builds**: Builds and signs APK with every release
+- **Release notes**: Automatically generated from commit messages
+- **Loop prevention**: Skips execution for version bump commits
+- **No CHANGELOG.md**: Release notes are in GitHub releases, not a file
+- **Git integration**: Commits version changes back to main branch
+
+### Publishing a Release
+
+1. Push commits to `main` branch using conventional commit messages
+2. Workflow automatically runs and creates/updates a draft release
+3. Go to GitHub Releases page
+4. Review the draft release and its attached APK
+5. Click "Publish release" when ready to make it public
+
+### Required Secrets
+
+The workflow requires these GitHub secrets:
+- `GH_PAT`: GitHub Personal Access Token with repo access
+- `ANDROID_KEYSTORE`: Base64-encoded Android keystore file
+- `SIGNING_STORE_PASSWORD`: Keystore password
+- `SIGNING_KEY_ALIAS`: Key alias in keystore
+- `SIGNING_KEY_PASSWORD`: Key password
 
 ### Notes
 
-- Uses semantic-release principles for version calculation
-- Requires Node.js for semantic-release tools (installed automatically in workflow)
-- Only runs if version changes are detected
-- Requires `GITHUB_TOKEN` with write permissions (automatically provided by GitHub Actions)
+- Uses semantic-release for version calculation and release notes generation
+- No tags are created until release is published
+- Only commits `gradle.properties`, not CHANGELOG.md
+- Requires Node.js and Java 17 (installed automatically in workflow)
 - Follows [Conventional Commits](https://www.conventionalcommits.org/) specification
-
+- Draft releases can be edited before publishing
