@@ -77,31 +77,6 @@ jobs:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
-          # 1. Create a "fake" git bin directory
-          mkdir -p $HOME/fakebin
-          
-          # 2. Create the interceptor script
-          cat << 'EOF' > $HOME/fakebin/git
-          #!/bin/bash
-          # Check if the command is trying to push tags
-          if [[ "$*" == *"push"* ]] && [[ "$*" == *"--tags"* ]]; then
-            echo "Intercepted: semantic-release tried to push tags. Blocking to bypass Ruleset."
-            exit 0
-          fi
-          # Otherwise, execute the real git binary
-          exec /usr/bin/git "$@"
-          EOF
-          
-          # 3. Make it executable
-          chmod +x $HOME/fakebin/git
-          
-          # 4. Force this directory to the VERY START of PATH
-          export PATH="$HOME/fakebin:$PATH"
-          
-          # 5. Verify the hijack (Should point to $HOME/fakebin/git)
-          which git
-          
-          # 6. Force remote to use PAT and run
           npx semantic-release
 
       - name: Summary
