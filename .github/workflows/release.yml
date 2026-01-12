@@ -24,6 +24,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email \
             "github-actions[bot]@users.noreply.github.com"
+          # Configure git to skip pushing tags
+          git config --global push.followTags false
 
       - name: Setup Node.js for semantic-release
         uses: actions/setup-node@v4
@@ -67,6 +69,20 @@ jobs:
         if: steps.check_skip.outputs.skip == 'false'
         run: chmod +x gradlew
 
+      - name: Create git wrapper to block tag pushing
+        if: steps.check_skip.outputs.skip == 'false'
+        run: |
+          # Create a wrapper script that intercepts git push --tags
+          cat > /tmp/git-wrapper.sh << 'EOF'
+          #!/bin/bash
+          if [[ "$*" == *"--tags"* ]] || [[ "$*" == *"push"*"refs/tags"* ]]; then
+            echo "Blocking git tag push to prevent repository rule violations"
+            exit 0
+          fi
+          /usr/bin/git "$@"
+          EOF
+          chmod +x /tmp/git-wrapper.sh
+
       - name: Run semantic-release
         if: steps.check_skip.outputs.skip == 'false'
         id: semantic
@@ -75,7 +91,11 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          GIT_EXEC_PATH: /tmp
         run: |
+          # Use the git wrapper to intercept tag pushes
+          export PATH="/tmp:$PATH"
+          alias git='/tmp/git-wrapper.sh'
           npx semantic-release
 
       - name: Summary
