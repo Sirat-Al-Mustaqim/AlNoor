@@ -1,5 +1,5 @@
 ---
-name: Release
+name: Build and Release
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  release:
+  build-and-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -26,21 +26,6 @@ jobs:
           VERSION_NAME=$(grep -oP '^VERSION_NAME=\K[^\s]+' gradle.properties)
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "Version: $VERSION_NAME"
-          
-          # Extract release notes for this specific version from CHANGELOG.md
-          # Format: # 0.1.0 (2026-01-11)
-          # Extract content between "# $VERSION_NAME" and the next "# " header
-          RELEASE_NOTES=$(awk "/^# $VERSION_NAME /{flag=1; next} /^# /{flag=0} flag" CHANGELOG.md)
-          
-          # If no content found, provide a default message
-          if [ -z "$RELEASE_NOTES" ]; then
-            RELEASE_NOTES="Release version $VERSION_NAME"
-          fi
-          
-          # Save to file for GitHub release
-          echo "$RELEASE_NOTES" > release_notes.txt
-          
-          echo "Release notes extracted for version $VERSION_NAME"
 
       - name: Decode keystore
         run: |
@@ -73,39 +58,44 @@ jobs:
           ls -lh al-noor.apk
           echo "✓ APK renamed to al-noor.apk"
 
-      - name: Fetch tags
+      - name: Generate release notes
+        id: release_notes
         run: |
-          git fetch --tags
-          echo "✓ Tags fetched"
+          # Generate release notes from recent commits
+          echo "## AlNoor v${{ steps.version.outputs.version_name }}" > release_notes.txt
+          echo "" >> release_notes.txt
+          echo "### Changes" >> release_notes.txt
+          echo "" >> release_notes.txt
+          git log --pretty=format:"- %s" -10 >> release_notes.txt
+          echo "" >> release_notes.txt
+          echo "" >> release_notes.txt
+          echo "---" >> release_notes.txt
+          echo "_This is a draft release. It will be updated with each push to main._" >> release_notes.txt
+          
+          echo "Release notes generated"
 
-      - name: Verify tag exists
-        id: check_tag
-        run: |
-          TAG="v${{ steps.version.outputs.version_name }}"
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "tag_exists=true" >> $GITHUB_OUTPUT
-            echo "✓ Tag $TAG exists"
-          else
-            echo "tag_exists=false" >> $GITHUB_OUTPUT
-            echo "⚠ Tag $TAG does not exist - release will fail!"
-            exit 1
-          fi
-
-      - name: Create or Update GitHub Release
+      - name: Create or Update Draft Release
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          # Use the tag name extracted from your gradle.properties
+          # Use version name as tag (it will be created when draft is published)
           tag_name: v${{ steps.version.outputs.version_name }}
           name: AlNoor ${{ steps.version.outputs.version_name }}
           body_path: release_notes.txt
           files: al-noor.apk
-          # This is the key setting:
-          fail_on_unexisting_tag: false
-          # Set to true if you want to overwrite the APK on the same tag
-          append_body: false 
-          make_latest: false
-          draft: false
+          draft: true
           prerelease: false
+          # Don't fail if tag doesn't exist - we're creating a draft
+          fail_on_unexisting_tag: false
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Summary
+        run: |
+          echo "### Build and Release Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** ${{ steps.version.outputs.version_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **APK:** al-noor.apk" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** Draft release created/updated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✓ Draft release is ready. Publish it manually when ready." >> $GITHUB_STEP_SUMMARY
