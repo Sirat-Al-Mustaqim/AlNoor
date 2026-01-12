@@ -1,5 +1,5 @@
 ---
-name: Main Branch Release
+name: Release
 
 on:
   push:
