@@ -2,7 +2,7 @@
 
 ## Main Branch Release
 
-The `main-release.yml` workflow automatically manages versioning and creates draft releases for the AlNoor app whenever changes are pushed to the `main` branch. It uses **semantic versioning** based on **conventional commit messages** and builds the release APK.
+The `auto-release.yml` workflow automatically manages versioning and creates draft releases for the AlNoor app whenever changes are pushed to the `main` branch. It uses **semantic versioning** based on **conventional commit messages** and builds the release APK.
 
 ### How it works
 
