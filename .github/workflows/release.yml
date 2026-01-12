@@ -104,5 +104,8 @@ jobs:
           fail_on_unexisting_tag: false
           # Set to true if you want to overwrite the APK on the same tag
           append_body: false 
+          make_latest: false
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
