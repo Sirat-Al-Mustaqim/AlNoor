@@ -28,14 +28,14 @@ jobs:
           publish: false
           prerelease: false
           config-name: auto-release.yml
-          disable-releaser: ${{ github.ref_name != 'main' }}
+          disable-releaser: ${{ github.ref_name != 'develop' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
   build-and-release:
     runs-on: ubuntu-latest
     needs: draft-release
-    if: github.ref_name == 'main'
+    if: github.ref_name == 'develop'
     steps:
       - uses: actions/checkout@v4
         with:
