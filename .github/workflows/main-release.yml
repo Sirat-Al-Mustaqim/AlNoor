@@ -57,10 +57,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           npx semantic-release
-          
-          # Fetch and reset to the committed changes from semantic-release
-          git fetch origin main
-          git reset --hard origin/main
 
       - name: Extract version info
         if: steps.check_skip.outputs.skip == 'false'
