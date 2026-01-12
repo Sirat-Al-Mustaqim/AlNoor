@@ -85,7 +85,7 @@ jobs:
           VERSION_NAME=$(grep -oP '^VERSION_NAME=\K[^\s]+' gradle.properties)
           VERSION_CODE=$(grep -oP '^VERSION_CODE=\K\d+' gradle.properties)
           
-          echo "### Release Draft Summary :rocket:" \
+          echo "### Release Summary :rocket:" \
             >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Version:** $VERSION_NAME" \
@@ -93,10 +93,7 @@ jobs:
           echo "- **Version Code:** $VERSION_CODE" \
             >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✓ Draft release created for v$VERSION_NAME" \
+          echo "✓ Release published for v$VERSION_NAME" \
             >> $GITHUB_STEP_SUMMARY
-          echo "✓ APK uploaded to release" \
-            >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Note:** Release is in draft mode. Publish manually when ready." \
+          echo "✓ Version bumped and committed to repository" \
             >> $GITHUB_STEP_SUMMARY
