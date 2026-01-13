@@ -135,7 +135,7 @@ private fun SplashScreenContent(
             ) {
                 // Logo image
                 Image(
-                    painter = painterResource(R.drawable.ic_launcher),
+                    painter = painterResource(R.drawable.ic_launcher_foreground),
                     contentDescription = stringResource(R.string.app_name),
                     modifier = Modifier.size(180.dp)
                 )

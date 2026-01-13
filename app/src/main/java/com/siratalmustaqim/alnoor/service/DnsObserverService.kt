@@ -173,7 +173,7 @@ class DnsObserverService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("AlNoor Protection Active")
             .setContentText("DNS protection is enabled")
-            .setSmallIcon(R.drawable.ic_launcher)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
