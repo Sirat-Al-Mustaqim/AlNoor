@@ -5,57 +5,57 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-
-    <!-- Shield centered in the safe zone (66x66 centered in 108x108) -->
-    <!-- Translated to center: (108-66)/2 = 21, scaled to fit -->
-    <group
-        android:scaleX="0.66"
-        android:scaleY="0.66"
-        android:translateX="21"
-        android:translateY="14">
-
-        <!-- Shield Base Shape with Gradient -->
-        <path
-            android:pathData="M50,5 L10,20 L10,50 C10,80 25,100 50,115 C75,100 90,80 90,50 L90,20 L50,5 Z"
-            android:strokeWidth="2"
-            android:strokeColor="#D4AF37"
-            android:strokeLineJoin="round">
-            <aapt:attr name="android:fillColor">
-                <gradient
-                    android:endX="100"
-                    android:endY="120"
-                    android:startX="0"
-                    android:startY="0"
-                    android:type="linear">
-                    <item
-                        android:color="#FF1A8F55"
-                        android:offset="0" />
-                    <item
-                        android:color="#FF0E5230"
-                        android:offset="1" />
-                </gradient>
-            </aapt:attr>
-        </path>
-
-        <!-- Inner Decorative Gold Line (Subtle) -->
-        <path
-            android:fillColor="#00000000"
-            android:pathData="M50,12 L18,24 L18,50 C18,75 30,90 50,102 C70,90 82,75 82,50 L82,24 L50,12 Z"
-            android:strokeWidth="1"
-            android:strokeColor="#80D4AF37" />
-
-        <!-- Abstract Calligraphy 'Nur' Symbol -->
-        <path
-            android:fillColor="#00000000"
-            android:pathData="M66,44 C62,44 58,52 50,52 C42,52 38,44 34,48 C28,54 34,72 50,72 C66,72 70,56 70,48"
-            android:strokeWidth="5"
-            android:strokeColor="#D4AF37"
-            android:strokeLineCap="round" />
-
-        <!-- The 'Dot' of the letter -->
-        <path
-            android:fillColor="#D4AF37"
-            android:pathData="M50,40 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
-    </group>
-
+  <group android:scaleX="0.7192308"
+      android:scaleY="0.7192308"
+      android:translateX="15.161538"
+      android:translateY="17.319231">
+      <!-- Shield positioned in the center of 108x108 viewport -->
+      <!-- The shield is scaled and centered within the icon safe zone -->
+      <group
+          android:translateX="19"
+          android:translateY="9"
+          android:scaleX="0.7"
+          android:scaleY="0.7">
+          <!-- Main shield shape with gradient fill -->
+          <path
+              android:pathData="M50,5L10,20V50C10,80 25,100 50,115C75,100 90,80 90,50V20L50,5Z"
+              android:strokeWidth="1.5"
+              android:strokeColor="#D4AF37"
+              android:strokeLineJoin="round">
+              <aapt:attr name="android:fillColor">
+                  <gradient
+                      android:endX="90"
+                      android:endY="115"
+                      android:startX="10"
+                      android:startY="5"
+                      android:type="linear">
+                      <item
+                          android:color="#FF1A8F55"
+                          android:offset="0" />
+                      <item
+                          android:color="#FF0E5230"
+                          android:offset="1" />
+                  </gradient>
+              </aapt:attr>
+          </path>
+          <!-- Inner decorative border -->
+          <path
+              android:fillColor="#00000000"
+              android:pathData="M50,12L18,24V50C18,75 30,90 50,102C70,90 82,75 82,50V24L50,12Z"
+              android:strokeWidth="0.5"
+              android:strokeAlpha="0.5"
+              android:strokeColor="#D4AF37" />
+          <!-- Eye/Noor symbol -->
+          <path
+              android:fillColor="#00000000"
+              android:pathData="M66,44C62,44 58,52 50,52C42,52 38,44 34,48C28,54 34,72 50,72C66,72 70,56 70,48"
+              android:strokeWidth="3.2"
+              android:strokeColor="#D4AF37"
+              android:strokeLineCap="round" />
+          <!-- Center dot -->
+          <path
+              android:fillColor="#D4AF37"
+              android:pathData="M50,40m-2.4,0a2.4,2.4 0,1 1,4.8 0a2.4,2.4 0,1 1,-4.8 0" />
+      </group>
+  </group>
 </vector>

@@ -8,9 +8,9 @@
         <!-- Background color for splash screen -->
         <item name="windowSplashScreenBackground">@color/splash_background</item>
         <!-- Center icon displayed during splash -->
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_noor_shield</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <!-- Set icon background on 12+ for proper sizing -->
-        <item name="windowSplashScreenIconBackgroundColor">@color/splash_background</item>
+        <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
         <!-- Duration to keep the splash icon visible (in ms) -->
         <item name="windowSplashScreenAnimationDuration">1000</item>
         <!-- Theme to apply after splash completes -->
