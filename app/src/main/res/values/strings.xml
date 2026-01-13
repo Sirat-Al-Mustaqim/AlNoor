@@ -171,4 +171,11 @@
     <!-- Splash Screen -->
     <string name="splash_tagline">Secure. Private. Local.</string>
     <string name="splash_offline_protection">Offline Protection Active</string>
+
+    <!-- Provisioning -->
+    <string name="provisioning_mode_title">Device Setup</string>
+    <string name="provisioning_mode_message">Setting up device protection mode…</string>
+    <string name="provisioning_compliance_title">Policy Compliance</string>
+    <string name="provisioning_compliance_message">Applying protection policies…</string>
+    <string name="provisioning_complete">Device setup complete</string>
 </resources>

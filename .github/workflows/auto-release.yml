@@ -48,6 +48,7 @@ jobs:
           VERSION="${{ needs.draft-release.outputs.tag-name }}"
           VERSION_NUMBER="${VERSION#v}"
           echo "version=$VERSION_NUMBER" >> $GITHUB_OUTPUT
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
           echo "📦 Version: $VERSION_NUMBER"
 
       - name: Update gradle.properties
@@ -93,3 +94,46 @@ jobs:
           asset_path: ./al-noor-v${{ steps.version.outputs.version }}.apk
           asset_name: al-noor-v${{ steps.version.outputs.version }}.apk
           asset_content_type: application/vnd.android.package-archive
+
+      - name: Publish Release
+        uses: release-drafter/release-drafter@v6
+        with:
+          publish: true
+          prerelease: false
+          config-name: auto-release.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Update provisioning.json
+        run: |
+          # Calculate APK checksum (SHA-256, URL-safe base64)
+          APK_FILE="./al-noor-v${{ steps.version.outputs.version }}.apk"
+          CHECKSUM=$(shasum -a 256 "$APK_FILE" | awk '{print $1}' | xxd -r -p | base64 | tr '+/' '-_' | tr -d '=')
+          
+          # Set download URL pointing to the release
+          DOWNLOAD_URL="https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.tag }}/al-noor-v${{ steps.version.outputs.version }}.apk"
+          
+          echo "📦 APK Checksum: $CHECKSUM"
+          echo "🔗 Download URL: $DOWNLOAD_URL"
+          
+          # Update provisioning.json using jq
+          jq --arg url "$DOWNLOAD_URL" --arg checksum "$CHECKSUM" \
+            '."android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION" = $url | ."android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_CHECKSUM" = $checksum' \
+            docs/provisioning.json > docs/provisioning.json.tmp && mv docs/provisioning.json.tmp docs/provisioning.json
+          
+          echo "✅ Updated provisioning.json:"
+          cat docs/provisioning.json
+
+      - name: Commit provisioning.json Update
+        run: |
+          git add docs/provisioning.json
+          git diff --staged --quiet || git commit -m "chore: update provisioning.json for ${{ steps.version.outputs.tag }} [skip ci]"
+          git push
+
+      - name: Merge main to develop
+        run: |
+          git fetch origin develop
+          git checkout develop
+          git merge origin/main --no-edit -m "chore: merge main (${{ steps.version.outputs.tag }}) into develop [skip ci]"
+          git push origin develop
+
