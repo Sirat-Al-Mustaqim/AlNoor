@@ -104,7 +104,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
-      - name: Update provisioning.json
+      - name: Update provisioning
         run: |
           # Calculate APK checksum (SHA-256, URL-safe base64)
           APK_FILE="./al-noor-v${{ steps.version.outputs.version }}.apk"
@@ -123,11 +123,16 @@ jobs:
           
           echo "✅ Updated provisioning.json:"
           cat docs/provisioning.json
+          
+          # Generate QR code from provisioning.json
+          sudo apt-get install -y qrencode
+          qrencode -o docs/provisioning-qr.png -s 10 -l H < docs/provisioning.json
+          echo "✅ Generated provisioning-qr.png"
 
-      - name: Commit provisioning.json Update
+      - name: Commit provisioning Update
         run: |
-          git add docs/provisioning.json
-          git diff --staged --quiet || git commit -m "chore: update provisioning.json for ${{ steps.version.outputs.tag }} [skip ci]"
+          git add docs/provisioning.json docs/provisioning-qr.png
+          git diff --staged --quiet || git commit -m "chore: update provisioning for ${{ steps.version.outputs.tag }} [skip ci]"
           git push
 
       - name: Merge main to develop
