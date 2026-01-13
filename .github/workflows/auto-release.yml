@@ -3,7 +3,7 @@ name: auto-release
 on:
   push:
     branches:
-      - main
+      - develop
   pull_request:
     types: [opened, reopened, synchronize]
 
@@ -28,14 +28,14 @@ jobs:
           publish: false
           prerelease: false
           config-name: auto-release.yml
-          disable-releaser: ${{ github.ref_name != 'main' }}
+          disable-releaser: ${{ github.ref_name != 'develop' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
   build-and-release:
     runs-on: ubuntu-latest
     needs: draft-release
-    if: github.ref_name == 'main'
+    if: github.ref_name == 'develop'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -95,15 +95,6 @@ jobs:
           asset_name: al-noor-v${{ steps.version.outputs.version }}.apk
           asset_content_type: application/vnd.android.package-archive
 
-      - name: Publish Release
-        uses: release-drafter/release-drafter@v6
-        with:
-          publish: true
-          prerelease: false
-          config-name: auto-release.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-
       - name: Update provisioning
         run: |
           # Calculate APK checksum (SHA-256, URL-safe base64)
@@ -134,11 +125,4 @@ jobs:
           git add docs/provisioning.json docs/provisioning-qr.png
           git diff --staged --quiet || git commit -m "chore: update provisioning for ${{ steps.version.outputs.tag }} [skip ci]"
           git push
-
-      - name: Merge main to develop
-        run: |
-          git fetch origin develop
-          git checkout develop
-          git merge origin/main --no-edit -m "chore: merge main (${{ steps.version.outputs.tag }}) into develop [skip ci]"
-          git push origin develop
 
