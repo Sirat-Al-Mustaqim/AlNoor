@@ -1,43 +1,48 @@
 # GitHub Workflows
 
-## Main Branch Release
+## Develop Branch Release
 
-The `auto-release.yml` workflow automatically manages versioning and creates draft releases for the AlNoor app whenever changes are pushed to the `main` branch. It uses **semantic versioning** based on **conventional commit messages** and builds the release APK.
+The `auto-release.yml` workflow automatically manages versioning and creates draft releases for the AlNoor app whenever changes are pushed to the `develop` branch. It uses **semantic versioning** based on **PR labels** and builds the release APK.
 
 ### How it works
 
-1. **Trigger**: Activates on every push to the `main` branch
-2. **Loop Prevention**: Checks if the last commit was a version bump (`chore(release):`) to prevent infinite loops
-3. **Semantic Release**: 
-   - Analyzes commit messages using conventional commits
+1. **Trigger**: Activates on:
+   - Every push to the `develop` branch
+   - Pull request events (for auto-labeling)
+2. **Release Drafter**: 
+   - Analyzes PR labels to determine version bump
    - Determines the next version (MAJOR, MINOR, or PATCH)
-   - Generates release notes from commits
-4. **Version Update**: 
+   - Generates release notes from merged PRs
+3. **Version Update**: 
    - Updates `VERSION_CODE` (increments by 1) and `VERSION_NAME` in `gradle.properties`
-   - Commits changes back to `main` branch with `[skip ci]` tag
-5. **APK Build**: 
+   - Commits changes back to `develop` branch with `[skip ci]` tag
+4. **APK Build**: 
    - Decodes keystore from secrets
    - Builds and signs the release APK
-6. **Draft Release**: 
+5. **Draft Release**: 
    - Creates or updates a GitHub draft release
    - Attaches the built APK
    - Includes generated release notes
    - Creates a tag (e.g., `v1.2.3`) but keeps release in draft mode
-7. **Manual Publishing**: Release remains in draft until manually published from GitHub
+6. **Manual Publishing**: Release remains in draft until manually published from GitHub
 
-### Conventional Commits
+### PR Labels and Version Bumping
 
-The workflow recognizes these commit message formats:
+The workflow uses PR labels to determine version bumps:
 
 ```
-feat: add new feature          → MINOR bump (1.0.0 → 1.1.0)
-fix: resolve bug               → PATCH bump (1.0.0 → 1.0.1)
-feat!: breaking change         → MAJOR bump (1.0.0 → 2.0.0)
-refactor: improve code         → PATCH bump (1.0.0 → 1.0.1)
-perf: optimize performance     → PATCH bump (1.0.0 → 1.0.1)
+major label                    → MAJOR bump (1.0.0 → 2.0.0)
+minor, enhancement, feature    → MINOR bump (1.0.0 → 1.1.0)
+patch, fix, bugfix, bug        → PATCH bump (1.0.0 → 1.0.1)
 
-BREAKING CHANGE: in body       → MAJOR bump (1.0.0 → 2.0.0)
+Default (no label)             → PATCH bump (1.0.0 → 1.0.1)
 ```
+
+**Auto-labeling**: PRs are automatically labeled based on title:
+- `🚀` or `🎉` in title → `feature` label
+- `🐛` or `bug` in title → `bug` label
+- `bugfix` in title → `bugfix` label
+- Modifies `*.md` files → `docs` label
 
 ### Version Management
 
@@ -57,40 +62,42 @@ defaultConfig {
 
 ### Examples
 
-**Example 1: Feature commit**
+**Example 1: Feature PR**
 ```bash
-# Commit: feat: add prayer times feature
+# PR title: 🚀 Add prayer times feature
+# Auto-labeled with: feature
 # gradle.properties before:
 VERSION_CODE=1
 VERSION_NAME=1.0.0
 
-# After workflow runs:
+# After merging to develop:
 VERSION_CODE=2
 VERSION_NAME=1.1.0  # MINOR bump
 # Draft release v1.1.0 created with APK
 ```
 
-**Example 2: Bug fix commit**
+**Example 2: Bug fix PR**
 ```bash
-# Commit: fix: correct time calculation
+# PR title: 🐛 Fix time calculation
+# Auto-labeled with: bug
 # gradle.properties before:
 VERSION_CODE=2
 VERSION_NAME=1.1.0
 
-# After workflow runs:
+# After merging to develop:
 VERSION_CODE=3
 VERSION_NAME=1.1.1  # PATCH bump
 # Draft release v1.1.1 created with APK
 ```
 
-**Example 3: Breaking change**
+**Example 3: Major update PR**
 ```bash
-# Commit: feat!: redesign navigation
+# PR manually labeled with: major
 # gradle.properties before:
 VERSION_CODE=3
 VERSION_NAME=1.1.1
 
-# After workflow runs:
+# After merging to develop:
 VERSION_CODE=4
 VERSION_NAME=2.0.0  # MAJOR bump
 # Draft release v2.0.0 created with APK
@@ -98,21 +105,22 @@ VERSION_NAME=2.0.0  # MAJOR bump
 
 ### Features
 
-- **Semantic versioning**: Automatically determines version bump based on conventional commits
+- **Semantic versioning**: Automatically determines version bump based on PR labels
 - **Draft releases**: All releases start as drafts for manual review before publishing
 - **Automated builds**: Builds and signs APK with every release
-- **Release notes**: Automatically generated from commit messages
-- **Loop prevention**: Skips execution for version bump commits
-- **No CHANGELOG.md**: Release notes are in GitHub releases, not a file
-- **Git integration**: Commits version changes back to main branch
+- **Release notes**: Automatically generated from merged PRs with collapsible details
+- **Auto-labeling**: PRs are automatically labeled based on title and files changed
+- **Organized changelog**: PRs grouped into categories (Enhancements, Bug Fixes, etc.)
+- **Git integration**: Commits version changes back to develop branch
 
 ### Publishing a Release
 
-1. Push commits to `main` branch using conventional commit messages
-2. Workflow automatically runs and creates/updates a draft release
-3. Go to GitHub Releases page
-4. Review the draft release and its attached APK
-5. Click "Publish release" when ready to make it public
+1. Create a PR to `develop` branch with appropriate title (use emojis for auto-labeling)
+2. Merge the PR to `develop`
+3. Workflow automatically runs and creates/updates a draft release
+4. Go to GitHub Releases page
+5. Review the draft release and its attached APK
+6. Click "Publish release" when ready to make it public
 
 ### Required Secrets
 
@@ -125,9 +133,9 @@ The workflow requires these GitHub secrets:
 
 ### Notes
 
-- Uses semantic-release for version calculation and release notes generation
-- No tags are created until release is published
+- Uses release-drafter v6 for version calculation and release notes generation
+- Tags are created with draft releases but not pushed until published
 - Only commits `gradle.properties`, not CHANGELOG.md
-- Requires Node.js and Java 17 (installed automatically in workflow)
-- Follows [Conventional Commits](https://www.conventionalcommits.org/) specification
+- Requires Java 17 (installed automatically in workflow)
+- Release notes are organized by PR category
 - Draft releases can be edited before publishing
